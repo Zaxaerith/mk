@@ -4,6 +4,13 @@ Static recompilation of **Super Mario Kart** (SNES, 1992) from WDC 65C816 assemb
 
 Part of the [sp00nznet](https://github.com/sp00nznet) recompilation portfolio. This is the first SNES (65816 CPU) target in the series.
 
+> **Contribution branch note:** `contrib/recompiler-correctness` is an experimental fork branch
+> focused on generator coverage, deterministic ROM-oracle validation, and exact timed native C
+> execution. It is **not yet a complete C recompile**: the default playable path still executes a
+> user-supplied ROM through LakeSnes. See
+> [`docs/contribution_status.md`](docs/contribution_status.md) for the exact scope, reproducible
+> validation commands, current results, and remaining work.
+
 ## Status
 
 **Playable end-to-end.** A cold boot walks the authentic flow from controller input —
@@ -99,7 +106,7 @@ A Dear ImGui menu bar (File / Graphics / Sound / Controller / Multiplayer / Help
 ┌─────────────────────────────────────────────────┐
 │                 smk_launcher                      │
 │  ┌──────────────────────────────────────────┐    │
-│  │  src/recomp/ — 80 registered C entries   │    │
+│  │  src/recomp/ — 81 registered C entries   │    │
 │  │  smk_boot.c  — NMI, state machine, input │    │
 │  │  smk_init.c  — Init, transition dispatch │    │
 │  │  smk_title.c — Decompressor, PPU, menus  │    │
@@ -260,7 +267,9 @@ Commands `$E0`–`$FE` use extended 10-bit counts: 1 data byte + cmd bits 0-1 as
 │                        mp_session.c      — generic SNES lockstep netplay (TCP)
 │                        third_party/imgui — vendored Dear ImGui
 ├── docs/
-│   └── smk_flow_re.md  reverse-engineering of the menu→race flow
+│   ├── contribution_status.md  public status and reproducible validation for this branch
+│   ├── recompilation_roadmap.md staged plan toward complete C ownership
+│   └── smk_flow_re.md           reverse-engineering of the menu→race flow
 └── tools/
     ├── disasm/        65816 disassembler (M/X flag tracking, all addressing modes)
     ├── bizhawk/       headless BizHawk + snes9x-core ground-truth harness

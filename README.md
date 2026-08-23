@@ -211,7 +211,8 @@ SMK_SHELLS=1 build/Debug/smk_launcher.exe           # recompiled per-frame shell
 ```
 
 Set `SMK_RECOMP_PROFILE=1` to rank direct call targets. The default report shows 40 rows;
-`SMK_RECOMP_PROFILE_TOP=1000` exports the complete observed set.
+`SMK_RECOMP_PROFILE_TOP=1000` exports the complete observed set. Targets seen under more than
+one accumulator/index width include an exact `VARIANTS=...` list for safe CFG generation.
 
 ## Decompressor
 

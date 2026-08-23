@@ -146,3 +146,17 @@ is the boundary that motivates the timed/cycle-accurate model.
   indirect JSR targets demonstrate the next boundary: the C semantics generate, but approximate
   instruction timing reaches the race-init NMI boundary at a different point. The closure is an
   opt-in regression for the bus-phase/exact-interrupt milestone, not part of the safe default.
+- Corrected 32 shared opcode-table sizes: `($dp,X)`, `($dp)`, `($dp),Y`, `[$dp]`, and
+  `[$dp],Y` all carry one operand byte. Added their 24-bit effective-address helpers together
+  with stack-relative `$dp,S` and `($dp,S),Y`, including bank-00 pointer wrap semantics.
+- Added `MVN`/`MVP` generation with per-byte ticking, data-bank update, direction, accumulator
+  count, and index-width behavior. The generated set is now 32 bodies.
+- CFG nodes are keyed by `(PC,M,X)` and use explicit successor gotos, so internal width-state
+  merges no longer misdecode immediates. The profiler now emits exact entry combinations such as
+  `VARIANTS=00,20`; generated multi-entry functions dispatch from live M/X flags without trying
+  impossible combinations. This matters for the SPC700 upload routines `$81:F504`/`$81:F4B2`,
+  where inventing X=8 turns a 16-bit immediate's high byte into a false `BRK`.
+- Full standard-route audit: 361 distinct direct targets, 56 already registered and all 305
+  remaining candidates generated (`unsupported: 0`). Fifteen focused generator tests pass; the
+  Release build passes; the 18-function default still makes 6,801 interceptions and matches all
+  140 reference snapshots across the 1,400-frame route.

@@ -45,14 +45,84 @@ class WidthSensitiveStackTests(unittest.TestCase):
 
 
 class AdditionalOpcodeTests(unittest.TestCase):
+    def test_indirect_opcodes_are_two_bytes(self):
+        # Every direct-page/stack indirect mode has one operand byte.  A bad
+        # opcode-table size silently shifts the entire following CFG.
+        opcodes = [0xA1, 0xB2, 0xB1, 0xA7, 0xB7, 0xA3, 0xB3]
+        for opcode in opcodes:
+            rom = bytearray(512 * 1024)
+            rom[0x8100:0x8103] = bytes([opcode, 0x20, 0x6B])
+            insn, _, _ = autogen._decode_at(rom, 0x80, 0x8100, False, False)
+            self.assertEqual(insn["total"], 2, hex(opcode))
+
+    def test_indirect_load_effective_addresses(self):
+        source = generate([
+            0xA1, 0x10,  # LDA ($10,X)
+            0xB2, 0x11,  # LDA ($11)
+            0xB1, 0x12,  # LDA ($12),Y
+            0xA7, 0x13,  # LDA [$13]
+            0xB7, 0x14,  # LDA [$14],Y
+            0xA3, 0x15,  # LDA $15,S
+            0xB3, 0x16,  # LDA ($16,S),Y
+            0x6B,
+        ])
+        for mode in ("dpxi", "dpi", "dpiy", "dpil", "dpily", "sr", "sriy"):
+            self.assertIn(f"smk_ea_{mode}", source)
+        self.assertEqual(source.count("smk_bus_read16_24"), 7)
+
+    def test_indirect_store_effective_addresses(self):
+        source = generate([
+            0x81, 0x10, 0x92, 0x11, 0x91, 0x12, 0x87, 0x13,
+            0x97, 0x14, 0x83, 0x15, 0x93, 0x16, 0x6B,
+        ], p=0x20)
+        self.assertEqual(source.count("smk_bus_write8_24"), 7)
+
     def test_mid_function_entry_jumps_to_real_entry_block(self):
         # $8103 BRA $8100; the lower block is shared code before the entry.
         rom = bytearray(512 * 1024)
         rom[0x8100:0x8105] = bytes([0xA6, 0x4A, 0x60, 0x80, 0xFB])
         source = autogen.generate(rom, 0x80, 0x8103, 0x00, "smk_test")
-        entry_jump = source.index("goto L_8103;")
-        lower_block = source.index("L_8100:;")
+        entry_jump = source.index("goto L_8103_M0X0;")
+        lower_block = source.index("L_8100_M0X0:;")
         self.assertLess(entry_jump, lower_block)
+
+    def test_cfg_keeps_distinct_mx_variants_for_one_pc(self):
+        # BEQ selects SEP or REP before both paths merge at a width-neutral NOP.
+        source = generate([
+            0xF0, 0x04,       # BEQ $8106
+            0xC2, 0x20,       # REP #$20
+            0x80, 0x02,       # BRA $8108
+            0xE2, 0x20,       # SEP #$20
+            0xEA,             # same PC under M=0 and M=1
+            0x6B,
+        ], p=0x20)
+        self.assertIn("L_8108_M0X0", source)
+        self.assertIn("L_8108_M1X0", source)
+        self.assertEqual(source.count("/* $8108 NOP */"), 2)
+
+    def test_multi_entry_dispatches_from_live_mx_flags(self):
+        rom = bytearray(512 * 1024)
+        rom[0x8100:0x8102] = bytes([0xEA, 0x6B])
+        source = autogen.generate(rom, 0x80, 0x8100,
+                                  [0x00, 0x10, 0x20, 0x30], "smk_test")
+        self.assertIn("g_cpu.flag_M == 0", source)
+        self.assertIn("g_cpu.flag_X == 0", source)
+        for m in (0, 1):
+            for x in (0, 1):
+                self.assertIn(f"goto L_8100_M{m}X{x};", source)
+                self.assertIn(f"L_8100_M{m}X{x}:;", source)
+        self.assertEqual(source.count("/* $8100 NOP */"), 4)
+
+    def test_exact_profile_variants_avoid_impossible_entry_width(self):
+        # X=16 is a calling convention here. Decoding X=8 would consume only
+        # one immediate byte and mistake the high byte ($00) for BRK.
+        rom = bytearray(512 * 1024)
+        rom[0x8100:0x8105] = bytes([0xA2, 0x34, 0x00, 0xEA, 0x6B])
+        source = autogen.generate(rom, 0x80, 0x8100, [0x00, 0x20], "smk_test")
+        self.assertIn("L_8100_M0X0", source)
+        self.assertIn("L_8100_M1X0", source)
+        self.assertNotIn("L_8100_M0X1", source)
+        self.assertEqual(source.count("BRK"), 0)
 
     def test_bank_and_direct_page_stack_ops(self):
         source = generate([0x4B, 0x0B, 0x2B, 0x6B])  # PHK, PHD, PLD, RTL
@@ -77,6 +147,20 @@ class AdditionalOpcodeTests(unittest.TestCase):
         self.assertIn("smk_op_adc8", source8)
         self.assertIn("smk_op_sbc8", source8)
         self.assertIn("bus_read8", source8)
+
+    def test_block_moves_repeat_and_honor_index_width(self):
+        mvn = generate([0x54, 0x7F, 0x7E, 0x6B])
+        self.assertIn("do { recomp_tick(", mvn)
+        self.assertIn("bus_read8(0x7E, g_cpu.X)", mvn)
+        self.assertIn("bus_write8(0x7F, g_cpu.Y", mvn)
+        self.assertIn("g_cpu.DB = 0x7F", mvn)
+        self.assertIn("g_cpu.X + 1", mvn)
+        self.assertNotIn("g_cpu.X &= 0x00FF", mvn)
+
+        mvp8 = generate([0x44, 0x7E, 0x7F, 0x6B], p=0x10)
+        self.assertIn("g_cpu.X - 1", mvp8)
+        self.assertIn("g_cpu.X &= 0x00FF", mvp8)
+        self.assertIn("while (g_cpu.C != 0xFFFF)", mvp8)
 
     def test_remaining_register_transfers(self):
         source = generate([0xBA, 0x9A, 0x9B, 0xBB, 0x5B, 0x7B,

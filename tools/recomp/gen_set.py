@@ -2,7 +2,8 @@
 """
 gen_set.py — generate src/recomp/smk_autogen.c for a set of functions in ONE
 process (imports autogen; no per-function subprocess like batch.py). Reads a
-profile file's `PROF <addr> <count> <P> [flags]` lines, skips recompiled/MULTI-MX,
+profile file's `PROF <addr> <count> <P> [flags]` lines, skips recompiled entries,
+uses live-flag entry dispatch for MULTI-MX entries,
 and emits each via autogen.generate(). Keeps the link anchor.
 
 Usage: py tools/recomp/gen_set.py <rom.sfc> <prof.txt> <out.c>
@@ -19,8 +20,12 @@ def main():
     rows = []
     for line in open(prof, encoding="utf-8", errors="replace"):
         f = line.split()
-        if len(f) >= 4 and f[0] == "PROF" and "recompiled" not in line and "MULTI-MX" not in line:
-            rows.append((f[1], int(f[3], 16)))
+        if len(f) >= 4 and f[0] == "PROF" and "recompiled" not in line:
+            variant = next((s.split("=", 1)[1] for s in f[4:]
+                            if s.startswith("VARIANTS=")), None)
+            P = ([int(p, 16) for p in variant.split(",")] if variant else
+                 None if "MULTI-MX" in line else int(f[3], 16))
+            rows.append((f[1], P))
     hdr = ('/*\n * smk_autogen.c - autogen.py output (cycle-accurate recomp_tick calls).\n'
            ' * Entry flags come from a real-ROM profile; main.c selects the oracle-gated\n'
            ' * default subset. Other generated bodies remain opt-in for focused work.\n'

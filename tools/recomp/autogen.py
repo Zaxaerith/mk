@@ -41,7 +41,9 @@ BRANCH = {0xF0: ("Z", True), 0xD0: ("Z", False),          # BEQ BNE
 UNCOND = {0x80, 0x82}                                      # BRA BRL
 CALL = {0x20, 0x22, 0xFC}                                  # JSR/JSL/JSR(abs,x) — fall through
 TAILJMP = {0x4C, 0x5C, 0x6C, 0x7C, 0xDC}                   # JMP/JML/(ind)/(abs,x)/[abs] — terminal
-MEM_MODES = {"abs", "absx", "absy", "dp", "dpx", "dpy", "long", "longx"}
+STATIC_MEM_MODES = {"abs", "absx", "absy", "dp", "dpx", "dpy", "long", "longx"}
+INDIRECT_MODES = {"dpi", "dpxi", "dpiy", "dpil", "dpily", "sr", "sriy"}
+MEM_MODES = STATIC_MEM_MODES | INDIRECT_MODES
 
 
 def _call_target(insn, bank):
@@ -107,38 +109,48 @@ def _decode_at(data, bank, pc, m8, x8):
                 target=target, m8=m8, x8=x8), nm8, nx8
 
 
-def decode_cfg(data, bank, addr, m8, x8, limit=2048):
-    """Walk all reachable instructions from the entry, threading M/X. Returns
-    (insns_by_pc, branch_targets)."""
-    insns, targets = {}, set()
-    work = [(addr, m8, x8)]
+def decode_cfg(data, bank, addr, m8=None, x8=None, limit=2048, entry_states=None):
+    """Walk reachable (PC,M,X) states from one or more entry variants.
+
+    A single ROM address may legally be reached under multiple accumulator/index
+    widths.  Keep those states as distinct C blocks rather than rejecting the
+    function or decoding a width-dependent immediate with the wrong length.
+    """
+    insns = {}
+    if entry_states is None:
+        if m8 is None or x8 is None:
+            raise ValueError("m8/x8 are required without entry_states")
+        entry_states = [(addr, m8, x8)]
+    work = list(entry_states)
     n = 0
     while work:
         pc, m, x = work.pop()
-        if pc in insns:
-            if (insns[pc]["m8"], insns[pc]["x8"]) != (m, x):
-                raise Unsupported(f"${pc:04X} re-entered with differing M/X "
-                                  f"(per-(M,X) variants not handled in v2)")
+        key = (pc, m, x)
+        if key in insns:
             continue
         n += 1
         if n > limit:
             raise Unsupported("function too large / unbounded")
         ins, nm, nx = _decode_at(data, bank, pc, m, x)
-        insns[pc] = ins
+        ins["next_m8"], ins["next_x8"] = nm, nx
+        insns[key] = ins
         op = ins["op"]
         if op in TERMINALS or op in TAILJMP:
             continue                                   # no in-function successor
         nxt = (pc + ins["total"]) & 0xFFFF
         if op in UNCOND:
-            targets.add(ins["target"]); work.append((ins["target"], nm, nx))
+            work.append((ins["target"], nm, nx))
         elif op in BRANCH:
-            targets.add(ins["target"])
             work.append((ins["target"], nm, nx)); work.append((nxt, nm, nx))
         else:
             # JSR/JSL fall through (we assume the callee preserves M/X — the diff
             # gate rejects any function where that doesn't hold).
             work.append((nxt, nm, nx))
-    return insns, targets
+    return insns
+
+
+def _cfg_label(pc, m8, x8):
+    return f"L_{pc:04X}_M{int(m8)}X{int(x8)}"
 
 
 # ---- inline emit helpers -------------------------------------------------
@@ -258,9 +270,11 @@ def _src(insn, w):
     mode, val = insn["mode"], insn["val"]
     if mode in ("imm8", "immA", "immX"):
         return f"0x{val:0{w // 4}X}"
-    if mode in MEM_MODES:
+    if mode in STATIC_MEM_MODES:
         bank, addr = _ea(mode, val)
         return f"bus_read{w}({bank}, {addr})"
+    if mode in INDIRECT_MODES:
+        return f"smk_bus_read{w}_24(smk_ea_{mode}(0x{val:02X}))"
     raise Unsupported(f"{insn['name']} {mode}")
 
 
@@ -280,6 +294,23 @@ def _arithmetic(insn, name):  # ADC/SBC, including runtime decimal mode
     w = 16 if _wide(insn, "m") else 8
     return (f"{{ uint{w}_t _v = (uint{w}_t)({_src(insn, w)}); "
             f"smk_op_{name.lower()}{w}(_v); }}")
+
+
+def _block_move(insn, forward, bank):  # MVN/MVP repeat until A wraps to $FFFF
+    dest = insn["val"] & 0xFF
+    src = (insn["val"] >> 8) & 0xFF
+    delta = "+ 1" if forward else "- 1"
+    # Each repeated byte refetches opcode+operands, performs one read/write,
+    # then two internal cycles.  Exact interrupt boundaries are an M3 concern,
+    # but ticking per byte avoids treating a large transfer as one instruction.
+    cycles = (3 * _access_time(bank, insn["pc"]) +
+              _access_time(src, 0) + _access_time(dest, 0) + 12)
+    xmask = " g_cpu.X &= 0x00FF; g_cpu.Y &= 0x00FF;" if insn["x8"] else ""
+    return (f"do {{ recomp_tick({cycles}); uint8_t _v = bus_read8(0x{src:02X}, g_cpu.X); "
+            f"bus_write8(0x{dest:02X}, g_cpu.Y, _v); g_cpu.DB = 0x{dest:02X}; "
+            f"g_cpu.C--; g_cpu.X = (uint16_t)(g_cpu.X {delta}); "
+            f"g_cpu.Y = (uint16_t)(g_cpu.Y {delta});{xmask} "
+            f"}} while (g_cpu.C != 0xFFFF);")
 
 
 def _cmp(insn, reg, kind):  # CMP/CPX/CPY: flags from reg - src
@@ -360,8 +391,10 @@ def _store(insn, reg, kind):
     mode, val = insn["mode"], insn["val"]
     if mode not in MEM_MODES:
         raise Unsupported(f"{insn['name']} {mode}")
-    bank, addr = _ea(mode, val)
     v = "0" if reg is None else _reg_read(reg, w)
+    if mode in INDIRECT_MODES:
+        return f"smk_bus_write{w}_24(smk_ea_{mode}(0x{val:02X}), (uint{w}_t)({v}));"
+    bank, addr = _ea(mode, val)
     return f"bus_write{w}({bank}, {addr}, (uint{w}_t)({v}));"
 
 
@@ -447,7 +480,7 @@ _LOGIC = {"AND": "&", "ORA": "|", "EOR": "^"}
 _INCDEC = {"INX": ("X", +1), "INY": ("Y", +1), "DEX": ("X", -1), "DEY": ("Y", -1)}
 
 
-def emit_body(insn):
+def emit_body(insn, bank=0):
     op, name = insn["op"], insn["name"]
     if name in ("REP", "SEP"):
         return f"op_{name.lower()}(0x{insn['val']:02X});"
@@ -465,6 +498,8 @@ def emit_body(insn):
         return _logical(insn, _LOGIC[name])
     if name in ("ADC", "SBC"):
         return _arithmetic(insn, name)
+    if name in ("MVN", "MVP"):
+        return _block_move(insn, name == "MVN", bank)
     if name == "CMP":
         return _cmp(insn, "A", "m")
     if name == "CPX":
@@ -493,39 +528,64 @@ def emit_body(insn):
 
 
 def generate(data, bank, addr, P, name):
-    m8, x8 = bool(P & 0x20), bool(P & 0x10)
-    insns, targets = decode_cfg(data, bank, addr, m8, x8)
+    """Generate for one P, an iterable of observed P values, or all if P is None."""
+    Ps = list((0x00, 0x10, 0x20, 0x30) if P is None else
+              (P,) if isinstance(P, int) else P)
+    states = sorted(set((bool(p & 0x20), bool(p & 0x10)) for p in Ps))
+    entries = [(addr, m, x) for m, x in states]
+    if len(entries) > 1:
+        insns = decode_cfg(data, bank, addr, entry_states=entries)
+    else:
+        m8, x8 = states[0]
+        insns = decode_cfg(data, bank, addr, m8, x8)
     out = []
     pc24 = (bank << 16) | addr
     out.append(f"/* Auto-generated by tools/recomp/autogen.py from ${bank:02X}:{addr:04X}")
-    out.append(f" * entry M={int(m8)} X={int(x8)} (P=${P:02X}). Validate with the diff harness. */")
+    if len(entries) > 1:
+        p_text = ",".join(f"${p:02X}" for p in sorted(set(Ps)))
+        out.append(f" * observed entry P(M/X)={p_text}; selected from live CPU flags. Validate with the diff harness. */")
+    else:
+        out.append(f" * entry M={int(m8)} X={int(x8)} (P=${P:02X}). Validate with the diff harness. */")
     out.append(f"RECOMP_PATCH({name}, 0x{pc24:06X}) {{")
-    # CFG blocks are emitted in address order so ordinary fallthrough remains
-    # natural C fallthrough. Some SMK routines enter in the middle and branch
-    # backward into a shared lower-address tail; explicitly select the real
-    # entry instead of accidentally executing the numerically first block.
-    out.append(f"    goto L_{addr:04X};")
-    targets.add(addr)
-    for pc in sorted(insns):
-        ins = insns[pc]
-        if pc in targets:
-            out.append(f"  L_{pc:04X}:;")
+    # Every decoded instruction is an explicit CFG block. This is slightly more
+    # verbose than C fallthrough, but it makes address order irrelevant and lets
+    # one PC have separate M/X-width variants safely.
+    if len(entries) > 1:
+        for index, (_, m, x) in enumerate(entries[:-1]):
+            prefix = "if" if index == 0 else "else if"
+            out.append(f"    {prefix} (g_cpu.flag_M == {int(m)} && g_cpu.flag_X == {int(x)}) goto {_cfg_label(addr, m, x)};")
+        _, m, x = entries[-1]
+        out.append(f"    else goto {_cfg_label(addr, m, x)};")
+    else:
+        out.append(f"    goto {_cfg_label(addr, m8, x8)};")
+    for key in sorted(insns):
+        pc, state_m, state_x = key
+        ins = insns[key]
+        nm, nx = ins["next_m8"], ins["next_x8"]
+        nxt = (pc + ins["total"]) & 0xFFFF
+        out.append(f"  {_cfg_label(pc, state_m, state_x)}:;")
         op = ins["op"]
-        out.append(f"    recomp_tick({_instr_cycles(ins, bank)});")  # cycle-accurate (no-op unless enabled)
+        # Block moves repeat the opcode internally and therefore own their
+        # per-byte ticks inside emit_body().
+        if ins["name"] not in ("MVN", "MVP"):
+            out.append(f"    recomp_tick({_instr_cycles(ins, bank)});")  # cycle-accurate (no-op unless enabled)
         if op in TERMINALS:
             out.append(f"    return;            /* ${pc:04X} {ins['name']} */")
         elif op in CALL:
             out.append(f"    {_transfer_stmt(ins, bank)}  /* ${pc:04X} {ins['name']} */")
+            out.append(f"    goto {_cfg_label(nxt, nm, nx)};")
         elif op in TAILJMP:
             out.append(f"    {_transfer_stmt(ins, bank)} return;  /* ${pc:04X} {ins['name']} (tail) */")
         elif op in UNCOND:
-            out.append(f"    goto L_{ins['target']:04X};   /* ${pc:04X} {ins['name']} */")
+            out.append(f"    goto {_cfg_label(ins['target'], nm, nx)};   /* ${pc:04X} {ins['name']} */")
         elif op in BRANCH:
             flag, want = BRANCH[op]
             cond = f"g_cpu.flag_{flag}" if want else f"!g_cpu.flag_{flag}"
-            out.append(f"    if ({cond}) goto L_{ins['target']:04X};  /* ${pc:04X} {ins['name']} */")
+            out.append(f"    if ({cond}) goto {_cfg_label(ins['target'], nm, nx)};  /* ${pc:04X} {ins['name']} */")
+            out.append(f"    goto {_cfg_label(nxt, nm, nx)};")
         else:
-            out.append(f"    {emit_body(ins):<46s} /* ${pc:04X} {ins['name']} */")
+            out.append(f"    {emit_body(ins, bank):<46s} /* ${pc:04X} {ins['name']} */")
+            out.append(f"    goto {_cfg_label(nxt, nm, nx)};")
     out.append("}")
     return "\n".join(out)
 
@@ -536,7 +596,12 @@ def main():
         return 1
     rom_path, loc, p_hex = sys.argv[1], sys.argv[2], sys.argv[3]
     bank, addr = (int(v, 16) for v in loc.split(":"))
-    P = int(p_hex, 16)
+    if p_hex.lower() in ("multi", "all"):
+        P = None
+    elif "," in p_hex:
+        P = [int(p, 16) for p in p_hex.split(",")]
+    else:
+        P = int(p_hex, 16)
     name = sys.argv[4] if len(sys.argv) > 4 else f"smk_{bank:02X}{addr:04X}"
     data = open(rom_path, "rb").read()
     if len(data) % 1024 == 512:

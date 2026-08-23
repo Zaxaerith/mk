@@ -13,11 +13,11 @@ race initialization, and a short driving segment.
 
 | Metric | Current value | Meaning |
 |---|---:|---|
-| Registered C entries | 80 | 49 hand-written plus 31 auto-generated; registration alone does not imply correctness |
+| Registered C entries | 81 | 49 hand-written plus 32 auto-generated; registration alone does not imply correctness |
 | Default oracle-gated intercepts | 18 | Safe as one combined set on the standard route |
 | Distinct direct JSR/JSL targets on the route | 361 | Excludes indirect calls, jumps, interrupt entries, and unvisited game modes |
-| Registered direct targets reached | 55 / 361 (15.2%) | Potential C coverage if every registered body were enabled |
-| Direct calls to registered targets | 28,677 / 150,979 (19.0%) | Call-weighted potential, not the default enabled share |
+| Registered direct targets reached | 56 / 361 (15.5%) | Potential C coverage if every registered body were enabled |
+| Direct calls to registered targets | 86,972 / 150,979 (57.6%) | Call-weighted potential, boosted by the opt-in APU reader `$81:F56C`; not the default enabled share |
 | Default execution mode | ROM interpreter | `snes_runFrame` still executes the original 65C816 code |
 
 The percentages above are **route coverage**, not whole-game completion. Two-player modes,
@@ -29,11 +29,13 @@ small validated subset exists, but the project is still in an early static-recom
 ## Current technical boundary
 
 The generator now handles ordinary control flow, direct and computed calls/jumps, width-aware
-stack/register operations, TSB/TRB, and binary/decimal 8/16-bit ADC/SBC for its existing memory
-addressing modes. Important gaps remain:
+stack/register operations, TSB/TRB, binary/decimal 8/16-bit ADC/SBC, all observed direct-page
+indirect and stack-relative modes, `MVN`/`MVP`, and distinct `(PC,M,X)` CFG states. The profiler
+exports exact multi-width entry variants and the generator selects the matching entry block from
+the live CPU flags. On the standard route, all 305 not-yet-registered direct targets generate;
+combined with 56 registered targets this is 361/361 observed-target generation coverage.
+Important gaps remain:
 
-- indirect/stack-relative operand addressing (`dpi`, `dpiy`, `dpil`, `dpily`, `dpxi`, `sr`,
-  `sriy`), block moves (`MVN`/`MVP`), and per-(M,X) CFG variants;
 - exact dynamic cycle accounting: taken branches, page/direct-page penalties, interrupt
   recognition points, DMA stalls, and nested call costs;
 - complete discovery of indirect call-table targets and all entry flag variants;
@@ -67,8 +69,9 @@ same profile and byte-identical reference snapshots.
 - Split CFGs by `(M,X)` state instead of rejecting multi-width re-entry.
 - Add focused unit cases for every opcode/addressing/width rule.
 
-**Exit gate:** every single-width direct-call target from the standard profile either generates
-successfully or has a documented semantic reason for a hand port.
+**Exit gate (met 2026-08-23):** every direct-call target from the standard profile, including
+multi-width entries, either already has C registered or generates successfully. The 1,400-frame
+default-set regression remains byte-identical across all 140 sampled frames after the M2 changes.
 
 ### M3 — Exact timed native execution
 

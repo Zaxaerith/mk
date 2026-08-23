@@ -10,6 +10,73 @@
 #include <snesrecomp/snesrecomp.h>
 #include <stdint.h>
 
+/* Flat 24-bit bus helpers.  Pointer bytes in direct page/stack always wrap
+ * inside bank $00; the final data address, however, carries across banks. */
+static inline uint8_t smk_bus_read8_24(uint32_t address) {
+    address &= 0xFFFFFFu;
+    return bus_read8((uint8_t)(address >> 16), (uint16_t)address);
+}
+
+static inline uint16_t smk_bus_read16_24(uint32_t address) {
+    uint8_t lo = smk_bus_read8_24(address);
+    uint8_t hi = smk_bus_read8_24((address + 1) & 0xFFFFFFu);
+    return (uint16_t)(lo | ((uint16_t)hi << 8));
+}
+
+static inline void smk_bus_write8_24(uint32_t address, uint8_t value) {
+    address &= 0xFFFFFFu;
+    bus_write8((uint8_t)(address >> 16), (uint16_t)address, value);
+}
+
+static inline void smk_bus_write16_24(uint32_t address, uint16_t value) {
+    smk_bus_write8_24(address, (uint8_t)value);
+    smk_bus_write8_24((address + 1) & 0xFFFFFFu, (uint8_t)(value >> 8));
+}
+
+static inline uint16_t smk_dp_pointer16(uint16_t address) {
+    uint8_t lo = bus_read8(0x00, address);
+    uint8_t hi = bus_read8(0x00, (uint16_t)(address + 1));
+    return (uint16_t)(lo | ((uint16_t)hi << 8));
+}
+
+static inline uint32_t smk_dp_pointer24(uint16_t address) {
+    uint32_t value = smk_dp_pointer16(address);
+    value |= (uint32_t)bus_read8(0x00, (uint16_t)(address + 2)) << 16;
+    return value;
+}
+
+static inline uint32_t smk_ea_dpi(uint8_t operand) {
+    uint16_t pointer = smk_dp_pointer16((uint16_t)(g_cpu.DP + operand));
+    return ((uint32_t)g_cpu.DB << 16) | pointer;
+}
+
+static inline uint32_t smk_ea_dpxi(uint8_t operand) {
+    uint16_t address = (uint16_t)(g_cpu.DP + operand + g_cpu.X);
+    uint16_t pointer = smk_dp_pointer16(address);
+    return ((uint32_t)g_cpu.DB << 16) | pointer;
+}
+
+static inline uint32_t smk_ea_dpiy(uint8_t operand) {
+    return (smk_ea_dpi(operand) + g_cpu.Y) & 0xFFFFFFu;
+}
+
+static inline uint32_t smk_ea_dpil(uint8_t operand) {
+    return smk_dp_pointer24((uint16_t)(g_cpu.DP + operand));
+}
+
+static inline uint32_t smk_ea_dpily(uint8_t operand) {
+    return (smk_ea_dpil(operand) + g_cpu.Y) & 0xFFFFFFu;
+}
+
+static inline uint32_t smk_ea_sr(uint8_t operand) {
+    return (uint16_t)(g_cpu.S + operand);
+}
+
+static inline uint32_t smk_ea_sriy(uint8_t operand) {
+    uint16_t pointer = smk_dp_pointer16((uint16_t)(g_cpu.S + operand));
+    return (((uint32_t)g_cpu.DB << 16) + pointer + g_cpu.Y) & 0xFFFFFFu;
+}
+
 static inline void smk_op_adc8(uint8_t value) {
     uint16_t a = (uint8_t)g_cpu.C;
     int result;

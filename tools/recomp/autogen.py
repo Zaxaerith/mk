@@ -276,6 +276,12 @@ def _logical(insn, c_op):  # AND/ORA/EOR: A = A <op> src; N/Z
             f"_a = (uint{w}_t)(_a {c_op} _v); {_reg_write('A', w, '_a')} {_nz(w, '_a')} }}")
 
 
+def _arithmetic(insn, name):  # ADC/SBC, including runtime decimal mode
+    w = 16 if _wide(insn, "m") else 8
+    return (f"{{ uint{w}_t _v = (uint{w}_t)({_src(insn, w)}); "
+            f"smk_op_{name.lower()}{w}(_v); }}")
+
+
 def _cmp(insn, reg, kind):  # CMP/CPX/CPY: flags from reg - src
     w = 16 if _wide(insn, kind) else 8
     return (f"{{ uint{w}_t _a = (uint{w}_t)({_reg_read(reg, w)}); "
@@ -457,6 +463,8 @@ def emit_body(insn):
         return _store(insn, *_STORES[name])
     if name in _LOGIC:
         return _logical(insn, _LOGIC[name])
+    if name in ("ADC", "SBC"):
+        return _arithmetic(insn, name)
     if name == "CMP":
         return _cmp(insn, "A", "m")
     if name == "CPX":
@@ -479,10 +487,8 @@ def emit_body(insn):
         return _incdec_val(insn, +1 if name == "INC" else -1)
     if name == "PEA":  # push 16-bit immediate operand
         return (f"{{ g_cpu.S--; bus_wram_write16(g_cpu.S, 0x{insn['val']:04X}); g_cpu.S--; }}")
-    if name in ("ADC", "SBC"):
-        if insn["mode"] == "immA" and not insn["m8"]:
-            return f"op_{name.lower()}_imm16(0x{insn['val']:04X});"
-        raise Unsupported(f"{name} {insn['mode']} (only imm16 has a helper)")
+    if name == "NOP":
+        return "(void)0;"
     raise Unsupported(f"no emit rule for {name} {insn['mode']} (${op:02X}) at ${insn['pc']:04X}")
 
 

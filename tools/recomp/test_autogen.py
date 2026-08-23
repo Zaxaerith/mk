@@ -66,6 +66,18 @@ class AdditionalOpcodeTests(unittest.TestCase):
         self.assertIn("_m | _a", source)
         self.assertIn("_m & (uint16_t)~_a", source)
 
+    def test_adc_sbc_memory_width_and_nop(self):
+        source16 = generate([0x65, 0x10, 0xF5, 0x20, 0xEA, 0x6B])
+        self.assertIn("smk_op_adc16", source16)
+        self.assertIn("smk_op_sbc16", source16)
+        self.assertIn("bus_read16", source16)
+        self.assertIn("(void)0;", source16)
+
+        source8 = generate([0x65, 0x10, 0xF5, 0x20, 0x6B], p=0x20)
+        self.assertIn("smk_op_adc8", source8)
+        self.assertIn("smk_op_sbc8", source8)
+        self.assertIn("bus_read8", source8)
+
     def test_remaining_register_transfers(self):
         source = generate([0xBA, 0x9A, 0x9B, 0xBB, 0x5B, 0x7B,
                            0x1B, 0x3B, 0x6B])

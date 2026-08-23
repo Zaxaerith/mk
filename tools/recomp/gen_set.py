@@ -25,7 +25,7 @@ def main():
            ' * Entry flags come from a real-ROM profile; main.c selects the oracle-gated\n'
            ' * default subset. Other generated bodies remain opt-in for focused work.\n'
            ' * Regenerate: py tools/recomp/gen_set.py <rom> <prof> <this>\n */\n'
-           '#include "smk/functions.h"\n#include <snesrecomp/snesrecomp.h>\n'
+           '#include "smk/functions.h"\n#include "smk/recomp_ops.h"\n#include <snesrecomp/snesrecomp.h>\n'
            '#include <snesrecomp/func_table.h>\n#include <stdint.h>\n\n'
            '/* Link anchor: forces this static-lib TU (and its registrations) to link. */\n'
            'void smk_autogen_link_anchor(void) {}\n\n')

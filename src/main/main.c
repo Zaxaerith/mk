@@ -21,9 +21,52 @@ extern struct Snes *snesrecomp_get_snes(void);
 void snes_setButtonState(struct Snes *snes, int player, int button, bool pressed);
 void snes_doAutoJoypad(struct Snes *snes);
 
+#define SMK_ROM_FILENAME "Super Mario Kart (USA).sfc"
+
+static bool file_exists(const char *path) {
+    FILE *f = fopen(path, "rb");
+    if (!f) return false;
+    fclose(f);
+    return true;
+}
+
 static const char *find_rom_path(int argc, char *argv[]) {
     if (argc >= 2) return argv[1];
-    return "Super Mario Kart (USA).sfc";
+
+    /* A double-click starts the executable from its configuration directory
+     * (for example build-manifest/Release), while the locally supplied ROM is
+     * normally kept at the repository root.  Search both the working directory
+     * and locations relative to argv[0], without copying the ROM into a build. */
+    static const char *cwd_candidates[] = {
+        SMK_ROM_FILENAME,
+        "../" SMK_ROM_FILENAME,
+        "../../" SMK_ROM_FILENAME,
+    };
+    for (size_t i = 0; i < sizeof(cwd_candidates) / sizeof(cwd_candidates[0]); i++) {
+        if (file_exists(cwd_candidates[i])) return cwd_candidates[i];
+    }
+
+    static char path[1024];
+    char exe_dir[1024];
+    if (argv[0] && strlen(argv[0]) < sizeof(exe_dir)) {
+        strcpy(exe_dir, argv[0]);
+        char *slash = strrchr(exe_dir, '/');
+        char *backslash = strrchr(exe_dir, '\\');
+        if (!slash || (backslash && backslash > slash)) slash = backslash;
+        if (slash) {
+            *slash = '\0';
+            static const char *relative_dirs[] = { "", "/..", "/../.." };
+            for (size_t i = 0; i < sizeof(relative_dirs) / sizeof(relative_dirs[0]); i++) {
+                int n = snprintf(path, sizeof(path), "%s%s/%s",
+                                 exe_dir, relative_dirs[i], SMK_ROM_FILENAME);
+                if (n > 0 && (size_t)n < sizeof(path) && file_exists(path)) return path;
+            }
+        }
+    }
+
+    /* Preserve the useful filename in the existing load error if no candidate
+     * exists.  An explicit path can always be supplied as argv[1]. */
+    return SMK_ROM_FILENAME;
 }
 
 /*
@@ -429,7 +472,12 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if (profile) recomp_timed_profile_dump(40);
+    if (profile) {
+        int top = 40;
+        const char *profile_top = getenv("SMK_RECOMP_PROFILE_TOP");
+        if (profile_top && atoi(profile_top) > 0) top = atoi(profile_top);
+        recomp_timed_profile_dump(top);
+    }
 
     printf("Shutting down...\n");
     snesrecomp_shutdown();

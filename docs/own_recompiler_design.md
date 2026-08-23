@@ -141,3 +141,8 @@ is the boundary that motivates the timed/cycle-accurate model.
   race init through its `$80:9FAC` callee, while `$81:81C4` and `$85:92F9` are transition
   sensitive. Their generated bodies remain available for opt-in experiments, but they are no
   longer enabled by default.
+- Added binary/decimal-correct 8/16-bit ADC/SBC emission for the generator's existing memory
+  modes, plus NOP. This raised the generated set from 21 to 31 bodies. `$81:F638` and its eight
+  indirect JSR targets demonstrate the next boundary: the C semantics generate, but approximate
+  instruction timing reaches the race-init NMI boundary at a different point. The closure is an
+  opt-in regression for the bus-phase/exact-interrupt milestone, not part of the safe default.

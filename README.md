@@ -61,6 +61,13 @@ A Dear ImGui menu bar (File / Graphics / Sound / Controller / Multiplayer / Help
 - More recompiled functions (the long-term goal: replace real-frame with recompiled C)
 
 ### Recent (August 2026)
+- **Measured full-C baseline and roadmap** — the standard 1,400-frame route reaches 361 direct
+  call targets. 80 C entries are registered (31 auto-generated), but only the strict 18-function
+  combined set is default oracle-gated; see [`docs/recompilation_roadmap.md`](docs/recompilation_roadmap.md).
+- **Generator arithmetic expansion** — added runtime-decimal-correct 8/16-bit ADC/SBC for
+  existing memory modes plus NOP. This unlocks several high-frequency math routines; the
+  `$81:F638` indirect-call closure is retained as an exact-timing regression rather than being
+  prematurely default-enabled.
 - **Auto-recompiler correctness pass** — fixed mid-function entries whose CFG branches into
   lower-address shared blocks; added M/X-width-correct register stack operations, PHK/PHD/PLD,
   TSB/TRB, and the remaining register transfers, with focused Python regression tests.
@@ -91,7 +98,7 @@ A Dear ImGui menu bar (File / Graphics / Sound / Controller / Multiplayer / Help
 ┌─────────────────────────────────────────────────┐
 │                 smk_launcher                      │
 │  ┌──────────────────────────────────────────┐    │
-│  │  src/recomp/ — 70 Recompiled functions   │    │
+│  │  src/recomp/ — 80 registered C entries   │    │
 │  │  smk_boot.c  — NMI, state machine, input │    │
 │  │  smk_init.c  — Init, transition dispatch │    │
 │  │  smk_title.c — Decompressor, PPU, menus  │    │
@@ -186,6 +193,10 @@ python -m unittest tools/recomp/test_autogen.py -v
 build/Debug/smk_launcher.exe
 ```
 
+When no ROM argument is supplied, the launcher searches its current/executable directory and
+up to two parent directories. This allows a Release/Debug executable to be double-clicked while
+the legally supplied ROM remains at the repository root. An explicit ROM path is still accepted.
+
 The ROM file is not included — supply your own US v1.0 copy (MD5: `7f25ce5a283d902694c52fb1152fa61a`).
 
 By default the launcher runs in **real-frame mode** — the genuine ROM via LakeSnes's
@@ -198,6 +209,9 @@ For recompilation development, use the recompiled-shell path:
 ```bash
 SMK_SHELLS=1 build/Debug/smk_launcher.exe           # recompiled per-frame shells
 ```
+
+Set `SMK_RECOMP_PROFILE=1` to rank direct call targets. The default report shows 40 rows;
+`SMK_RECOMP_PROFILE_TOP=1000` exports the complete observed set.
 
 ## Decompressor
 

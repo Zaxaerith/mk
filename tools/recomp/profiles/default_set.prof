@@ -21,3 +21,14 @@ PROF 8181C4 191      00
 PROF 8592F9 191      00 
 PROF 808EED 2030     00
 PROF 81BB70 738      00
+PROF 81F638 2715     00
+# Indirect JSR closure used by $81:F638 (not visible to the direct-call profiler).
+PROF 81F6C7 0        00
+PROF 81F6D2 0        00
+PROF 81F6DD 0        00
+PROF 81F6E8 0        00
+PROF 81F6F3 0        00
+PROF 81F6FE 0        00
+PROF 81F705 0        00
+PROF 81F710 0        00
+PROF 8596DC 675      00

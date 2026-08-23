@@ -160,3 +160,7 @@ is the boundary that motivates the timed/cycle-accurate model.
   remaining candidates generated (`unsupported: 0`). Fifteen focused generator tests pass; the
   Release build passes; the 18-function default still makes 6,801 interceptions and matches all
   140 reference snapshots across the 1,400-frame route.
+- M3 started with path-dependent timing: taken conditional branches and `BRA`/`BRL` add their
+  missing internal cycle. Sixteen generator tests pass and the default 18-function oracle gate
+  remains green. `$81:F638` still diverges first at frame 1040, proving the remaining fault is
+  phase/interrupt placement rather than a missing constant branch cost.

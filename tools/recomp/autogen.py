@@ -577,11 +577,16 @@ def generate(data, bank, addr, P, name):
         elif op in TAILJMP:
             out.append(f"    {_transfer_stmt(ins, bank)} return;  /* ${pc:04X} {ins['name']} (tail) */")
         elif op in UNCOND:
+            # BRA/BRL spend one internal cycle after fetching the displacement.
+            out.append("    recomp_tick(6);")
             out.append(f"    goto {_cfg_label(ins['target'], nm, nx)};   /* ${pc:04X} {ins['name']} */")
         elif op in BRANCH:
             flag, want = BRANCH[op]
             cond = f"g_cpu.flag_{flag}" if want else f"!g_cpu.flag_{flag}"
-            out.append(f"    if ({cond}) goto {_cfg_label(ins['target'], nm, nx)};  /* ${pc:04X} {ins['name']} */")
+            # A taken conditional branch has one extra internal cycle. Page-cross
+            # penalties only apply in emulation mode and are added separately once
+            # E-mode entry profiling is available.
+            out.append(f"    if ({cond}) {{ recomp_tick(6); goto {_cfg_label(ins['target'], nm, nx)}; }}  /* ${pc:04X} {ins['name']} */")
             out.append(f"    goto {_cfg_label(nxt, nm, nx)};")
         else:
             out.append(f"    {emit_body(ins, bank):<46s} /* ${pc:04X} {ins['name']} */")

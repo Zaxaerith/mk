@@ -75,6 +75,12 @@ default-set regression remains byte-identical across all 140 sampled frames afte
 
 ### M3 — Exact timed native execution
 
+Progress: taken conditional branches and `BRA`/`BRL` now pay their dynamic internal-cycle
+penalty. The default 18-function set remains byte-identical after this change, but the
+`$81:F638` closure still first diverges at frame 1040. This confirms aggregate whole-instruction
+ticks cannot reproduce an NMI that lands between fetch/read/write phases; bus-phase ordering and
+an interrupt-yield protocol are required rather than further constant-cycle tuning.
+
 - Move from aggregate instruction costs to bus-phase-accurate fetch/read/write/idle timing.
 - Allow NMI/IRQ recognition at the same instruction boundaries as LakeSnes.
 - Carry timing through nested native calls and indirect call closures.

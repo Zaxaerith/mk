@@ -100,6 +100,15 @@ class AdditionalOpcodeTests(unittest.TestCase):
         self.assertIn("L_8108_M1X0", source)
         self.assertEqual(source.count("/* $8108 NOP */"), 2)
 
+    def test_branch_cycles_are_path_dependent(self):
+        source = generate([0xF0, 0x01, 0xEA, 0x6B])
+        self.assertIn("if (g_cpu.flag_Z) { recomp_tick(6);", source)
+        self.assertEqual(source.count("recomp_tick(6);"), 1)
+
+        bra = generate([0x80, 0x01, 0xEA, 0x6B])
+        self.assertIn("recomp_tick(6);", bra)
+        self.assertIn("goto L_8103_M0X0", bra)
+
     def test_multi_entry_dispatches_from_live_mx_flags(self):
         rom = bytearray(512 * 1024)
         rom[0x8100:0x8102] = bytes([0xEA, 0x6B])

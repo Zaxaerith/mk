@@ -28,7 +28,7 @@ RECOMP_PATCH(smk_80F90A, 0x80F90A) {
     goto L_F90D_M0X0;
   L_F90D_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_C) goto L_F927_M0X0;  /* $F90D BCS */
+    if (g_cpu.flag_C) { recomp_tick(6); goto L_F927_M0X0; }  /* $F90D BCS */
     goto L_F90F_M0X0;
   L_F90F_M0X0:;
     recomp_tick(28);
@@ -36,7 +36,7 @@ RECOMP_PATCH(smk_80F90A, 0x80F90A) {
     goto L_F911_M0X0;
   L_F911_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_F924_M0X0;  /* $F911 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_F924_M0X0; }  /* $F911 BNE */
     goto L_F913_M0X0;
   L_F913_M0X0:;
     recomp_tick(28);
@@ -44,7 +44,7 @@ RECOMP_PATCH(smk_80F90A, 0x80F90A) {
     goto L_F915_M0X0;
   L_F915_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_F91C_M0X0;  /* $F915 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_F91C_M0X0; }  /* $F915 BEQ */
     goto L_F917_M0X0;
   L_F917_M0X0:;
     recomp_tick(12);
@@ -56,6 +56,7 @@ RECOMP_PATCH(smk_80F90A, 0x80F90A) {
     goto L_F91A_M0X0;
   L_F91A_M0X0:;
     recomp_tick(12);
+    recomp_tick(6);
     goto L_F927_M0X0;   /* $F91A BRA */
   L_F91C_M0X0:;
     recomp_tick(28);
@@ -136,7 +137,7 @@ RECOMP_PATCH(smk_80A027, 0x80A027) {
     goto L_A02A_M0X0;
   L_A02A_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_A05B_M0X0;  /* $A02A BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_A05B_M0X0; }  /* $A02A BEQ */
     goto L_A02C_M0X0;
   L_A02C_M0X0:;
     recomp_tick(34);
@@ -144,7 +145,7 @@ RECOMP_PATCH(smk_80A027, 0x80A027) {
     goto L_A02F_M0X0;
   L_A02F_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_A05B_M0X0;  /* $A02F BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_A05B_M0X0; }  /* $A02F BEQ */
     goto L_A031_M0X0;
   L_A031_M0X0:;
     recomp_tick(28);
@@ -160,7 +161,7 @@ RECOMP_PATCH(smk_80A027, 0x80A027) {
     goto L_A037_M0X0;
   L_A037_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_A05A_M0X0;  /* $A037 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_A05A_M0X0; }  /* $A037 BEQ */
     goto L_A039_M0X0;
   L_A039_M0X0:;
     recomp_tick(28);
@@ -168,11 +169,11 @@ RECOMP_PATCH(smk_80A027, 0x80A027) {
     goto L_A03B_M0X0;
   L_A03B_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_A05A_M0X0;  /* $A03B BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_A05A_M0X0; }  /* $A03B BEQ */
     goto L_A03D_M0X0;
   L_A03D_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_C) goto L_A05A_M0X0;  /* $A03D BCC */
+    if (!g_cpu.flag_C) { recomp_tick(6); goto L_A05A_M0X0; }  /* $A03D BCC */
     goto L_A03F_M0X0;
   L_A03F_M0X0:;
     recomp_tick(28);
@@ -184,7 +185,7 @@ RECOMP_PATCH(smk_80A027, 0x80A027) {
     goto L_A044_M0X0;
   L_A044_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_A05A_M0X0;  /* $A044 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_A05A_M0X0; }  /* $A044 BNE */
     goto L_A046_M0X0;
   L_A046_M0X0:;
     recomp_tick(12);
@@ -236,6 +237,7 @@ RECOMP_PATCH(smk_80A027, 0x80A027) {
     goto L_A058_M0X0;
   L_A058_M0X0:;
     recomp_tick(12);
+    recomp_tick(6);
     goto L_A027_M0X0;   /* $A058 BRA */
   L_A05A_M0X0:;
     recomp_tick(34);
@@ -260,7 +262,7 @@ RECOMP_PATCH(smk_818902, 0x818902) {
     goto L_8907_M1X1;
   L_8907_M1X1:;
     recomp_tick(12);
-    if (!g_cpu.flag_N) goto L_8918_M1X1;  /* $8907 BPL */
+    if (!g_cpu.flag_N) { recomp_tick(6); goto L_8918_M1X1; }  /* $8907 BPL */
     goto L_8909_M1X1;
   L_8909_M1X1:;
     recomp_tick(12);
@@ -280,7 +282,7 @@ RECOMP_PATCH(smk_818902, 0x818902) {
     goto L_8911_M1X1;
   L_8911_M1X1:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_8910_M1X1;  /* $8911 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_8910_M1X1; }  /* $8911 BNE */
     goto L_8913_M1X1;
   L_8913_M1X1:;
     recomp_tick(12);
@@ -471,7 +473,7 @@ RECOMP_PATCH(smk_8086A0, 0x8086A0) {
     goto L_86A5_M0X0;
   L_86A5_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_86AB_M0X0;  /* $86A5 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_86AB_M0X0; }  /* $86A5 BEQ */
     goto L_86A7_M0X0;
   L_86A7_M0X0:;
     recomp_tick(28);
@@ -479,7 +481,7 @@ RECOMP_PATCH(smk_8086A0, 0x8086A0) {
     goto L_86A9_M0X0;
   L_86A9_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_N) goto L_86CB_M0X0;  /* $86A9 BPL */
+    if (!g_cpu.flag_N) { recomp_tick(6); goto L_86CB_M0X0; }  /* $86A9 BPL */
     goto L_86AB_M0X0;
   L_86AB_M0X0:;
     recomp_tick(34);
@@ -564,7 +566,7 @@ RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
     goto L_BBD1_M0X0;
   L_BBD1_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_N) goto L_BBFE_M0X0;  /* $BBD1 BPL */
+    if (!g_cpu.flag_N) { recomp_tick(6); goto L_BBFE_M0X0; }  /* $BBD1 BPL */
     goto L_BBD3_M0X0;
   L_BBD3_M0X0:;
     recomp_tick(34);
@@ -572,7 +574,7 @@ RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
     goto L_BBD6_M0X0;
   L_BBD6_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_N) goto L_BBE2_M0X0;  /* $BBD6 BMI */
+    if (g_cpu.flag_N) { recomp_tick(6); goto L_BBE2_M0X0; }  /* $BBD6 BMI */
     goto L_BBD8_M0X0;
   L_BBD8_M0X0:;
     recomp_tick(18);
@@ -645,7 +647,7 @@ RECOMP_PATCH(smk_80BA50, 0x80BA50) {
     goto L_BA58_M0X0;
   L_BA58_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_N) goto L_BA5E_M0X0;  /* $BA58 BMI */
+    if (g_cpu.flag_N) { recomp_tick(6); goto L_BA5E_M0X0; }  /* $BA58 BMI */
     goto L_BA5A_M0X0;
   L_BA5A_M0X0:;
     recomp_tick(54);
@@ -670,7 +672,7 @@ RECOMP_PATCH(smk_808D83, 0x808D83) {
     goto L_8D85_M0X0;
   L_8D85_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_8DD0_M0X0;  /* $8D85 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_8DD0_M0X0; }  /* $8D85 BNE */
     goto L_8D87_M0X0;
   L_8D87_M0X0:;
     recomp_tick(34);
@@ -682,7 +684,7 @@ RECOMP_PATCH(smk_808D83, 0x808D83) {
     goto L_8D8D_M0X0;
   L_8D8D_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_C) goto L_8DD0_M0X0;  /* $8D8D BCS */
+    if (g_cpu.flag_C) { recomp_tick(6); goto L_8DD0_M0X0; }  /* $8D8D BCS */
     goto L_8D8F_M0X0;
   L_8D8F_M0X0:;
     recomp_tick(28);
@@ -730,7 +732,7 @@ RECOMP_PATCH(smk_808D83, 0x808D83) {
     goto L_8DAD_M0X0;
   L_8DAD_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_C) goto L_8DB5_M0X0;  /* $8DAD BCS */
+    if (g_cpu.flag_C) { recomp_tick(6); goto L_8DB5_M0X0; }  /* $8DAD BCS */
     goto L_8DAF_M0X0;
   L_8DAF_M0X0:;
     recomp_tick(12);
@@ -742,6 +744,7 @@ RECOMP_PATCH(smk_808D83, 0x808D83) {
     goto L_8DB3_M0X0;
   L_8DB3_M0X0:;
     recomp_tick(12);
+    recomp_tick(6);
     goto L_8DB9_M0X0;   /* $8DB3 BRA */
   L_8DB5_M0X0:;
     recomp_tick(12);
@@ -806,11 +809,11 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     goto L_B7ED_M0X0;
   L_B7ED_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_B80F_M0X0;  /* $B7ED BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_B80F_M0X0; }  /* $B7ED BEQ */
     goto L_B7EF_M0X0;
   L_B7EF_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_N) goto L_B7F7_M0X0;  /* $B7EF BMI */
+    if (g_cpu.flag_N) { recomp_tick(6); goto L_B7F7_M0X0; }  /* $B7EF BMI */
     goto L_B7F1_M0X0;
   L_B7F1_M0X0:;
     recomp_tick(12);
@@ -818,7 +821,7 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     goto L_B7F2_M0X0;
   L_B7F2_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_B804_M0X0;  /* $B7F2 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_B804_M0X0; }  /* $B7F2 BEQ */
     goto L_B7F4_M0X0;
   L_B7F4_M0X0:;
     recomp_tick(28);
@@ -833,7 +836,7 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     goto L_B7F8_M0X0;
   L_B7F8_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_B7FD_M0X0;  /* $B7F8 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_B7FD_M0X0; }  /* $B7F8 BEQ */
     goto L_B7FA_M0X0;
   L_B7FA_M0X0:;
     recomp_tick(28);
@@ -852,6 +855,7 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     goto L_B802_M0X0;
   L_B802_M0X0:;
     recomp_tick(12);
+    recomp_tick(6);
     goto L_B826_M0X0;   /* $B802 BRA */
   L_B804_M0X0:;
     recomp_tick(40);
@@ -871,6 +875,7 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     goto L_B80D_M0X0;
   L_B80D_M0X0:;
     recomp_tick(12);
+    recomp_tick(6);
     goto L_B815_M0X0;   /* $B80D BRA */
   L_B80F_M0X0:;
     recomp_tick(40);
@@ -965,7 +970,7 @@ RECOMP_PATCH(smk_809EB2, 0x809EB2) {
     goto L_9EB5_M0X0;
   L_9EB5_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_9EC7_M0X0;  /* $9EB5 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_9EC7_M0X0; }  /* $9EB5 BEQ */
     goto L_9EB7_M0X0;
   L_9EB7_M0X0:;
     recomp_tick(28);
@@ -973,7 +978,7 @@ RECOMP_PATCH(smk_809EB2, 0x809EB2) {
     goto L_9EB9_M0X0;
   L_9EB9_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_9EC7_M0X0;  /* $9EB9 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_9EC7_M0X0; }  /* $9EB9 BNE */
     goto L_9EBB_M0X0;
   L_9EBB_M0X0:;
     recomp_tick(18);
@@ -1047,7 +1052,7 @@ RECOMP_PATCH(smk_858EE9, 0x858EE9) {
     goto L_8EF4_M0X0;
   L_8EF4_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_8EFA_M0X0;  /* $8EF4 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_8EFA_M0X0; }  /* $8EF4 BNE */
     goto L_8EF6_M0X0;
   L_8EF6_M0X0:;
     recomp_tick(12);
@@ -1082,7 +1087,7 @@ RECOMP_PATCH(smk_858EE9, 0x858EE9) {
     goto L_8F06_M0X0;
   L_8F06_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_8F0A_M0X0;  /* $8F06 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_8F0A_M0X0; }  /* $8F06 BNE */
     goto L_8F08_M0X0;
   L_8F08_M0X0:;
     recomp_tick(28);
@@ -1189,7 +1194,7 @@ RECOMP_PATCH(smk_858B7A, 0x858B7A) {
     goto L_8B7D_M0X0;
   L_8B7D_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_8B80_M0X0;  /* $8B7D BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8B80_M0X0; }  /* $8B7D BEQ */
     goto L_8B7F_M0X0;
   L_8B7F_M0X0:;
     recomp_tick(24);
@@ -1216,7 +1221,7 @@ RECOMP_PATCH(smk_858B7A, 0x858B7A) {
     goto L_8B8D_M0X0;
   L_8B8D_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_8BAB_M0X0;  /* $8B8D BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8BAB_M0X0; }  /* $8B8D BEQ */
     goto L_8B8F_M0X0;
   L_8B8F_M0X0:;
     recomp_tick(18);
@@ -1224,7 +1229,7 @@ RECOMP_PATCH(smk_858B7A, 0x858B7A) {
     goto L_8B92_M0X0;
   L_8B92_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_8BAB_M0X0;  /* $8B92 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8BAB_M0X0; }  /* $8B92 BEQ */
     goto L_8B94_M0X0;
   L_8B94_M0X0:;
     recomp_tick(18);
@@ -1232,7 +1237,7 @@ RECOMP_PATCH(smk_858B7A, 0x858B7A) {
     goto L_8B97_M0X0;
   L_8B97_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_8BAB_M0X0;  /* $8B97 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8BAB_M0X0; }  /* $8B97 BEQ */
     goto L_8B99_M0X0;
   L_8B99_M0X0:;
     recomp_tick(18);
@@ -1240,7 +1245,7 @@ RECOMP_PATCH(smk_858B7A, 0x858B7A) {
     goto L_8B9C_M0X0;
   L_8B9C_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_8BAB_M0X0;  /* $8B9C BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8BAB_M0X0; }  /* $8B9C BEQ */
     goto L_8B9E_M0X0;
   L_8B9E_M0X0:;
     recomp_tick(18);
@@ -1248,7 +1253,7 @@ RECOMP_PATCH(smk_858B7A, 0x858B7A) {
     goto L_8BA1_M0X0;
   L_8BA1_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_8BAB_M0X0;  /* $8BA1 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8BAB_M0X0; }  /* $8BA1 BEQ */
     goto L_8BA3_M0X0;
   L_8BA3_M0X0:;
     recomp_tick(18);
@@ -1256,7 +1261,7 @@ RECOMP_PATCH(smk_858B7A, 0x858B7A) {
     goto L_8BA6_M0X0;
   L_8BA6_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_8BAB_M0X0;  /* $8BA6 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8BAB_M0X0; }  /* $8BA6 BEQ */
     goto L_8BA8_M0X0;
   L_8BA8_M0X0:;
     recomp_tick(18);
@@ -1292,6 +1297,7 @@ RECOMP_PATCH(smk_8181C4, 0x8181C4) {
     goto L_81C7_M0X0;
   L_81C7_M0X0:;
     recomp_tick(12);
+    recomp_tick(6);
     goto L_81CC_M0X0;   /* $81C7 BRA */
   L_81CC_M0X0:;
     recomp_tick(34);
@@ -1376,7 +1382,7 @@ RECOMP_PATCH(smk_8592F9, 0x8592F9) {
     goto L_92FB_M0X0;
   L_92FB_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_9331_M0X0;  /* $92FB BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_9331_M0X0; }  /* $92FB BNE */
     goto L_92FD_M0X0;
   L_92FD_M0X0:;
     recomp_tick(18);
@@ -1396,7 +1402,7 @@ RECOMP_PATCH(smk_8592F9, 0x8592F9) {
     goto L_9306_M0X0;
   L_9306_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_9331_M0X0;  /* $9306 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_9331_M0X0; }  /* $9306 BNE */
     goto L_9308_M0X0;
   L_9308_M0X0:;
     recomp_tick(28);
@@ -1424,7 +1430,7 @@ RECOMP_PATCH(smk_8592F9, 0x8592F9) {
     goto L_9315_M0X0;
   L_9315_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_931F_M0X0;  /* $9315 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_931F_M0X0; }  /* $9315 BEQ */
     goto L_9317_M0X0;
   L_9317_M0X0:;
     recomp_tick(18);
@@ -1432,7 +1438,7 @@ RECOMP_PATCH(smk_8592F9, 0x8592F9) {
     goto L_931A_M0X0;
   L_931A_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_9320_M0X0;  /* $931A BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_9320_M0X0; }  /* $931A BEQ */
     goto L_931C_M0X0;
   L_931C_M0X0:;
     recomp_tick(40);
@@ -1451,7 +1457,7 @@ RECOMP_PATCH(smk_8592F9, 0x8592F9) {
     goto L_9325_M0X0;
   L_9325_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_931C_M0X0;  /* $9325 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_931C_M0X0; }  /* $9325 BNE */
     goto L_9327_M0X0;
   L_9327_M0X0:;
     recomp_tick(28);
@@ -1463,7 +1469,7 @@ RECOMP_PATCH(smk_8592F9, 0x8592F9) {
     goto L_932C_M0X0;
   L_932C_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_931F_M0X0;  /* $932C BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_931F_M0X0; }  /* $932C BEQ */
     goto L_932E_M0X0;
   L_932E_M0X0:;
     recomp_tick(18);
@@ -1514,7 +1520,7 @@ RECOMP_PATCH(smk_808EED, 0x808EED) {
     goto L_8EF6_M0X0;
   L_8EF6_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_8EEA_M0X0;  /* $8EF6 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8EEA_M0X0; }  /* $8EF6 BEQ */
     goto L_8EF8_M0X0;
   L_8EF8_M0X0:;
     recomp_tick(28);
@@ -1526,7 +1532,7 @@ RECOMP_PATCH(smk_808EED, 0x808EED) {
     goto L_8EFC_M0X0;
   L_8EFC_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_8EEA_M0X0;  /* $8EFC BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8EEA_M0X0; }  /* $8EFC BEQ */
     goto L_8EFE_M0X0;
   L_8EFE_M0X0:;
     recomp_tick(28);
@@ -1546,7 +1552,7 @@ RECOMP_PATCH(smk_808EED, 0x808EED) {
     goto L_8F07_M0X0;
   L_8F07_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_C) goto L_8EEA_M0X0;  /* $8F07 BCS */
+    if (g_cpu.flag_C) { recomp_tick(6); goto L_8EEA_M0X0; }  /* $8F07 BCS */
     goto L_8F09_M0X0;
   L_8F09_M0X0:;
     recomp_tick(18);
@@ -1554,7 +1560,7 @@ RECOMP_PATCH(smk_808EED, 0x808EED) {
     goto L_8F0C_M0X0;
   L_8F0C_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_C) goto L_8F1C_M0X0;  /* $8F0C BCC */
+    if (!g_cpu.flag_C) { recomp_tick(6); goto L_8F1C_M0X0; }  /* $8F0C BCC */
     goto L_8F0E_M0X0;
   L_8F0E_M0X0:;
     recomp_tick(28);
@@ -1562,7 +1568,7 @@ RECOMP_PATCH(smk_808EED, 0x808EED) {
     goto L_8F10_M0X0;
   L_8F10_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_8F17_M0X0;  /* $8F10 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8F17_M0X0; }  /* $8F10 BEQ */
     goto L_8F12_M0X0;
   L_8F12_M0X0:;
     recomp_tick(18);
@@ -1597,7 +1603,7 @@ RECOMP_PATCH(smk_808EED, 0x808EED) {
     goto L_8F25_M0X0;
   L_8F25_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_8F32_M0X0;  /* $8F25 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_8F32_M0X0; }  /* $8F25 BNE */
     goto L_8F27_M0X0;
   L_8F27_M0X0:;
     recomp_tick(34);
@@ -1605,7 +1611,7 @@ RECOMP_PATCH(smk_808EED, 0x808EED) {
     goto L_8F2A_M0X0;
   L_8F2A_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_N) goto L_8F2F_M0X0;  /* $8F2A BMI */
+    if (g_cpu.flag_N) { recomp_tick(6); goto L_8F2F_M0X0; }  /* $8F2A BMI */
     goto L_8F2C_M0X0;
   L_8F2C_M0X0:;
     recomp_tick(18);
@@ -1764,7 +1770,7 @@ RECOMP_PATCH(smk_808EED, 0x808EED) {
     goto L_8F76_M0X0;
   L_8F76_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_8F54_M0X0;  /* $8F76 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_8F54_M0X0; }  /* $8F76 BNE */
     goto L_8F78_M0X0;
   L_8F78_M0X0:;
     recomp_tick(28);
@@ -1829,7 +1835,7 @@ RECOMP_PATCH(smk_81BB70, 0x81BB70) {
     goto L_BB8A_M0X0;
   L_BB8A_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_C) goto L_BB93_M0X0;  /* $BB8A BCC */
+    if (!g_cpu.flag_C) { recomp_tick(6); goto L_BB93_M0X0; }  /* $BB8A BCC */
     goto L_BB8C_M0X0;
   L_BB8C_M0X0:;
     recomp_tick(18);
@@ -1848,7 +1854,7 @@ RECOMP_PATCH(smk_81BB70, 0x81BB70) {
     goto L_BB96_M0X0;
   L_BB96_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_BB8F_M0X0;  /* $BB96 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_BB8F_M0X0; }  /* $BB96 BNE */
     goto L_BB98_M0X0;
   L_BB98_M0X0:;
     recomp_tick(34);
@@ -1877,11 +1883,11 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     goto L_F63F_M0X0;
   L_F63F_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_F6A7_M0X0;  /* $F63F BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_F6A7_M0X0; }  /* $F63F BEQ */
     goto L_F641_M0X0;
   L_F641_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_N) goto L_F64A_M0X0;  /* $F641 BPL */
+    if (!g_cpu.flag_N) { recomp_tick(6); goto L_F64A_M0X0; }  /* $F641 BPL */
     goto L_F643_M0X0;
   L_F643_M0X0:;
     recomp_tick(18);
@@ -1905,11 +1911,11 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     goto L_F64D_M0X0;
   L_F64D_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_F6B6_M0X0;  /* $F64D BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_F6B6_M0X0; }  /* $F64D BEQ */
     goto L_F64F_M0X0;
   L_F64F_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_N) goto L_F657_M0X0;  /* $F64F BPL */
+    if (!g_cpu.flag_N) { recomp_tick(6); goto L_F657_M0X0; }  /* $F64F BPL */
     goto L_F651_M0X0;
   L_F651_M0X0:;
     recomp_tick(18);
@@ -1937,7 +1943,7 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     goto L_F65B_M0X0;
   L_F65B_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_C) goto L_F67A_M0X0;  /* $F65B BCS */
+    if (g_cpu.flag_C) { recomp_tick(6); goto L_F67A_M0X0; }  /* $F65B BCS */
     goto L_F65D_M0X0;
   L_F65D_M0X0:;
     recomp_tick(18);
@@ -1949,7 +1955,7 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     goto L_F662_M0X0;
   L_F662_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_C) goto L_F66A_M0X0;  /* $F662 BCS */
+    if (g_cpu.flag_C) { recomp_tick(6); goto L_F66A_M0X0; }  /* $F662 BCS */
     goto L_F664_M0X0;
   L_F664_M0X0:;
     recomp_tick(50);
@@ -1961,6 +1967,7 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     goto L_F668_M0X0;
   L_F668_M0X0:;
     recomp_tick(12);
+    recomp_tick(6);
     goto L_F660_M0X0;   /* $F668 BRA */
   L_F66A_M0X0:;
     recomp_tick(28);
@@ -2011,7 +2018,7 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     goto L_F67F_M0X0;
   L_F67F_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_C) goto L_F687_M0X0;  /* $F67F BCS */
+    if (g_cpu.flag_C) { recomp_tick(6); goto L_F687_M0X0; }  /* $F67F BCS */
     goto L_F681_M0X0;
   L_F681_M0X0:;
     recomp_tick(50);
@@ -2023,6 +2030,7 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     goto L_F685_M0X0;
   L_F685_M0X0:;
     recomp_tick(12);
+    recomp_tick(6);
     goto L_F67D_M0X0;   /* $F685 BRA */
   L_F687_M0X0:;
     recomp_tick(28);
@@ -2069,11 +2077,11 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     goto L_F6A8_M0X0;
   L_F6A8_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_F6C5_M0X0;  /* $F6A8 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_F6C5_M0X0; }  /* $F6A8 BEQ */
     goto L_F6AA_M0X0;
   L_F6AA_M0X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_N) goto L_F6B1_M0X0;  /* $F6AA BPL */
+    if (!g_cpu.flag_N) { recomp_tick(6); goto L_F6B1_M0X0; }  /* $F6AA BPL */
     goto L_F6AC_M0X0;
   L_F6AC_M0X0:;
     recomp_tick(18);
@@ -2103,7 +2111,7 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     goto L_F6B9_M0X0;
   L_F6B9_M0X0:;
     recomp_tick(12);
-    if (g_cpu.flag_Z) goto L_F6C0_M0X0;  /* $F6B9 BEQ */
+    if (g_cpu.flag_Z) { recomp_tick(6); goto L_F6C0_M0X0; }  /* $F6B9 BEQ */
     goto L_F6BB_M0X0;
   L_F6BB_M0X0:;
     recomp_tick(18);
@@ -2399,7 +2407,7 @@ RECOMP_PATCH(smk_81F56C, 0x81F56C) {
     goto L_F572_M1X0;
   L_F572_M1X0:;
     recomp_tick(12);
-    if (!g_cpu.flag_Z) goto L_F579_M1X0;  /* $F572 BNE */
+    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_F579_M1X0; }  /* $F572 BNE */
     goto L_F574_M1X0;
   L_F574_M1X0:;
     recomp_tick(34);

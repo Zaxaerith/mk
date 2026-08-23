@@ -24,8 +24,8 @@ class WidthSensitiveStackTests(unittest.TestCase):
         for helper in ("op_pha16", "op_pla16", "op_phx16", "op_plx16",
                        "op_phy16", "op_ply16"):
             self.assertIn(helper + "();", source)
-        self.assertIn("recomp_tick(28);", source)  # 16-bit push
-        self.assertIn("recomp_tick(34);", source)  # 16-bit pull
+        self.assertIn("recomp_phase_begin(28,", source)  # 16-bit push
+        self.assertIn("recomp_phase_begin(34,", source)  # 16-bit pull
 
     def test_8_bit_stack_preserves_b_and_uses_one_byte(self):
         source = generate([0x48, 0x68, 0xDA, 0xFA, 0x5A, 0x7A, 0x6B], p=0x30)
@@ -33,8 +33,8 @@ class WidthSensitiveStackTests(unittest.TestCase):
         self.assertNotIn("op_phx16", source)
         self.assertIn("bus_wram_write8(g_cpu.S", source)
         self.assertIn("g_cpu.C & 0xFF00", source)
-        self.assertIn("recomp_tick(20);", source)  # 8-bit push
-        self.assertIn("recomp_tick(26);", source)  # 8-bit pull
+        self.assertIn("recomp_phase_begin(20,", source)  # 8-bit push
+        self.assertIn("recomp_phase_begin(26,", source)  # 8-bit pull
 
     def test_rep_sep_changes_following_stack_width(self):
         source = generate([0xE2, 0x30, 0x48, 0xDA, 0xC2, 0x30,
@@ -108,6 +108,25 @@ class AdditionalOpcodeTests(unittest.TestCase):
         bra = generate([0x80, 0x01, 0xEA, 0x6B])
         self.assertIn("recomp_tick(6);", bra)
         self.assertIn("goto L_8103_M0X0", bra)
+
+    def test_bus_phase_brackets_data_semantics(self):
+        source = generate([0xA5, 0x10, 0x6B])
+        begin = source.index("recomp_phase_begin(28,")
+        read = source.index("bus_read16")
+        end = source.index("recomp_phase_end(0, 0);")
+        self.assertLess(begin, read)
+        self.assertLess(read, end)
+        self.assertIn("recomp_phase_interrupt_pending()", source)
+
+    def test_indirect_jsr_times_table_before_stack_and_callee(self):
+        source = generate([0xFC, 0x00, 0x82, 0x6B])
+        begin = source.index("recomp_phase_begin(40,")
+        table = source.index("bus_read16(0x80")
+        stack = source.index("recomp_phase_end(6, 2);")
+        call = source.index("func_table_call_jsr")
+        self.assertLess(begin, table)
+        self.assertLess(table, stack)
+        self.assertLess(stack, call)
 
     def test_multi_entry_dispatches_from_live_mx_flags(self):
         rom = bytearray(512 * 1024)

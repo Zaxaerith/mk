@@ -19,86 +19,126 @@ void smk_autogen_link_anchor(void) {}
 RECOMP_PATCH(smk_80F90A, 0x80F90A) {
     goto L_F90A_M0X0;
   L_F90A_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xF90A, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x5A + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F90A LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F90C); return; }
     goto L_F90C_M0X0;
   L_F90C_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xF90C, 1);
     { uint16_t _x = (uint16_t)(g_cpu.C); uint8_t _c = (uint8_t)((_x >> 15) & 1); uint16_t _r = (uint16_t)(_x << 1); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((_r) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $F90C ASL */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F90D); return; }
     goto L_F90D_M0X0;
   L_F90D_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_C) { recomp_tick(6); goto L_F927_M0X0; }  /* $F90D BCS */
+    recomp_phase_begin(12, 0x80, 0xF90D, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_C) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F927); return; } goto L_F927_M0X0; }  /* $F90D BCS */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F90F); return; }
     goto L_F90F_M0X0;
   L_F90F_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xF90F, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x5E + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F90F LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F911); return; }
     goto L_F911_M0X0;
   L_F911_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_F924_M0X0; }  /* $F911 BNE */
+    recomp_phase_begin(12, 0x80, 0xF911, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F924); return; } goto L_F924_M0X0; }  /* $F911 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F913); return; }
     goto L_F913_M0X0;
   L_F913_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xF913, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x5C + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F913 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F915); return; }
     goto L_F915_M0X0;
   L_F915_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_F91C_M0X0; }  /* $F915 BEQ */
+    recomp_phase_begin(12, 0x80, 0xF915, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F91C); return; } goto L_F91C_M0X0; }  /* $F915 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F917); return; }
     goto L_F917_M0X0;
   L_F917_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xF917, 1);
     { uint16_t _t = (uint16_t)((g_cpu.C) - 1); g_cpu.C = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $F917 DEC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F918); return; }
     goto L_F918_M0X0;
   L_F918_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xF918, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x5C + g_cpu.X), (uint16_t)(g_cpu.C)); /* $F918 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F91A); return; }
     goto L_F91A_M0X0;
   L_F91A_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xF91A, 2);
+    recomp_phase_end(0, 0);
     recomp_tick(6);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F927); return; }
     goto L_F927_M0X0;   /* $F91A BRA */
   L_F91C_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xF91C, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x10 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F91C LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F91E); return; }
     goto L_F91E_M0X0;
   L_F91E_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0xF91E, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0xBFFF); _a = (uint16_t)(_a & _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $F91E AND */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F921); return; }
     goto L_F921_M0X0;
   L_F921_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xF921, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x10 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $F921 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F923); return; }
     goto L_F923_M0X0;
   L_F923_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0xF923, 1);
+    recomp_phase_end(18, 2);
     return;            /* $F923 RTS */
   L_F924_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xF924, 1);
     { uint16_t _t = (uint16_t)((g_cpu.C) - 1); g_cpu.C = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $F924 DEC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F925); return; }
     goto L_F925_M0X0;
   L_F925_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xF925, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x5E + g_cpu.X), (uint16_t)(g_cpu.C)); /* $F925 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F927); return; }
     goto L_F927_M0X0;
   L_F927_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xF927, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x10 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F927 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F929); return; }
     goto L_F929_M0X0;
   L_F929_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0xF929, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x4000); _a = (uint16_t)(_a | _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $F929 ORA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F92C); return; }
     goto L_F92C_M0X0;
   L_F92C_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xF92C, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x10 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $F92C STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F92E); return; }
     goto L_F92E_M0X0;
   L_F92E_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xF92E, 1);
     g_cpu.flag_C = 1;                              /* $F92E SEC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F92F); return; }
     goto L_F92F_M0X0;
   L_F92F_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0xF92F, 1);
+    recomp_phase_end(18, 2);
     return;            /* $F92F RTS */
 }
 
@@ -107,23 +147,32 @@ RECOMP_PATCH(smk_80F90A, 0x80F90A) {
 RECOMP_PATCH(smk_80A01F, 0x80A01F) {
     goto L_A01F_M0X0;
   L_A01F_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xA01F, 1);
     op_phx16();                                    /* $A01F PHX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A020); return; }
     goto L_A020_M0X0;
   L_A020_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xA020, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xE6 + g_cpu.X))); g_cpu.Y = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $A020 LDY */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A022); return; }
     goto L_A022_M0X0;
   L_A022_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x80, 0xA022, 3);
+    recomp_phase_end(6, 2);
     func_table_call_jsr(0x80A027);  /* $A022 JSR */
+    if (recomp_redirect_pending()) return;
     goto L_A025_M0X0;
   L_A025_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xA025, 1);
     op_plx16();                                    /* $A025 PLX */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A026); return; }
     goto L_A026_M0X0;
   L_A026_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0xA026, 1);
+    recomp_phase_end(18, 2);
     return;            /* $A026 RTS */
 }
 
@@ -132,119 +181,176 @@ RECOMP_PATCH(smk_80A01F, 0x80A01F) {
 RECOMP_PATCH(smk_80A027, 0x80A027) {
     goto L_A027_M0X0;
   L_A027_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0xA027, 3);
     { uint16_t _a = (uint16_t)(g_cpu.Y); uint16_t _v = (uint16_t)(0x0000); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $A027 CPY */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A02A); return; }
     goto L_A02A_M0X0;
   L_A02A_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_A05B_M0X0; }  /* $A02A BEQ */
+    recomp_phase_begin(12, 0x80, 0xA02A, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A05B); return; } goto L_A05B_M0X0; }  /* $A02A BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A02C); return; }
     goto L_A02C_M0X0;
   L_A02C_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xA02C, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x010E + g_cpu.Y))); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $A02C LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A02F); return; }
     goto L_A02F_M0X0;
   L_A02F_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_A05B_M0X0; }  /* $A02F BEQ */
+    recomp_phase_begin(12, 0x80, 0xA02F, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A05B); return; } goto L_A05B_M0X0; }  /* $A02F BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A031); return; }
     goto L_A031_M0X0;
   L_A031_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xA031, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xC0 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $A031 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A033); return; }
     goto L_A033_M0X0;
   L_A033_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xA033, 1);
     op_phx16();                                    /* $A033 PHX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A034); return; }
     goto L_A034_M0X0;
   L_A034_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xA034, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x010C + g_cpu.Y))); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $A034 LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A037); return; }
     goto L_A037_M0X0;
   L_A037_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_A05A_M0X0; }  /* $A037 BEQ */
+    recomp_phase_begin(12, 0x80, 0xA037, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A05A); return; } goto L_A05A_M0X0; }  /* $A037 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A039); return; }
     goto L_A039_M0X0;
   L_A039_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xA039, 2);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xC0 + g_cpu.X))); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $A039 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A03B); return; }
     goto L_A03B_M0X0;
   L_A03B_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_A05A_M0X0; }  /* $A03B BEQ */
+    recomp_phase_begin(12, 0x80, 0xA03B, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A05A); return; } goto L_A05A_M0X0; }  /* $A03B BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A03D); return; }
     goto L_A03D_M0X0;
   L_A03D_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_C) { recomp_tick(6); goto L_A05A_M0X0; }  /* $A03D BCC */
+    recomp_phase_begin(12, 0x80, 0xA03D, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_C) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A05A); return; } goto L_A05A_M0X0; }  /* $A03D BCC */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A03F); return; }
     goto L_A03F_M0X0;
   L_A03F_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xA03F, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x10 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $A03F LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A041); return; }
     goto L_A041_M0X0;
   L_A041_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0xA041, 3);
     g_cpu.flag_Z = (uint8_t)(((uint16_t)(g_cpu.C) & (uint16_t)0x0020) == 0); /* $A041 BIT */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A044); return; }
     goto L_A044_M0X0;
   L_A044_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_A05A_M0X0; }  /* $A044 BNE */
+    recomp_phase_begin(12, 0x80, 0xA044, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A05A); return; } goto L_A05A_M0X0; }  /* $A044 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A046); return; }
     goto L_A046_M0X0;
   L_A046_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xA046, 1);
     op_txa();                                      /* $A046 TXA */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A047); return; }
     goto L_A047_M0X0;
   L_A047_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xA047, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x010E + g_cpu.Y), (uint16_t)(g_cpu.C)); /* $A047 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A04A); return; }
     goto L_A04A_M0X0;
   L_A04A_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xA04A, 1);
     op_tya();                                      /* $A04A TYA */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A04B); return; }
     goto L_A04B_M0X0;
   L_A04B_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xA04B, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0xE6 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $A04B STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A04D); return; }
     goto L_A04D_M0X0;
   L_A04D_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xA04D, 1);
     op_plx16();                                    /* $A04D PLX */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A04E); return; }
     goto L_A04E_M0X0;
   L_A04E_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xA04E, 1);
     op_txa();                                      /* $A04E TXA */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A04F); return; }
     goto L_A04F_M0X0;
   L_A04F_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xA04F, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x010C + g_cpu.Y), (uint16_t)(g_cpu.C)); /* $A04F STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A052); return; }
     goto L_A052_M0X0;
   L_A052_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xA052, 1);
     op_tya();                                      /* $A052 TYA */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A053); return; }
     goto L_A053_M0X0;
   L_A053_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xA053, 1);
     { uint16_t _t = (uint16_t)((g_cpu.C) - 1); g_cpu.C = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $A053 DEC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A054); return; }
     goto L_A054_M0X0;
   L_A054_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xA054, 1);
     { uint16_t _t = (uint16_t)((g_cpu.C) - 1); g_cpu.C = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $A054 DEC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A055); return; }
     goto L_A055_M0X0;
   L_A055_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xA055, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0xE6 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $A055 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A057); return; }
     goto L_A057_M0X0;
   L_A057_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xA057, 1);
     op_tay();                                      /* $A057 TAY */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A058); return; }
     goto L_A058_M0X0;
   L_A058_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xA058, 2);
+    recomp_phase_end(0, 0);
     recomp_tick(6);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A027); return; }
     goto L_A027_M0X0;   /* $A058 BRA */
   L_A05A_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xA05A, 1);
     op_plx16();                                    /* $A05A PLX */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A05B); return; }
     goto L_A05B_M0X0;
   L_A05B_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0xA05B, 1);
+    recomp_phase_end(18, 2);
     return;            /* $A05B RTS */
 }
 
@@ -253,51 +359,74 @@ RECOMP_PATCH(smk_80A027, 0x80A027) {
 RECOMP_PATCH(smk_818902, 0x818902) {
     goto L_8902_M0X0;
   L_8902_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0x8902, 2);
     op_sep(0x30);                                  /* $8902 SEP */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x818904); return; }
     goto L_8904_M1X1;
   L_8904_M1X1:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x81, 0x8904, 3);
     { uint8_t _m = (uint8_t)(bus_read8(g_cpu.DB, 0x1F06)); uint8_t _a = (uint8_t)((uint8_t)(g_cpu.C & 0xFF)); g_cpu.flag_Z = (uint8_t)((_a & _m) == 0); g_cpu.flag_N = (uint8_t)((_m >> 7) & 1); g_cpu.flag_V = (uint8_t)((_m >> 6) & 1); } /* $8904 BIT */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x818907); return; }
     goto L_8907_M1X1;
   L_8907_M1X1:;
-    recomp_tick(12);
-    if (!g_cpu.flag_N) { recomp_tick(6); goto L_8918_M1X1; }  /* $8907 BPL */
+    recomp_phase_begin(12, 0x81, 0x8907, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_N) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x818918); return; } goto L_8918_M1X1; }  /* $8907 BPL */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x818909); return; }
     goto L_8909_M1X1;
   L_8909_M1X1:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0x8909, 2);
     { uint8_t _v = (uint8_t)(0x08); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $8909 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81890B); return; }
     goto L_890B_M1X1;
   L_890B_M1X1:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0x890B, 3);
     bus_write8(g_cpu.DB, 0x2100, (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $890B STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81890E); return; }
     goto L_890E_M1X1;
   L_890E_M1X1:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0x890E, 2);
     { uint8_t _v = (uint8_t)(0x10); g_cpu.X = (uint16_t)((_v) & 0xFF); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $890E LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x818910); return; }
     goto L_8910_M1X1;
   L_8910_M1X1:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0x8910, 1);
     { uint8_t _t = (uint8_t)(((uint8_t)(g_cpu.X & 0xFF)) - 1); g_cpu.X = (uint16_t)((_t) & 0xFF); g_cpu.flag_N = (uint8_t)(((uint8_t)(_t) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_t) == 0); } /* $8910 DEX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x818911); return; }
     goto L_8911_M1X1;
   L_8911_M1X1:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_8910_M1X1; }  /* $8911 BNE */
+    recomp_phase_begin(12, 0x81, 0x8911, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x818910); return; } goto L_8910_M1X1; }  /* $8911 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x818913); return; }
     goto L_8913_M1X1;
   L_8913_M1X1:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0x8913, 2);
     { uint8_t _v = (uint8_t)(0x0F); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $8913 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x818915); return; }
     goto L_8915_M1X1;
   L_8915_M1X1:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0x8915, 3);
     bus_write8(g_cpu.DB, 0x2100, (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $8915 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x818918); return; }
     goto L_8918_M1X1;
   L_8918_M1X1:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0x8918, 2);
     op_rep(0x30);                                  /* $8918 REP */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81891A); return; }
     goto L_891A_M0X0;
   L_891A_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0x891A, 1);
+    recomp_phase_end(18, 2);
     return;            /* $891A RTS */
 }
 
@@ -306,91 +435,134 @@ RECOMP_PATCH(smk_818902, 0x818902) {
 RECOMP_PATCH(smk_81B9A8, 0x81B9A8) {
     goto L_B9A8_M1X0;
   L_B9A8_M1X0:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x81, 0xB9A8, 3);
     { uint8_t _v = (uint8_t)(bus_read8(g_cpu.DB, (uint16_t)(0x0000 + g_cpu.Y))); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $B9A8 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9AB); return; }
     goto L_B9AB_M1X0;
   L_B9AB_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9AB, 1);
     { uint8_t _x = (uint8_t)((uint8_t)(g_cpu.C & 0xFF)); uint8_t _c = (uint8_t)(_x & 1); uint8_t _r = (uint8_t)(_x >> 1); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_r) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_r) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_r) == 0); } /* $B9AB LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9AC); return; }
     goto L_B9AC_M1X0;
   L_B9AC_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9AC, 1);
     { uint8_t _x = (uint8_t)((uint8_t)(g_cpu.C & 0xFF)); uint8_t _c = (uint8_t)(_x & 1); uint8_t _r = (uint8_t)(_x >> 1); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_r) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_r) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_r) == 0); } /* $B9AC LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9AD); return; }
     goto L_B9AD_M1X0;
   L_B9AD_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9AD, 1);
     { uint8_t _x = (uint8_t)((uint8_t)(g_cpu.C & 0xFF)); uint8_t _c = (uint8_t)(_x & 1); uint8_t _r = (uint8_t)(_x >> 1); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_r) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_r) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_r) == 0); } /* $B9AD LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9AE); return; }
     goto L_B9AE_M1X0;
   L_B9AE_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9AE, 1);
     { uint8_t _x = (uint8_t)((uint8_t)(g_cpu.C & 0xFF)); uint8_t _c = (uint8_t)(_x & 1); uint8_t _r = (uint8_t)(_x >> 1); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_r) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_r) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_r) == 0); } /* $B9AE LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9AF); return; }
     goto L_B9AF_M1X0;
   L_B9AF_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9AF, 2);
     { uint8_t _a = (uint8_t)((uint8_t)(g_cpu.C & 0xFF)); uint8_t _v = (uint8_t)(0x80); _a = (uint8_t)(_a | _v); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_a) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_a) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_a) == 0); } /* $B9AF ORA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9B1); return; }
     goto L_B9B1_M1X0;
   L_B9B1_M1X0:;
-    recomp_tick(20);
+    recomp_phase_begin(20, 0x81, 0xB9B1, 2);
     bus_write8(0x00, (uint16_t)(g_cpu.DP + 0x2C + g_cpu.X), (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $B9B1 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9B3); return; }
     goto L_B9B3_M1X0;
   L_B9B3_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9B3, 2);
     { uint8_t _a = (uint8_t)((uint8_t)(g_cpu.C & 0xFF)); uint8_t _v = (uint8_t)(0x10); _a = (uint8_t)(_a | _v); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_a) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_a) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_a) == 0); } /* $B9B3 ORA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9B5); return; }
     goto L_B9B5_M1X0;
   L_B9B5_M1X0:;
-    recomp_tick(20);
+    recomp_phase_begin(20, 0x81, 0xB9B5, 2);
     bus_write8(0x00, (uint16_t)(g_cpu.DP + 0x6C + g_cpu.X), (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $B9B5 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9B7); return; }
     goto L_B9B7_M1X0;
   L_B9B7_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9B7, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B9B7 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9B8); return; }
     goto L_B9B8_M1X0;
   L_B9B8_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9B8, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B9B8 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9B9); return; }
     goto L_B9B9_M1X0;
   L_B9B9_M1X0:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x81, 0xB9B9, 3);
     { uint8_t _v = (uint8_t)(bus_read8(g_cpu.DB, (uint16_t)(0x0000 + g_cpu.Y))); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $B9B9 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9BC); return; }
     goto L_B9BC_M1X0;
   L_B9BC_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9BC, 2);
     { uint8_t _a = (uint8_t)((uint8_t)(g_cpu.C & 0xFF)); uint8_t _v = (uint8_t)(0x0F); _a = (uint8_t)(_a & _v); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_a) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_a) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_a) == 0); } /* $B9BC AND */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9BE); return; }
     goto L_B9BE_M1X0;
   L_B9BE_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9BE, 2);
     { uint8_t _a = (uint8_t)((uint8_t)(g_cpu.C & 0xFF)); uint8_t _v = (uint8_t)(0x80); _a = (uint8_t)(_a | _v); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_a) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_a) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_a) == 0); } /* $B9BE ORA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9C0); return; }
     goto L_B9C0_M1X0;
   L_B9C0_M1X0:;
-    recomp_tick(20);
+    recomp_phase_begin(20, 0x81, 0xB9C0, 2);
     bus_write8(0x00, (uint16_t)(g_cpu.DP + 0x2C + g_cpu.X), (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $B9C0 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9C2); return; }
     goto L_B9C2_M1X0;
   L_B9C2_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9C2, 2);
     { uint8_t _a = (uint8_t)((uint8_t)(g_cpu.C & 0xFF)); uint8_t _v = (uint8_t)(0x10); _a = (uint8_t)(_a | _v); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_a) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_a) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_a) == 0); } /* $B9C2 ORA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9C4); return; }
     goto L_B9C4_M1X0;
   L_B9C4_M1X0:;
-    recomp_tick(20);
+    recomp_phase_begin(20, 0x81, 0xB9C4, 2);
     bus_write8(0x00, (uint16_t)(g_cpu.DP + 0x6C + g_cpu.X), (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $B9C4 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9C6); return; }
     goto L_B9C6_M1X0;
   L_B9C6_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9C6, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B9C6 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9C7); return; }
     goto L_B9C7_M1X0;
   L_B9C7_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9C7, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B9C7 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9C8); return; }
     goto L_B9C8_M1X0;
   L_B9C8_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9C8, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B9C8 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9C9); return; }
     goto L_B9C9_M1X0;
   L_B9C9_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xB9C9, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B9C9 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9CA); return; }
     goto L_B9CA_M1X0;
   L_B9CA_M1X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xB9CA, 1);
+    recomp_phase_end(18, 2);
     return;            /* $B9CA RTS */
 }
 
@@ -399,63 +571,92 @@ RECOMP_PATCH(smk_81B9A8, 0x81B9A8) {
 RECOMP_PATCH(smk_808BBF, 0x808BBF) {
     goto L_8BBF_M1X1;
   L_8BBF_M1X1:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x80, 0x8BBF, 3);
     { uint8_t _v = (uint8_t)(bus_read8(g_cpu.DB, (uint16_t)(0x016A + g_cpu.X))); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $8BBF LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BC2); return; }
     goto L_8BC2_M1X1;
   L_8BC2_M1X1:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x8BC2, 3);
     bus_write8(g_cpu.DB, 0x2131, (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $8BC2 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BC5); return; }
     goto L_8BC5_M1X1;
   L_8BC5_M1X1:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x80, 0x8BC5, 3);
     { uint8_t _v = (uint8_t)(bus_read8(g_cpu.DB, (uint16_t)(0x016C + g_cpu.X))); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $8BC5 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BC8); return; }
     goto L_8BC8_M1X1;
   L_8BC8_M1X1:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x8BC8, 3);
     bus_write8(g_cpu.DB, 0x2132, (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $8BC8 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BCB); return; }
     goto L_8BCB_M1X1;
   L_8BCB_M1X1:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x80, 0x8BCB, 3);
     { uint8_t _v = (uint8_t)(bus_read8(g_cpu.DB, (uint16_t)(0x016E + g_cpu.X))); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $8BCB LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BCE); return; }
     goto L_8BCE_M1X1;
   L_8BCE_M1X1:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x8BCE, 3);
     bus_write8(g_cpu.DB, 0x2132, (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $8BCE STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BD1); return; }
     goto L_8BD1_M1X1;
   L_8BD1_M1X1:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x80, 0x8BD1, 3);
     { uint8_t _v = (uint8_t)(bus_read8(g_cpu.DB, (uint16_t)(0x0170 + g_cpu.X))); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $8BD1 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BD4); return; }
     goto L_8BD4_M1X1;
   L_8BD4_M1X1:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x8BD4, 3);
     bus_write8(g_cpu.DB, 0x2132, (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $8BD4 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BD7); return; }
     goto L_8BD7_M1X1;
   L_8BD7_M1X1:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x80, 0x8BD7, 3);
     { uint8_t _v = (uint8_t)(bus_read8(g_cpu.DB, (uint16_t)(0x0108 + g_cpu.X))); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $8BD7 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BDA); return; }
     goto L_8BDA_M1X1;
   L_8BDA_M1X1:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x8BDA, 3);
     bus_write8(g_cpu.DB, 0x2125, (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $8BDA STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BDD); return; }
     goto L_8BDD_M1X1;
   L_8BDD_M1X1:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x80, 0x8BDD, 3);
     { uint8_t _v = (uint8_t)(bus_read8(g_cpu.DB, (uint16_t)(0x014E + g_cpu.X))); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $8BDD LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BE0); return; }
     goto L_8BE0_M1X1;
   L_8BE0_M1X1:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x8BE0, 3);
     bus_write8(g_cpu.DB, 0x212E, (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $8BE0 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BE3); return; }
     goto L_8BE3_M1X1;
   L_8BE3_M1X1:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x80, 0x8BE3, 3);
     { uint8_t _v = (uint8_t)(bus_read8(g_cpu.DB, (uint16_t)(0x017A + g_cpu.X))); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $8BE3 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BE6); return; }
     goto L_8BE6_M1X1;
   L_8BE6_M1X1:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x8BE6, 3);
     bus_write8(g_cpu.DB, 0x2130, (uint8_t)((uint8_t)(g_cpu.C & 0xFF))); /* $8BE6 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BE9); return; }
     goto L_8BE9_M1X1;
   L_8BE9_M1X1:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x8BE9, 1);
+    recomp_phase_end(18, 2);
     return;            /* $8BE9 RTS */
 }
 
@@ -464,91 +665,134 @@ RECOMP_PATCH(smk_808BBF, 0x808BBF) {
 RECOMP_PATCH(smk_8086A0, 0x8086A0) {
     goto L_86A0_M0X0;
   L_86A0_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x86A0, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xA4 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $86A0 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086A2); return; }
     goto L_86A2_M0X0;
   L_86A2_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x86A2, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x0002); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $86A2 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086A5); return; }
     goto L_86A5_M0X0;
   L_86A5_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_86AB_M0X0; }  /* $86A5 BEQ */
+    recomp_phase_begin(12, 0x80, 0x86A5, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086AB); return; } goto L_86AB_M0X0; }  /* $86A5 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086A7); return; }
     goto L_86A7_M0X0;
   L_86A7_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x86A7, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xAC + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $86A7 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086A9); return; }
     goto L_86A9_M0X0;
   L_86A9_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_N) { recomp_tick(6); goto L_86CB_M0X0; }  /* $86A9 BPL */
+    recomp_phase_begin(12, 0x80, 0x86A9, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_N) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086CB); return; } goto L_86CB_M0X0; }  /* $86A9 BPL */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086AB); return; }
     goto L_86AB_M0X0;
   L_86AB_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x86AB, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0016 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $86AB LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086AE); return; }
     goto L_86AE_M0X0;
   L_86AE_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x86AE, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x00), (uint16_t)(g_cpu.C)); /* $86AE STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086B0); return; }
     goto L_86B0_M0X0;
   L_86B0_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x86B0, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0018 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $86B0 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086B3); return; }
     goto L_86B3_M0X0;
   L_86B3_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x80, 0x86B3, 2);
     { uint8_t _bk = (uint8_t)(0x00); uint16_t _ad = (uint16_t)((uint16_t)(g_cpu.DP + 0x00)); uint16_t _x = bus_read16(_bk, _ad); uint8_t _c = (uint8_t)((_x >> 15) & 1); uint16_t _r = (uint16_t)((_x << 1) | (g_cpu.flag_C ? 1 : 0)); bus_write16(_bk, _ad, _r); g_cpu.flag_C = _c; g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $86B3 ROL */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086B5); return; }
     goto L_86B5_M0X0;
   L_86B5_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x86B5, 1);
     { uint16_t _x = (uint16_t)(g_cpu.C); uint8_t _c = (uint8_t)((_x >> 15) & 1); uint16_t _r = (uint16_t)((_x << 1) | (g_cpu.flag_C ? 1 : 0)); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((_r) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $86B5 ROL */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086B6); return; }
     goto L_86B6_M0X0;
   L_86B6_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x80, 0x86B6, 2);
     { uint8_t _bk = (uint8_t)(0x00); uint16_t _ad = (uint16_t)((uint16_t)(g_cpu.DP + 0x00)); uint16_t _x = bus_read16(_bk, _ad); uint8_t _c = (uint8_t)((_x >> 15) & 1); uint16_t _r = (uint16_t)((_x << 1) | (g_cpu.flag_C ? 1 : 0)); bus_write16(_bk, _ad, _r); g_cpu.flag_C = _c; g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $86B6 ROL */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086B8); return; }
     goto L_86B8_M0X0;
   L_86B8_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x86B8, 1);
     { uint16_t _x = (uint16_t)(g_cpu.C); uint8_t _c = (uint8_t)((_x >> 15) & 1); uint16_t _r = (uint16_t)((_x << 1) | (g_cpu.flag_C ? 1 : 0)); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((_r) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $86B8 ROL */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086B9); return; }
     goto L_86B9_M0X0;
   L_86B9_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x86B9, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x88 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $86B9 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086BB); return; }
     goto L_86BB_M0X0;
   L_86BB_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x86BB, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x001A + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $86BB LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086BE); return; }
     goto L_86BE_M0X0;
   L_86BE_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x86BE, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x00), (uint16_t)(g_cpu.C)); /* $86BE STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086C0); return; }
     goto L_86C0_M0X0;
   L_86C0_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x86C0, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x001C + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $86C0 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086C3); return; }
     goto L_86C3_M0X0;
   L_86C3_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x80, 0x86C3, 2);
     { uint8_t _bk = (uint8_t)(0x00); uint16_t _ad = (uint16_t)((uint16_t)(g_cpu.DP + 0x00)); uint16_t _x = bus_read16(_bk, _ad); uint8_t _c = (uint8_t)((_x >> 15) & 1); uint16_t _r = (uint16_t)((_x << 1) | (g_cpu.flag_C ? 1 : 0)); bus_write16(_bk, _ad, _r); g_cpu.flag_C = _c; g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $86C3 ROL */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086C5); return; }
     goto L_86C5_M0X0;
   L_86C5_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x86C5, 1);
     { uint16_t _x = (uint16_t)(g_cpu.C); uint8_t _c = (uint8_t)((_x >> 15) & 1); uint16_t _r = (uint16_t)((_x << 1) | (g_cpu.flag_C ? 1 : 0)); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((_r) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $86C5 ROL */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086C6); return; }
     goto L_86C6_M0X0;
   L_86C6_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x80, 0x86C6, 2);
     { uint8_t _bk = (uint8_t)(0x00); uint16_t _ad = (uint16_t)((uint16_t)(g_cpu.DP + 0x00)); uint16_t _x = bus_read16(_bk, _ad); uint8_t _c = (uint8_t)((_x >> 15) & 1); uint16_t _r = (uint16_t)((_x << 1) | (g_cpu.flag_C ? 1 : 0)); bus_write16(_bk, _ad, _r); g_cpu.flag_C = _c; g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $86C6 ROL */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086C8); return; }
     goto L_86C8_M0X0;
   L_86C8_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x86C8, 1);
     { uint16_t _x = (uint16_t)(g_cpu.C); uint8_t _c = (uint8_t)((_x >> 15) & 1); uint16_t _r = (uint16_t)((_x << 1) | (g_cpu.flag_C ? 1 : 0)); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((_r) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $86C8 ROL */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086C9); return; }
     goto L_86C9_M0X0;
   L_86C9_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x86C9, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x8C + g_cpu.X), (uint16_t)(g_cpu.C)); /* $86C9 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086CB); return; }
     goto L_86CB_M0X0;
   L_86CB_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x86CB, 1);
+    recomp_phase_end(18, 2);
     return;            /* $86CB RTS */
 }
 
@@ -557,71 +801,104 @@ RECOMP_PATCH(smk_8086A0, 0x8086A0) {
 RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
     goto L_BBCC_M0X0;
   L_BBCC_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xBBCC, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xB8))); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $BBCC LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBCE); return; }
     goto L_BBCE_M0X0;
   L_BBCE_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xBBCE, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x1E96 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $BBCE LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBD1); return; }
     goto L_BBD1_M0X0;
   L_BBD1_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_N) { recomp_tick(6); goto L_BBFE_M0X0; }  /* $BBD1 BPL */
+    recomp_phase_begin(12, 0x80, 0xBBD1, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_N) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBFE); return; } goto L_BBFE_M0X0; }  /* $BBD1 BPL */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBD3); return; }
     goto L_BBD3_M0X0;
   L_BBD3_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xBBD3, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x1EB0 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $BBD3 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBD6); return; }
     goto L_BBD6_M0X0;
   L_BBD6_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_N) { recomp_tick(6); goto L_BBE2_M0X0; }  /* $BBD6 BMI */
+    recomp_phase_begin(12, 0x80, 0xBBD6, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_N) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBE2); return; } goto L_BBE2_M0X0; }  /* $BBD6 BMI */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBD8); return; }
     goto L_BBD8_M0X0;
   L_BBD8_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0xBBD8, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x8000); _a = (uint16_t)(_a | _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $BBD8 ORA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBDB); return; }
     goto L_BBDB_M0X0;
   L_BBDB_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xBBDB, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x1EB0 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $BBDB STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBDE); return; }
     goto L_BBDE_M0X0;
   L_BBDE_M0X0:;
-    recomp_tick(54);
+    recomp_phase_begin(54, 0x80, 0xBBDE, 4);
+    recomp_phase_end(6, 3);
     func_table_call(0x81AF50);  /* $BBDE JSL */
+    if (recomp_redirect_pending()) return;
     goto L_BBE2_M0X0;
   L_BBE2_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0xBBE2, 3);
     { uint16_t _v = (uint16_t)(0x0020); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $BBE2 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBE5); return; }
     goto L_BBE5_M0X0;
   L_BBE5_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xBBE5, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x1EF8 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $BBE5 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBE8); return; }
     goto L_BBE8_M0X0;
   L_BBE8_M0X0:;
-    recomp_tick(54);
+    recomp_phase_begin(54, 0x80, 0xBBE8, 4);
+    recomp_phase_end(6, 3);
     func_table_call(0x81BB4A);  /* $BBE8 JSL */
+    if (recomp_redirect_pending()) return;
     goto L_BBEC_M0X0;
   L_BBEC_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0xBBEC, 3);
     { uint16_t _v = (uint16_t)(0xD3A1); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $BBEC LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBEF); return; }
     goto L_BBEF_M0X0;
   L_BBEF_M0X0:;
-    recomp_tick(54);
+    recomp_phase_begin(54, 0x80, 0xBBEF, 4);
+    recomp_phase_end(6, 3);
     func_table_call(0x81CC26);  /* $BBEF JSL */
+    if (recomp_redirect_pending()) return;
     goto L_BBF3_M0X0;
   L_BBF3_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0xBBF3, 3);
     { uint16_t _v = (uint16_t)(0xD3B0); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $BBF3 LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBF6); return; }
     goto L_BBF6_M0X0;
   L_BBF6_M0X0:;
-    recomp_tick(54);
+    recomp_phase_begin(54, 0x80, 0xBBF6, 4);
+    recomp_phase_end(6, 3);
     func_table_call(0x81CC26);  /* $BBF6 JSL */
+    if (recomp_redirect_pending()) return;
     goto L_BBFA_M0X0;
   L_BBFA_M0X0:;
-    recomp_tick(54);
+    recomp_phase_begin(54, 0x80, 0xBBFA, 4);
+    recomp_phase_end(6, 3);
     func_table_call(0x81AFB4);  /* $BBFA JSL */
+    if (recomp_redirect_pending()) return;
     goto L_BBFE_M0X0;
   L_BBFE_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0xBBFE, 1);
+    recomp_phase_end(18, 2);
     return;            /* $BBFE RTS */
 }
 
@@ -630,35 +907,50 @@ RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
 RECOMP_PATCH(smk_80BA50, 0x80BA50) {
     goto L_BA50_M0X0;
   L_BA50_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0xBA50, 3);
     { g_cpu.S--; bus_wram_write16(g_cpu.S, 0x8085); g_cpu.S--; } /* $BA50 PEA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BA53); return; }
     goto L_BA53_M0X0;
   L_BA53_M0X0:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x80, 0xBA53, 1);
     op_plb();                                      /* $BA53 PLB */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BA54); return; }
     goto L_BA54_M0X0;
   L_BA54_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xBA54, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xB8))); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $BA54 LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BA56); return; }
     goto L_BA56_M0X0;
   L_BA56_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xBA56, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xC8 + g_cpu.X))); g_cpu.Y = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $BA56 LDY */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BA58); return; }
     goto L_BA58_M0X0;
   L_BA58_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_N) { recomp_tick(6); goto L_BA5E_M0X0; }  /* $BA58 BMI */
+    recomp_phase_begin(12, 0x80, 0xBA58, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_N) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BA5E); return; } goto L_BA5E_M0X0; }  /* $BA58 BMI */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BA5A); return; }
     goto L_BA5A_M0X0;
   L_BA5A_M0X0:;
-    recomp_tick(54);
+    recomp_phase_begin(54, 0x80, 0xBA5A, 4);
+    recomp_phase_end(6, 3);
     func_table_call(0x85DFB4);  /* $BA5A JSL */
+    if (recomp_redirect_pending()) return;
     goto L_BA5E_M0X0;
   L_BA5E_M0X0:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x80, 0xBA5E, 1);
     op_plb();                                      /* $BA5E PLB */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BA5F); return; }
     goto L_BA5F_M0X0;
   L_BA5F_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0xBA5F, 1);
+    recomp_phase_end(18, 2);
     return;            /* $BA5F RTS */
 }
 
@@ -667,135 +959,200 @@ RECOMP_PATCH(smk_80BA50, 0x80BA50) {
 RECOMP_PATCH(smk_808D83, 0x808D83) {
     goto L_8D83_M0X0;
   L_8D83_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8D83, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x2C))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8D83 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808D85); return; }
     goto L_8D85_M0X0;
   L_8D85_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_8DD0_M0X0; }  /* $8D85 BNE */
+    recomp_phase_begin(12, 0x80, 0x8D85, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DD0); return; } goto L_8DD0_M0X0; }  /* $8D85 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808D87); return; }
     goto L_8D87_M0X0;
   L_8D87_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8D87, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, 0x012E)); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8D87 LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808D8A); return; }
     goto L_8D8A_M0X0;
   L_8D8A_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8D8A, 3);
     { uint16_t _a = (uint16_t)(g_cpu.X); uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, 0x0144)); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8D8A CPX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808D8D); return; }
     goto L_8D8D_M0X0;
   L_8D8D_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_C) { recomp_tick(6); goto L_8DD0_M0X0; }  /* $8D8D BCS */
+    recomp_phase_begin(12, 0x80, 0x8D8D, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_C) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DD0); return; } goto L_8DD0_M0X0; }  /* $8D8D BCS */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808D8F); return; }
     goto L_8D8F_M0X0;
   L_8D8F_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8D8F, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x4A))); g_cpu.Y = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8D8F LDY */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808D91); return; }
     goto L_8D91_M0X0;
   L_8D91_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8D91, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x8DD1 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8D91 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808D94); return; }
     goto L_8D94_M0X0;
   L_8D94_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8D94, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x0EA0 + g_cpu.Y), (uint16_t)(g_cpu.C)); /* $8D94 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808D97); return; }
     goto L_8D97_M0X0;
   L_8D97_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8D97, 1);
     g_cpu.flag_C = 0;                              /* $8D97 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808D98); return; }
     goto L_8D98_M0X0;
   L_8D98_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8D98, 3);
     { uint16_t _v = (uint16_t)(0x0100); smk_op_adc16(_v); } /* $8D98 ADC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808D9B); return; }
     goto L_8D9B_M0X0;
   L_8D9B_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8D9B, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x0EA6 + g_cpu.Y), (uint16_t)(g_cpu.C)); /* $8D9B STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808D9E); return; }
     goto L_8D9E_M0X0;
   L_8D9E_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8D9E, 3);
     { uint16_t _v = (uint16_t)(0x407F); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8D9E LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DA1); return; }
     goto L_8DA1_M0X0;
   L_8DA1_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8DA1, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x0EA4 + g_cpu.Y), (uint16_t)(g_cpu.C)); /* $8DA1 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DA4); return; }
     goto L_8DA4_M0X0;
   L_8DA4_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8DA4, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x0EAA + g_cpu.Y), (uint16_t)(g_cpu.C)); /* $8DA4 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DA7); return; }
     goto L_8DA7_M0X0;
   L_8DA7_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8DA7, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0130 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8DA7 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DAA); return; }
     goto L_8DAA_M0X0;
   L_8DAA_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8DAA, 3);
     { uint16_t _a = (uint16_t)(g_cpu.X); uint16_t _v = (uint16_t)(0x0008); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8DAA CPX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DAD); return; }
     goto L_8DAD_M0X0;
   L_8DAD_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_C) { recomp_tick(6); goto L_8DB5_M0X0; }  /* $8DAD BCS */
+    recomp_phase_begin(12, 0x80, 0x8DAD, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_C) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DB5); return; } goto L_8DB5_M0X0; }  /* $8DAD BCS */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DAF); return; }
     goto L_8DAF_M0X0;
   L_8DAF_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8DAF, 1);
     op_tax();                                      /* $8DAF TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DB0); return; }
     goto L_8DB0_M0X0;
   L_8DB0_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8DB0, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x8DE1 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8DB0 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DB3); return; }
     goto L_8DB3_M0X0;
   L_8DB3_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8DB3, 2);
+    recomp_phase_end(0, 0);
     recomp_tick(6);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DB9); return; }
     goto L_8DB9_M0X0;   /* $8DB3 BRA */
   L_8DB5_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8DB5, 1);
     op_tax();                                      /* $8DB5 TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DB6); return; }
     goto L_8DB6_M0X0;
   L_8DB6_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8DB6, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x8DF1 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8DB6 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DB9); return; }
     goto L_8DB9_M0X0;
   L_8DB9_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8DB9, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x0EA2 + g_cpu.Y), (uint16_t)(g_cpu.C)); /* $8DB9 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DBC); return; }
     goto L_8DBC_M0X0;
   L_8DBC_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8DBC, 1);
     g_cpu.flag_C = 0;                              /* $8DBC CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DBD); return; }
     goto L_8DBD_M0X0;
   L_8DBD_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8DBD, 3);
     { uint16_t _v = (uint16_t)(0x0200); smk_op_adc16(_v); } /* $8DBD ADC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DC0); return; }
     goto L_8DC0_M0X0;
   L_8DC0_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8DC0, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x0EA8 + g_cpu.Y), (uint16_t)(g_cpu.C)); /* $8DC0 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DC3); return; }
     goto L_8DC3_M0X0;
   L_8DC3_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8DC3, 1);
     op_tya();                                      /* $8DC3 TYA */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DC4); return; }
     goto L_8DC4_M0X0;
   L_8DC4_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8DC4, 1);
     g_cpu.flag_C = 0;                              /* $8DC4 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DC5); return; }
     goto L_8DC5_M0X0;
   L_8DC5_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8DC5, 3);
     { uint16_t _v = (uint16_t)(0x000C); smk_op_adc16(_v); } /* $8DC5 ADC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DC8); return; }
     goto L_8DC8_M0X0;
   L_8DC8_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8DC8, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x4A), (uint16_t)(g_cpu.C)); /* $8DC8 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DCA); return; }
     goto L_8DCA_M0X0;
   L_8DCA_M0X0:;
-    recomp_tick(56);
+    recomp_phase_begin(56, 0x80, 0x8DCA, 3);
     { uint8_t _bk = (uint8_t)(g_cpu.DB); uint16_t _ad = (uint16_t)(0x012E); uint16_t _t = (uint16_t)(bus_read16(_bk, _ad) + 1); bus_write16(_bk, _ad, _t); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8DCA INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DCD); return; }
     goto L_8DCD_M0X0;
   L_8DCD_M0X0:;
-    recomp_tick(56);
+    recomp_phase_begin(56, 0x80, 0x8DCD, 3);
     { uint8_t _bk = (uint8_t)(g_cpu.DB); uint16_t _ad = (uint16_t)(0x012E); uint16_t _t = (uint16_t)(bus_read16(_bk, _ad) + 1); bus_write16(_bk, _ad, _t); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8DCD INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DD0); return; }
     goto L_8DD0_M0X0;
   L_8DD0_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x8DD0, 1);
+    recomp_phase_end(18, 2);
     return;            /* $8DD0 RTS */
 }
 
@@ -804,159 +1161,234 @@ RECOMP_PATCH(smk_808D83, 0x808D83) {
 RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     goto L_B7EB_M0X0;
   L_B7EB_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xB7EB, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xC6 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $B7EB LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7ED); return; }
     goto L_B7ED_M0X0;
   L_B7ED_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_B80F_M0X0; }  /* $B7ED BEQ */
+    recomp_phase_begin(12, 0x80, 0xB7ED, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B80F); return; } goto L_B80F_M0X0; }  /* $B7ED BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7EF); return; }
     goto L_B7EF_M0X0;
   L_B7EF_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_N) { recomp_tick(6); goto L_B7F7_M0X0; }  /* $B7EF BMI */
+    recomp_phase_begin(12, 0x80, 0xB7EF, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_N) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7F7); return; } goto L_B7F7_M0X0; }  /* $B7EF BMI */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7F1); return; }
     goto L_B7F1_M0X0;
   L_B7F1_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xB7F1, 1);
     { uint16_t _t = (uint16_t)((g_cpu.C) - 1); g_cpu.C = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B7F1 DEC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7F2); return; }
     goto L_B7F2_M0X0;
   L_B7F2_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_B804_M0X0; }  /* $B7F2 BEQ */
+    recomp_phase_begin(12, 0x80, 0xB7F2, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B804); return; } goto L_B804_M0X0; }  /* $B7F2 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7F4); return; }
     goto L_B7F4_M0X0;
   L_B7F4_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xB7F4, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0xC6 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $B7F4 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7F6); return; }
     goto L_B7F6_M0X0;
   L_B7F6_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0xB7F6, 1);
+    recomp_phase_end(18, 2);
     return;            /* $B7F6 RTS */
   L_B7F7_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xB7F7, 1);
     { uint16_t _t = (uint16_t)((g_cpu.C) + 1); g_cpu.C = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B7F7 INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7F8); return; }
     goto L_B7F8_M0X0;
   L_B7F8_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_B7FD_M0X0; }  /* $B7F8 BEQ */
+    recomp_phase_begin(12, 0x80, 0xB7F8, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7FD); return; } goto L_B7FD_M0X0; }  /* $B7F8 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7FA); return; }
     goto L_B7FA_M0X0;
   L_B7FA_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xB7FA, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0xC6 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $B7FA STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7FC); return; }
     goto L_B7FC_M0X0;
   L_B7FC_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0xB7FC, 1);
+    recomp_phase_end(18, 2);
     return;            /* $B7FC RTS */
   L_B7FD_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x80, 0xB7FD, 3);
+    recomp_phase_end(6, 2);
     func_table_call_jsr(0x80B847);  /* $B7FD JSR */
+    if (recomp_redirect_pending()) return;
     goto L_B800_M0X0;
   L_B800_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xB800, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0xC6 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $B800 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B802); return; }
     goto L_B802_M0X0;
   L_B802_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xB802, 2);
+    recomp_phase_end(0, 0);
     recomp_tick(6);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B826); return; }
     goto L_B826_M0X0;   /* $B802 BRA */
   L_B804_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x80, 0xB804, 3);
+    recomp_phase_end(6, 2);
     func_table_call_jsr(0x80B847);  /* $B804 JSR */
+    if (recomp_redirect_pending()) return;
     goto L_B807_M0X0;
   L_B807_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0xB807, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0xFFFF); _a = (uint16_t)(_a ^ _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $B807 EOR */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B80A); return; }
     goto L_B80A_M0X0;
   L_B80A_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xB80A, 1);
     { uint16_t _t = (uint16_t)((g_cpu.C) + 1); g_cpu.C = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B80A INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B80B); return; }
     goto L_B80B_M0X0;
   L_B80B_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xB80B, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0xC6 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $B80B STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B80D); return; }
     goto L_B80D_M0X0;
   L_B80D_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xB80D, 2);
+    recomp_phase_end(0, 0);
     recomp_tick(6);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B815); return; }
     goto L_B815_M0X0;   /* $B80D BRA */
   L_B80F_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x80, 0xB80F, 3);
+    recomp_phase_end(6, 2);
     func_table_call_jsr(0x80B847);  /* $B80F JSR */
+    if (recomp_redirect_pending()) return;
     goto L_B812_M0X0;
   L_B812_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xB812, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0xC6 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $B812 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B814); return; }
     goto L_B814_M0X0;
   L_B814_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0xB814, 1);
+    recomp_phase_end(18, 2);
     return;            /* $B814 RTS */
   L_B815_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xB815, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x12 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $B815 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B817); return; }
     goto L_B817_M0X0;
   L_B817_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xB817, 1);
     op_tay();                                      /* $B817 TAY */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B818); return; }
     goto L_B818_M0X0;
   L_B818_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xB818, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0xB837 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $B818 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B81B); return; }
     goto L_B81B_M0X0;
   L_B81B_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xB81B, 1);
     op_phx16();                                    /* $B81B PHX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B81C); return; }
     goto L_B81C_M0X0;
   L_B81C_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xB81C, 1);
     op_tax();                                      /* $B81C TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B81D); return; }
     goto L_B81D_M0X0;
   L_B81D_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0xB81D, 3);
     { uint16_t _v = (uint16_t)(0x35A9); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $B81D LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B820); return; }
     goto L_B820_M0X0;
   L_B820_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x80, 0xB820, 4);
     bus_write16(0x7E, (uint16_t)(0x3A80 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $B820 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B824); return; }
     goto L_B824_M0X0;
   L_B824_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xB824, 1);
     op_plx16();                                    /* $B824 PLX */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B825); return; }
     goto L_B825_M0X0;
   L_B825_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0xB825, 1);
+    recomp_phase_end(18, 2);
     return;            /* $B825 RTS */
   L_B826_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xB826, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x12 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $B826 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B828); return; }
     goto L_B828_M0X0;
   L_B828_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xB828, 1);
     op_tay();                                      /* $B828 TAY */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B829); return; }
     goto L_B829_M0X0;
   L_B829_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xB829, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0xB837 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $B829 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B82C); return; }
     goto L_B82C_M0X0;
   L_B82C_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0xB82C, 1);
     op_phx16();                                    /* $B82C PHX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B82D); return; }
     goto L_B82D_M0X0;
   L_B82D_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0xB82D, 1);
     op_tax();                                      /* $B82D TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B82E); return; }
     goto L_B82E_M0X0;
   L_B82E_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0xB82E, 3);
     { uint16_t _v = (uint16_t)(0x2525); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $B82E LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B831); return; }
     goto L_B831_M0X0;
   L_B831_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x80, 0xB831, 4);
     bus_write16(0x7E, (uint16_t)(0x3A80 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $B831 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B835); return; }
     goto L_B835_M0X0;
   L_B835_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0xB835, 1);
     op_plx16();                                    /* $B835 PLX */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B836); return; }
     goto L_B836_M0X0;
   L_B836_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0xB836, 1);
+    recomp_phase_end(18, 2);
     return;            /* $B836 RTS */
 }
 
@@ -965,39 +1397,56 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
 RECOMP_PATCH(smk_809EB2, 0x809EB2) {
     goto L_9EB2_M0X0;
   L_9EB2_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x9EB2, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, 0x0E68)); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $9EB2 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x809EB5); return; }
     goto L_9EB5_M0X0;
   L_9EB5_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_9EC7_M0X0; }  /* $9EB5 BEQ */
+    recomp_phase_begin(12, 0x80, 0x9EB5, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x809EC7); return; } goto L_9EC7_M0X0; }  /* $9EB5 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x809EB7); return; }
     goto L_9EB7_M0X0;
   L_9EB7_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x9EB7, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x32))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $9EB7 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x809EB9); return; }
     goto L_9EB9_M0X0;
   L_9EB9_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_9EC7_M0X0; }  /* $9EB9 BNE */
+    recomp_phase_begin(12, 0x80, 0x9EB9, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x809EC7); return; } goto L_9EC7_M0X0; }  /* $9EB9 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x809EBB); return; }
     goto L_9EBB_M0X0;
   L_9EBB_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x9EBB, 3);
     { uint16_t _v = (uint16_t)(0x0000); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $9EBB LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x809EBE); return; }
     goto L_9EBE_M0X0;
   L_9EBE_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x80, 0x9EBE, 3);
+    recomp_phase_end(6, 2);
     func_table_call_jsr(0x809FAC);  /* $9EBE JSR */
+    if (recomp_redirect_pending()) return;
     goto L_9EC1_M0X0;
   L_9EC1_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x9EC1, 3);
     { uint16_t _v = (uint16_t)(0x0002); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $9EC1 LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x809EC4); return; }
     goto L_9EC4_M0X0;
   L_9EC4_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x80, 0x9EC4, 3);
+    recomp_phase_end(6, 2);
     func_table_call_jsr(0x809FAC);  /* $9EC4 JSR */
+    if (recomp_redirect_pending()) return;
     goto L_9EC7_M0X0;
   L_9EC7_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x9EC7, 1);
+    recomp_phase_end(18, 2);
     return;            /* $9EC7 RTS */
 }
 
@@ -1006,19 +1455,26 @@ RECOMP_PATCH(smk_809EB2, 0x809EB2) {
 RECOMP_PATCH(smk_8584D1, 0x8584D1) {
     goto L_84D1_M1X1;
   L_84D1_M1X1:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x84D1, 2);
     op_rep(0x20);                                  /* $84D1 REP */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8584D3); return; }
     goto L_84D3_M0X1;
   L_84D3_M0X1:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x85, 0x84D3, 2);
     op_inc_dp16(0x64);                             /* $84D3 INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8584D5); return; }
     goto L_84D5_M0X1;
   L_84D5_M0X1:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x84D5, 2);
     op_sep(0x20);                                  /* $84D5 SEP */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8584D7); return; }
     goto L_84D7_M1X1;
   L_84D7_M1X1:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x85, 0x84D7, 1);
+    recomp_phase_end(18, 2);
     return;            /* $84D7 RTS */
 }
 
@@ -1027,74 +1483,107 @@ RECOMP_PATCH(smk_8584D1, 0x8584D1) {
 RECOMP_PATCH(smk_858EE9, 0x858EE9) {
     goto L_8EE9_M0X0;
   L_8EE9_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8EE9, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x75))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8EE9 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EEB); return; }
     goto L_8EEB_M0X0;
   L_8EEB_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x85, 0x8EEB, 1);
     op_tax();                                      /* $8EEB TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EEC); return; }
     goto L_8EEC_M0X0;
   L_8EEC_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x85, 0x8EEC, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x8FE9 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8EEC LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EEF); return; }
     goto L_8EEF_M0X0;
   L_8EEF_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x85, 0x8EEF, 1);
     op_tax();                                      /* $8EEF TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EF0); return; }
     goto L_8EF0_M0X0;
   L_8EF0_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8EF0, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x1C + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8EF0 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EF2); return; }
     goto L_8EF2_M0X0;
   L_8EF2_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8EF2, 2);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x44 + g_cpu.X))); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8EF2 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EF4); return; }
     goto L_8EF4_M0X0;
   L_8EF4_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_8EFA_M0X0; }  /* $8EF4 BNE */
+    recomp_phase_begin(12, 0x85, 0x8EF4, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EFA); return; } goto L_8EFA_M0X0; }  /* $8EF4 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EF6); return; }
     goto L_8EF6_M0X0;
   L_8EF6_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x85, 0x8EF6, 1);
     { uint16_t _t = (uint16_t)((g_cpu.C) + 1); g_cpu.C = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8EF6 INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EF7); return; }
     goto L_8EF7_M0X0;
   L_8EF7_M0X0:;
     recomp_tick(18);
     func_table_call_jsr(0x858EFB); return;  /* $8EF7 JMP (tail) */
   L_8EFA_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x85, 0x8EFA, 1);
     { uint16_t _t = (uint16_t)((g_cpu.C) - 1); g_cpu.C = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8EFA DEC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EFB); return; }
     goto L_8EFB_M0X0;
   L_8EFB_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8EFB, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x1C + g_cpu.X), (uint16_t)(g_cpu.C)); /* $8EFB STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EFD); return; }
     goto L_8EFD_M0X0;
   L_8EFD_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x85, 0x8EFD, 2);
     op_inc_dp16(0x75);                             /* $8EFD INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EFF); return; }
     goto L_8EFF_M0X0;
   L_8EFF_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x85, 0x8EFF, 2);
     op_inc_dp16(0x75);                             /* $8EFF INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858F01); return; }
     goto L_8F01_M0X0;
   L_8F01_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8F01, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x75))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F01 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858F03); return; }
     goto L_8F03_M0X0;
   L_8F03_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x8F03, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x0010); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8F03 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858F06); return; }
     goto L_8F06_M0X0;
   L_8F06_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_8F0A_M0X0; }  /* $8F06 BNE */
+    recomp_phase_begin(12, 0x85, 0x8F06, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858F0A); return; } goto L_8F0A_M0X0; }  /* $8F06 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858F08); return; }
     goto L_8F08_M0X0;
   L_8F08_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8F08, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x75), (uint16_t)(0)); /* $8F08 STZ */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858F0A); return; }
     goto L_8F0A_M0X0;
   L_8F0A_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x85, 0x8F0A, 1);
+    recomp_phase_end(18, 2);
     return;            /* $8F0A RTS */
 }
 
@@ -1103,23 +1592,32 @@ RECOMP_PATCH(smk_858EE9, 0x858EE9) {
 RECOMP_PATCH(smk_85B945, 0x85B945) {
     goto L_B945_M0X0;
   L_B945_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x85, 0xB945, 1);
     { uint16_t _t = (uint16_t)((g_cpu.Y) + 1); g_cpu.Y = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B945 INY */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85B946); return; }
     goto L_B946_M0X0;
   L_B946_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x85, 0xB946, 1);
     { uint16_t _t = (uint16_t)((g_cpu.Y) + 1); g_cpu.Y = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B946 INY */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85B947); return; }
     goto L_B947_M0X0;
   L_B947_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x85, 0xB947, 1);
     { uint16_t _t = (uint16_t)((g_cpu.Y) + 1); g_cpu.Y = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B947 INY */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85B948); return; }
     goto L_B948_M0X0;
   L_B948_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x85, 0xB948, 1);
     { uint16_t _t = (uint16_t)((g_cpu.Y) + 1); g_cpu.Y = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $B948 INY */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85B949); return; }
     goto L_B949_M0X0;
   L_B949_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x85, 0xB949, 1);
+    recomp_phase_end(18, 2);
     return;            /* $B949 RTS */
 }
 
@@ -1128,59 +1626,86 @@ RECOMP_PATCH(smk_85B945, 0x85B945) {
 RECOMP_PATCH(smk_858FB8, 0x858FB8) {
     goto L_8FB8_M0X0;
   L_8FB8_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x85, 0x8FB8, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x8FF9 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8FB8 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FBB); return; }
     goto L_8FBB_M0X0;
   L_8FBB_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x85, 0x8FBB, 1);
     op_tay();                                      /* $8FBB TAY */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FBC); return; }
     goto L_8FBC_M0X0;
   L_8FBC_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8FBC, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x22 + g_cpu.X), (uint16_t)(0)); /* $8FBC STZ */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FBE); return; }
     goto L_8FBE_M0X0;
   L_8FBE_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x85, 0x8FBE, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0000 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8FBE LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FC1); return; }
     goto L_8FC1_M0X0;
   L_8FC1_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8FC1, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x18 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $8FC1 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FC3); return; }
     goto L_8FC3_M0X0;
   L_8FC3_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x85, 0x8FC3, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0002 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8FC3 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FC6); return; }
     goto L_8FC6_M0X0;
   L_8FC6_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8FC6, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x1C + g_cpu.X), (uint16_t)(g_cpu.C)); /* $8FC6 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FC8); return; }
     goto L_8FC8_M0X0;
   L_8FC8_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x85, 0x8FC8, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0004 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8FC8 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FCB); return; }
     goto L_8FCB_M0X0;
   L_8FCB_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8FCB, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x2A + g_cpu.X), (uint16_t)(g_cpu.C)); /* $8FCB STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FCD); return; }
     goto L_8FCD_M0X0;
   L_8FCD_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x85, 0x8FCD, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0006 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8FCD LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FD0); return; }
     goto L_8FD0_M0X0;
   L_8FD0_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8FD0, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x92 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $8FD0 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FD2); return; }
     goto L_8FD2_M0X0;
   L_8FD2_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x85, 0x8FD2, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0008 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8FD2 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FD5); return; }
     goto L_8FD5_M0X0;
   L_8FD5_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8FD5, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x44 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $8FD5 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FD7); return; }
     goto L_8FD7_M0X0;
   L_8FD7_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x85, 0x8FD7, 1);
+    recomp_phase_end(18, 2);
     return;            /* $8FD7 RTS */
 }
 
@@ -1189,98 +1714,143 @@ RECOMP_PATCH(smk_858FB8, 0x858FB8) {
 RECOMP_PATCH(smk_858B7A, 0x858B7A) {
     goto L_8B7A_M0X0;
   L_8B7A_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x85, 0x8B7A, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, 0x0048)); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8B7A LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B7D); return; }
     goto L_8B7D_M0X0;
   L_8B7D_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8B80_M0X0; }  /* $8B7D BEQ */
+    recomp_phase_begin(12, 0x85, 0x8B7D, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B80); return; } goto L_8B80_M0X0; }  /* $8B7D BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B7F); return; }
     goto L_8B7F_M0X0;
   L_8B7F_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x85, 0x8B7F, 1);
+    recomp_phase_end(18, 2);
     return;            /* $8B7F RTS */
   L_8B80_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x85, 0x8B80, 3);
+    recomp_phase_end(6, 2);
     func_table_call_jsr(0x858EE9);  /* $8B80 JSR */
+    if (recomp_redirect_pending()) return;
     goto L_8B83_M0X0;
   L_8B83_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x8B83, 3);
     { uint16_t _v = (uint16_t)(0x1000); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8B83 LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B86); return; }
     goto L_8B86_M0X0;
   L_8B86_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x85, 0x8B86, 2);
     { uint8_t _bk = (uint8_t)(0x00); uint16_t _ad = (uint16_t)((uint16_t)(g_cpu.DP + 0x40 + g_cpu.X)); uint16_t _t = (uint16_t)(bus_read16(_bk, _ad) + 1); bus_write16(_bk, _ad, _t); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8B86 INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B88); return; }
     goto L_8B88_M0X0;
   L_8B88_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8B88, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x40 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8B88 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B8A); return; }
     goto L_8B8A_M0X0;
   L_8B8A_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x8B8A, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x00D2); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8B8A CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B8D); return; }
     goto L_8B8D_M0X0;
   L_8B8D_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8BAB_M0X0; }  /* $8B8D BEQ */
+    recomp_phase_begin(12, 0x85, 0x8B8D, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BAB); return; } goto L_8BAB_M0X0; }  /* $8B8D BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B8F); return; }
     goto L_8B8F_M0X0;
   L_8B8F_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x8B8F, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x01F2); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8B8F CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B92); return; }
     goto L_8B92_M0X0;
   L_8B92_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8BAB_M0X0; }  /* $8B92 BEQ */
+    recomp_phase_begin(12, 0x85, 0x8B92, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BAB); return; } goto L_8BAB_M0X0; }  /* $8B92 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B94); return; }
     goto L_8B94_M0X0;
   L_8B94_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x8B94, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x0452); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8B94 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B97); return; }
     goto L_8B97_M0X0;
   L_8B97_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8BAB_M0X0; }  /* $8B97 BEQ */
+    recomp_phase_begin(12, 0x85, 0x8B97, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BAB); return; } goto L_8BAB_M0X0; }  /* $8B97 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B99); return; }
     goto L_8B99_M0X0;
   L_8B99_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x8B99, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x046A); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8B99 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B9C); return; }
     goto L_8B9C_M0X0;
   L_8B9C_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8BAB_M0X0; }  /* $8B9C BEQ */
+    recomp_phase_begin(12, 0x85, 0x8B9C, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BAB); return; } goto L_8BAB_M0X0; }  /* $8B9C BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B9E); return; }
     goto L_8B9E_M0X0;
   L_8B9E_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x8B9E, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x053A); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8B9E CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BA1); return; }
     goto L_8BA1_M0X0;
   L_8BA1_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8BAB_M0X0; }  /* $8BA1 BEQ */
+    recomp_phase_begin(12, 0x85, 0x8BA1, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BAB); return; } goto L_8BAB_M0X0; }  /* $8BA1 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BA3); return; }
     goto L_8BA3_M0X0;
   L_8BA3_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x8BA3, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x0592); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8BA3 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BA6); return; }
     goto L_8BA6_M0X0;
   L_8BA6_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8BAB_M0X0; }  /* $8BA6 BEQ */
+    recomp_phase_begin(12, 0x85, 0x8BA6, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BAB); return; } goto L_8BAB_M0X0; }  /* $8BA6 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BA8); return; }
     goto L_8BA8_M0X0;
   L_8BA8_M0X0:;
     recomp_tick(18);
     func_table_call_jsr(0x858BAD); return;  /* $8BA8 JMP (tail) */
   L_8BAB_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x85, 0x8BAB, 2);
     { uint8_t _bk = (uint8_t)(0x00); uint16_t _ad = (uint16_t)((uint16_t)(g_cpu.DP + 0x42 + g_cpu.X)); uint16_t _t = (uint16_t)(bus_read16(_bk, _ad) + 1); bus_write16(_bk, _ad, _t); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8BAB INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BAD); return; }
     goto L_8BAD_M0X0;
   L_8BAD_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x8BAD, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x42 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8BAD LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BAF); return; }
     goto L_8BAF_M0X0;
   L_8BAF_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x85, 0x8BAF, 1);
     { uint16_t _x = (uint16_t)(g_cpu.C); uint8_t _c = (uint8_t)((_x >> 15) & 1); uint16_t _r = (uint16_t)(_x << 1); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((_r) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $8BAF ASL */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BB0); return; }
     goto L_8BB0_M0X0;
   L_8BB0_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x85, 0x8BB0, 1);
     op_tax();                                      /* $8BB0 TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858BB1); return; }
     goto L_8BB1_M0X0;
   L_8BB1_M0X0:;
     recomp_tick(18);
@@ -1292,83 +1862,122 @@ RECOMP_PATCH(smk_858B7A, 0x858B7A) {
 RECOMP_PATCH(smk_8181C4, 0x8181C4) {
     goto L_81C4_M0X0;
   L_81C4_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0x81C4, 3);
     { uint16_t _v = (uint16_t)(0x81A8); g_cpu.Y = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $81C4 LDY */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181C7); return; }
     goto L_81C7_M0X0;
   L_81C7_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0x81C7, 2);
+    recomp_phase_end(0, 0);
     recomp_tick(6);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181CC); return; }
     goto L_81CC_M0X0;   /* $81C7 BRA */
   L_81CC_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0x81CC, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0000 + g_cpu.Y))); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $81CC LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181CF); return; }
     goto L_81CF_M0X0;
   L_81CF_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0x81CF, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0xB8), (uint16_t)(g_cpu.X)); /* $81CF STX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181D1); return; }
     goto L_81D1_M0X0;
   L_81D1_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0x81D1, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x1EF8 + g_cpu.X), (uint16_t)(0)); /* $81D1 STZ */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181D4); return; }
     goto L_81D4_M0X0;
   L_81D4_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0x81D4, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xC8 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $81D4 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181D6); return; }
     goto L_81D6_M0X0;
   L_81D6_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0x81D6, 3);
     bus_write16(g_cpu.DB, 0x0FE0, (uint16_t)(g_cpu.C)); /* $81D6 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181D9); return; }
     goto L_81D9_M0X0;
   L_81D9_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0x81D9, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0002 + g_cpu.Y))); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $81D9 LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181DC); return; }
     goto L_81DC_M0X0;
   L_81DC_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0x81DC, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0xCE), (uint16_t)(g_cpu.X)); /* $81DC STX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181DE); return; }
     goto L_81DE_M0X0;
   L_81DE_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0x81DE, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0004 + g_cpu.Y))); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $81DE LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181E1); return; }
     goto L_81E1_M0X0;
   L_81E1_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0x81E1, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0xCC), (uint16_t)(g_cpu.X)); /* $81E1 STX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181E3); return; }
     goto L_81E3_M0X0;
   L_81E3_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0x81E3, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0006 + g_cpu.Y))); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $81E3 LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181E6); return; }
     goto L_81E6_M0X0;
   L_81E6_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0x81E6, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0xBA), (uint16_t)(g_cpu.X)); /* $81E6 STX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181E8); return; }
     goto L_81E8_M0X0;
   L_81E8_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0x81E8, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x0008 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $81E8 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181EB); return; }
     goto L_81EB_M0X0;
   L_81EB_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0x81EB, 3);
     bus_write16(g_cpu.DB, 0x0FE2, (uint16_t)(g_cpu.C)); /* $81EB STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181EE); return; }
     goto L_81EE_M0X0;
   L_81EE_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0x81EE, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x000A + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $81EE LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181F1); return; }
     goto L_81F1_M0X0;
   L_81F1_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0x81F1, 3);
     bus_write16(g_cpu.DB, 0x0FE4, (uint16_t)(g_cpu.C)); /* $81F1 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181F4); return; }
     goto L_81F4_M0X0;
   L_81F4_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0x81F4, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x000C + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $81F4 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181F7); return; }
     goto L_81F7_M0X0;
   L_81F7_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0x81F7, 3);
     bus_write16(g_cpu.DB, 0x0FDC, (uint16_t)(g_cpu.C)); /* $81F7 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181FA); return; }
     goto L_81FA_M0X0;
   L_81FA_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0x81FA, 1);
+    recomp_phase_end(18, 2);
     return;            /* $81FA RTS */
 }
 
@@ -1377,113 +1986,165 @@ RECOMP_PATCH(smk_8181C4, 0x8181C4) {
 RECOMP_PATCH(smk_8592F9, 0x8592F9) {
     goto L_92F9_M0X0;
   L_92F9_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x92F9, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x48))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $92F9 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8592FB); return; }
     goto L_92FB_M0X0;
   L_92FB_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_9331_M0X0; }  /* $92FB BNE */
+    recomp_phase_begin(12, 0x85, 0x92FB, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859331); return; } goto L_9331_M0X0; }  /* $92FB BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8592FD); return; }
     goto L_92FD_M0X0;
   L_92FD_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x92FD, 2);
     op_sep(0x20);                                  /* $92FD SEP */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8592FF); return; }
     goto L_92FF_M1X0;
   L_92FF_M1X0:;
-    recomp_tick(26);
+    recomp_phase_begin(26, 0x85, 0x92FF, 3);
     { uint8_t _v = (uint8_t)(bus_read8(g_cpu.DB, 0x0161)); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $92FF LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859302); return; }
     goto L_9302_M1X0;
   L_9302_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x85, 0x9302, 2);
     { uint8_t _a = (uint8_t)((uint8_t)(g_cpu.C & 0xFF)); uint8_t _v = (uint8_t)(0x0F); uint8_t _t = (uint8_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 7) & 1); } /* $9302 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859304); return; }
     goto L_9304_M1X0;
   L_9304_M1X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x9304, 2);
     op_rep(0x20);                                  /* $9304 REP */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859306); return; }
     goto L_9306_M0X0;
   L_9306_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_9331_M0X0; }  /* $9306 BNE */
+    recomp_phase_begin(12, 0x85, 0x9306, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859331); return; } goto L_9331_M0X0; }  /* $9306 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859308); return; }
     goto L_9308_M0X0;
   L_9308_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x9308, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x28))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $9308 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85930A); return; }
     goto L_930A_M0X0;
   L_930A_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x930A, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x6A), (uint16_t)(g_cpu.C)); /* $930A STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85930C); return; }
     goto L_930C_M0X0;
   L_930C_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x930C, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x2A))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $930C LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85930E); return; }
     goto L_930E_M0X0;
   L_930E_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x930E, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x6C), (uint16_t)(g_cpu.C)); /* $930E STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859310); return; }
     goto L_9310_M0X0;
   L_9310_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x9310, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x36))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $9310 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859312); return; }
     goto L_9312_M0X0;
   L_9312_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x9312, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x0004); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $9312 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859315); return; }
     goto L_9315_M0X0;
   L_9315_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_931F_M0X0; }  /* $9315 BEQ */
+    recomp_phase_begin(12, 0x85, 0x9315, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85931F); return; } goto L_931F_M0X0; }  /* $9315 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859317); return; }
     goto L_9317_M0X0;
   L_9317_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x9317, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x0006); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $9317 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85931A); return; }
     goto L_931A_M0X0;
   L_931A_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_9320_M0X0; }  /* $931A BEQ */
+    recomp_phase_begin(12, 0x85, 0x931A, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859320); return; } goto L_9320_M0X0; }  /* $931A BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85931C); return; }
     goto L_931C_M0X0;
   L_931C_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x85, 0x931C, 3);
+    recomp_phase_end(6, 2);
     func_table_call_jsr(0x859336);  /* $931C JSR */
+    if (recomp_redirect_pending()) return;
     goto L_931F_M0X0;
   L_931F_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x85, 0x931F, 1);
+    recomp_phase_end(18, 2);
     return;            /* $931F RTS */
   L_9320_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x9320, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x2C))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $9320 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859322); return; }
     goto L_9322_M0X0;
   L_9322_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x9322, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x0004); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $9322 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859325); return; }
     goto L_9325_M0X0;
   L_9325_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_931C_M0X0; }  /* $9325 BNE */
+    recomp_phase_begin(12, 0x85, 0x9325, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85931C); return; } goto L_931C_M0X0; }  /* $9325 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859327); return; }
     goto L_9327_M0X0;
   L_9327_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x9327, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x2E))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $9327 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859329); return; }
     goto L_9329_M0X0;
   L_9329_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x85, 0x9329, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x0002); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $9329 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85932C); return; }
     goto L_932C_M0X0;
   L_932C_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_931F_M0X0; }  /* $932C BEQ */
+    recomp_phase_begin(12, 0x85, 0x932C, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85931F); return; } goto L_931F_M0X0; }  /* $932C BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85932E); return; }
     goto L_932E_M0X0;
   L_932E_M0X0:;
     recomp_tick(18);
     func_table_call_jsr(0x85931C); return;  /* $932E JMP (tail) */
   L_9331_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x9331, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x6A), (uint16_t)(0)); /* $9331 STZ */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859333); return; }
     goto L_9333_M0X0;
   L_9333_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x9333, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x6C), (uint16_t)(0)); /* $9333 STZ */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859335); return; }
     goto L_9335_M0X0;
   L_9335_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x85, 0x9335, 1);
+    recomp_phase_end(18, 2);
     return;            /* $9335 RTS */
 }
 
@@ -1492,292 +2153,432 @@ RECOMP_PATCH(smk_8592F9, 0x8592F9) {
 RECOMP_PATCH(smk_808EED, 0x808EED) {
     goto L_8EED_M0X0;
   L_8EEA_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8EEA, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x4A))); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8EEA LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EEC); return; }
     goto L_8EEC_M0X0;
   L_8EEC_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x8EEC, 1);
+    recomp_phase_end(18, 2);
     return;            /* $8EEC RTS */
   L_8EED_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x80, 0x8EED, 2);
     op_inc_dp16(0x1E);                             /* $8EED INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EEF); return; }
     goto L_8EEF_M0X0;
   L_8EEF_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8EEF, 1);
     op_xba();                                      /* $8EEF XBA */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EF0); return; }
     goto L_8EF0_M0X0;
   L_8EF0_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8EF0, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x1000); _a = (uint16_t)(_a | _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $8EF0 ORA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EF3); return; }
     goto L_8EF3_M0X0;
   L_8EF3_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8EF3, 1);
     op_tax();                                      /* $8EF3 TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EF4); return; }
     goto L_8EF4_M0X0;
   L_8EF4_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8EF4, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x10 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8EF4 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EF6); return; }
     goto L_8EF6_M0X0;
   L_8EF6_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8EEA_M0X0; }  /* $8EF6 BEQ */
+    recomp_phase_begin(12, 0x80, 0x8EF6, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EEA); return; } goto L_8EEA_M0X0; }  /* $8EF6 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EF8); return; }
     goto L_8EF8_M0X0;
   L_8EF8_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8EF8, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x30 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8EF8 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EFA); return; }
     goto L_8EFA_M0X0;
   L_8EFA_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8EFA, 2);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xBA + g_cpu.X))); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8EFA CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EFC); return; }
     goto L_8EFC_M0X0;
   L_8EFC_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8EEA_M0X0; }  /* $8EFC BEQ */
+    recomp_phase_begin(12, 0x80, 0x8EFC, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EEA); return; } goto L_8EEA_M0X0; }  /* $8EFC BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EFE); return; }
     goto L_8EFE_M0X0;
   L_8EFE_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8EFE, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0xBA + g_cpu.X), (uint16_t)(g_cpu.C)); /* $8EFE STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F00); return; }
     goto L_8F00_M0X0;
   L_8F00_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8F00, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x7FFF); _a = (uint16_t)(_a & _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $8F00 AND */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F03); return; }
     goto L_8F03_M0X0;
   L_8F03_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F03, 1);
     op_tay();                                      /* $8F03 TAY */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F04); return; }
     goto L_8F04_M0X0;
   L_8F04_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8F04, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x016E); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8F04 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F07); return; }
     goto L_8F07_M0X0;
   L_8F07_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_C) { recomp_tick(6); goto L_8EEA_M0X0; }  /* $8F07 BCS */
+    recomp_phase_begin(12, 0x80, 0x8F07, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_C) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EEA); return; } goto L_8EEA_M0X0; }  /* $8F07 BCS */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F09); return; }
     goto L_8F09_M0X0;
   L_8F09_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8F09, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x016A); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8F09 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F0C); return; }
     goto L_8F0C_M0X0;
   L_8F0C_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_C) { recomp_tick(6); goto L_8F1C_M0X0; }  /* $8F0C BCC */
+    recomp_phase_begin(12, 0x80, 0x8F0C, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_C) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F1C); return; } goto L_8F1C_M0X0; }  /* $8F0C BCC */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F0E); return; }
     goto L_8F0E_M0X0;
   L_8F0E_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F0E, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x08), (uint16_t)(0)); /* $8F0E STZ */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F10); return; }
     goto L_8F10_M0X0;
   L_8F10_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_8F17_M0X0; }  /* $8F10 BEQ */
+    recomp_phase_begin(12, 0x80, 0x8F10, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F17); return; } goto L_8F17_M0X0; }  /* $8F10 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F12); return; }
     goto L_8F12_M0X0;
   L_8F12_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8F12, 3);
     { uint16_t _v = (uint16_t)(0x0400); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F12 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F15); return; }
     goto L_8F15_M0X0;
   L_8F15_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F15, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x08), (uint16_t)(g_cpu.C)); /* $8F15 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F17); return; }
     goto L_8F17_M0X0;
   L_8F17_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F17, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xB6 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F17 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F19); return; }
     goto L_8F19_M0X0;
   L_8F19_M0X0:;
     recomp_tick(18);
     func_table_call_jsr(0x808FAE); return;  /* $8F19 JMP (tail) */
   L_8F1C_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F1C, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0xB6 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F1C LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F1E); return; }
     goto L_8F1E_M0X0;
   L_8F1E_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F1E, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x10), (uint16_t)(g_cpu.C)); /* $8F1E STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F20); return; }
     goto L_8F20_M0X0;
   L_8F20_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F20, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x12 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F20 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F22); return; }
     goto L_8F22_M0X0;
   L_8F22_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8F22, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x0002); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $8F22 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F25); return; }
     goto L_8F25_M0X0;
   L_8F25_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_8F32_M0X0; }  /* $8F25 BNE */
+    recomp_phase_begin(12, 0x80, 0x8F25, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F32); return; } goto L_8F32_M0X0; }  /* $8F25 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F27); return; }
     goto L_8F27_M0X0;
   L_8F27_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8F27, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x9292 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F27 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F2A); return; }
     goto L_8F2A_M0X0;
   L_8F2A_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_N) { recomp_tick(6); goto L_8F2F_M0X0; }  /* $8F2A BMI */
+    recomp_phase_begin(12, 0x80, 0x8F2A, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_N) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F2F); return; } goto L_8F2F_M0X0; }  /* $8F2A BMI */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F2C); return; }
     goto L_8F2C_M0X0;
   L_8F2C_M0X0:;
     recomp_tick(18);
     func_table_call_jsr(0x808FE5); return;  /* $8F2C JMP (tail) */
   L_8F2F_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8F2F, 3);
     { uint16_t _v = (uint16_t)(0x0000); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F2F LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F32); return; }
     goto L_8F32_M0X0;
   L_8F32_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F32, 1);
     op_tax();                                      /* $8F32 TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F33); return; }
     goto L_8F33_M0X0;
   L_8F33_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8F33, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x9080 + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F33 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F36); return; }
     goto L_8F36_M0X0;
   L_8F36_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F36, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x16), (uint16_t)(g_cpu.C)); /* $8F36 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F38); return; }
     goto L_8F38_M0X0;
   L_8F38_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8F38, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x9090 + g_cpu.Y))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F38 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F3B); return; }
     goto L_8F3B_M0X0;
   L_8F3B_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F3B, 1);
     op_pha16();                                    /* $8F3B PHA */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F3C); return; }
     goto L_8F3C_M0X0;
   L_8F3C_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8F3C, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x00FF); _a = (uint16_t)(_a & _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $8F3C AND */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F3F); return; }
     goto L_8F3F_M0X0;
   L_8F3F_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F3F, 1);
     op_tax();                                      /* $8F3F TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F40); return; }
     goto L_8F40_M0X0;
   L_8F40_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8F40, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, (uint16_t)(0x91FA + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F40 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F43); return; }
     goto L_8F43_M0X0;
   L_8F43_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F43, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x12), (uint16_t)(g_cpu.C)); /* $8F43 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F45); return; }
     goto L_8F45_M0X0;
   L_8F45_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8F45, 1);
     op_pla16();                                    /* $8F45 PLA */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F46); return; }
     goto L_8F46_M0X0;
   L_8F46_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8F46, 1);
     op_xba();                                      /* $8F46 XBA */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F47); return; }
     goto L_8F47_M0X0;
   L_8F47_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F47, 1);
     op_pha16();                                    /* $8F47 PHA */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F48); return; }
     goto L_8F48_M0X0;
   L_8F48_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8F48, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x00F0); _a = (uint16_t)(_a & _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $8F48 AND */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F4B); return; }
     goto L_8F4B_M0X0;
   L_8F4B_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F4B, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x17), (uint16_t)(g_cpu.C)); /* $8F4B STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F4D); return; }
     goto L_8F4D_M0X0;
   L_8F4D_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8F4D, 1);
     op_pla16();                                    /* $8F4D PLA */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F4E); return; }
     goto L_8F4E_M0X0;
   L_8F4E_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8F4E, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x000F); _a = (uint16_t)(_a & _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $8F4E AND */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F51); return; }
     goto L_8F51_M0X0;
   L_8F51_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F51, 1);
     op_tay();                                      /* $8F51 TAY */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F52); return; }
     goto L_8F52_M0X0;
   L_8F52_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F52, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x4A))); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F52 LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F54); return; }
     goto L_8F54_M0X0;
   L_8F54_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F54, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x10))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F54 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F56); return; }
     goto L_8F56_M0X0;
   L_8F56_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8F56, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x0EA0 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $8F56 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F59); return; }
     goto L_8F59_M0X0;
   L_8F59_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F59, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8F59 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F5A); return; }
     goto L_8F5A_M0X0;
   L_8F5A_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F5A, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8F5A INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F5B); return; }
     goto L_8F5B_M0X0;
   L_8F5B_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F5B, 1);
     g_cpu.flag_C = 0;                              /* $8F5B CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F5C); return; }
     goto L_8F5C_M0X0;
   L_8F5C_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8F5C, 3);
     { uint16_t _v = (uint16_t)(0x0100); smk_op_adc16(_v); } /* $8F5C ADC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F5F); return; }
     goto L_8F5F_M0X0;
   L_8F5F_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F5F, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x10), (uint16_t)(g_cpu.C)); /* $8F5F STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F61); return; }
     goto L_8F61_M0X0;
   L_8F61_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F61, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x12))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F61 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F63); return; }
     goto L_8F63_M0X0;
   L_8F63_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8F63, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x0EA0 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $8F63 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F66); return; }
     goto L_8F66_M0X0;
   L_8F66_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F66, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8F66 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F67); return; }
     goto L_8F67_M0X0;
   L_8F67_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F67, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8F67 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F68); return; }
     goto L_8F68_M0X0;
   L_8F68_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F68, 1);
     g_cpu.flag_C = 0;                              /* $8F68 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F69); return; }
     goto L_8F69_M0X0;
   L_8F69_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x80, 0x8F69, 3);
     { uint16_t _v = (uint16_t)(0x0200); smk_op_adc16(_v); } /* $8F69 ADC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F6C); return; }
     goto L_8F6C_M0X0;
   L_8F6C_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F6C, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x12), (uint16_t)(g_cpu.C)); /* $8F6C STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F6E); return; }
     goto L_8F6E_M0X0;
   L_8F6E_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F6E, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x16))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $8F6E LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F70); return; }
     goto L_8F70_M0X0;
   L_8F70_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x80, 0x8F70, 3);
     bus_write16(g_cpu.DB, (uint16_t)(0x0EA0 + g_cpu.X), (uint16_t)(g_cpu.C)); /* $8F70 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F73); return; }
     goto L_8F73_M0X0;
   L_8F73_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F73, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8F73 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F74); return; }
     goto L_8F74_M0X0;
   L_8F74_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F74, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8F74 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F75); return; }
     goto L_8F75_M0X0;
   L_8F75_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x80, 0x8F75, 1);
     { uint16_t _t = (uint16_t)((g_cpu.Y) - 1); g_cpu.Y = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $8F75 DEY */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F76); return; }
     goto L_8F76_M0X0;
   L_8F76_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_8F54_M0X0; }  /* $8F76 BNE */
+    recomp_phase_begin(12, 0x80, 0x8F76, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F54); return; } goto L_8F54_M0X0; }  /* $8F76 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F78); return; }
     goto L_8F78_M0X0;
   L_8F78_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x80, 0x8F78, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x4A), (uint16_t)(g_cpu.X)); /* $8F78 STX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F7A); return; }
     goto L_8F7A_M0X0;
   L_8F7A_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x80, 0x8F7A, 1);
+    recomp_phase_end(18, 2);
     return;            /* $8F7A RTS */
 }
 
@@ -1786,82 +2587,120 @@ RECOMP_PATCH(smk_808EED, 0x808EED) {
 RECOMP_PATCH(smk_81BB70, 0x81BB70) {
     goto L_BB70_M0X0;
   L_BB70_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0xBB70, 3);
     { uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, 0x1F26)); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $BB70 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB73); return; }
     goto L_BB73_M0X0;
   L_BB73_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xBB73, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x00FF); _a = (uint16_t)(_a & _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $BB73 AND */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB76); return; }
     goto L_BB76_M0X0;
   L_BB76_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xBB76, 1);
     op_xba();                                      /* $BB76 XBA */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB77); return; }
     goto L_BB77_M0X0;
   L_BB77_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0xBB77, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, 0x1F26)); _a = (uint16_t)(_a ^ _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $BB77 EOR */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB7A); return; }
     goto L_BB7A_M0X0;
   L_BB7A_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xBB7A, 1);
     op_xba();                                      /* $BB7A XBA */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB7B); return; }
     goto L_BB7B_M0X0;
   L_BB7B_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0xBB7B, 3);
     bus_write16(g_cpu.DB, 0x1F26, (uint16_t)(g_cpu.C)); /* $BB7B STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB7E); return; }
     goto L_BB7E_M0X0;
   L_BB7E_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xBB7E, 1);
     op_xba();                                      /* $BB7E XBA */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB7F); return; }
     goto L_BB7F_M0X0;
   L_BB7F_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xBB7F, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x00FF); _a = (uint16_t)(_a & _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $BB7F AND */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB82); return; }
     goto L_BB82_M0X0;
   L_BB82_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xBB82, 1);
     { uint16_t _x = (uint16_t)(g_cpu.C); uint8_t _c = (uint8_t)((_x >> 15) & 1); uint16_t _r = (uint16_t)(_x << 1); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((_r) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $BB82 ASL */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB83); return; }
     goto L_BB83_M0X0;
   L_BB83_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0xBB83, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(bus_read16(g_cpu.DB, 0x1F26)); _a = (uint16_t)(_a ^ _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $BB83 EOR */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB86); return; }
     goto L_BB86_M0X0;
   L_BB86_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xBB86, 1);
     { uint16_t _x = (uint16_t)(g_cpu.C); uint8_t _c = (uint8_t)(_x & 1); uint16_t _r = (uint16_t)(_x >> 1); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((_r) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $BB86 LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB87); return; }
     goto L_BB87_M0X0;
   L_BB87_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xBB87, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0xFF80); _a = (uint16_t)(_a ^ _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $BB87 EOR */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB8A); return; }
     goto L_BB8A_M0X0;
   L_BB8A_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_C) { recomp_tick(6); goto L_BB93_M0X0; }  /* $BB8A BCC */
+    recomp_phase_begin(12, 0x81, 0xBB8A, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_C) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB93); return; } goto L_BB93_M0X0; }  /* $BB8A BCC */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB8C); return; }
     goto L_BB8C_M0X0;
   L_BB8C_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xBB8C, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x8180); _a = (uint16_t)(_a ^ _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $BB8C EOR */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB8F); return; }
     goto L_BB8F_M0X0;
   L_BB8F_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0xBB8F, 3);
     bus_write16(g_cpu.DB, 0x1F26, (uint16_t)(g_cpu.C)); /* $BB8F STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB92); return; }
     goto L_BB92_M0X0;
   L_BB92_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xBB92, 1);
+    recomp_phase_end(12, 3);
     return;            /* $BB92 RTL */
   L_BB93_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xBB93, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0xAA55); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $BB93 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB96); return; }
     goto L_BB96_M0X0;
   L_BB96_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_BB8F_M0X0; }  /* $BB96 BNE */
+    recomp_phase_begin(12, 0x81, 0xBB96, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB8F); return; } goto L_BB8F_M0X0; }  /* $BB96 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB98); return; }
     goto L_BB98_M0X0;
   L_BB98_M0X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0xBB98, 3);
     bus_write16(g_cpu.DB, 0x1F26, (uint16_t)(0));  /* $BB98 STZ */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB9B); return; }
     goto L_BB9B_M0X0;
   L_BB9B_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xBB9B, 1);
+    recomp_phase_end(12, 3);
     return;            /* $BB9B RTL */
 }
 
@@ -1870,277 +2709,412 @@ RECOMP_PATCH(smk_81BB70, 0x81BB70) {
 RECOMP_PATCH(smk_81F638, 0x81F638) {
     goto L_F638_M0X0;
   L_F638_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF638, 1);
     op_txa();                                      /* $F638 TXA */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F639); return; }
     goto L_F639_M0X0;
   L_F639_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF639, 3);
     { uint16_t _v = (uint16_t)(0x0000); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F639 LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F63C); return; }
     goto L_F63C_M0X0;
   L_F63C_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF63C, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0x0000); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $F63C CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F63F); return; }
     goto L_F63F_M0X0;
   L_F63F_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_F6A7_M0X0; }  /* $F63F BEQ */
+    recomp_phase_begin(12, 0x81, 0xF63F, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6A7); return; } goto L_F6A7_M0X0; }  /* $F63F BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F641); return; }
     goto L_F641_M0X0;
   L_F641_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_N) { recomp_tick(6); goto L_F64A_M0X0; }  /* $F641 BPL */
+    recomp_phase_begin(12, 0x81, 0xF641, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_N) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F64A); return; } goto L_F64A_M0X0; }  /* $F641 BPL */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F643); return; }
     goto L_F643_M0X0;
   L_F643_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF643, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0xFFFF); _a = (uint16_t)(_a ^ _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $F643 EOR */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F646); return; }
     goto L_F646_M0X0;
   L_F646_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF646, 1);
     { uint16_t _t = (uint16_t)((g_cpu.C) + 1); g_cpu.C = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $F646 INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F647); return; }
     goto L_F647_M0X0;
   L_F647_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF647, 3);
     { uint16_t _v = (uint16_t)(0x0004); g_cpu.X = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F647 LDX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F64A); return; }
     goto L_F64A_M0X0;
   L_F64A_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0xF64A, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x00), (uint16_t)(g_cpu.C)); /* $F64A STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F64C); return; }
     goto L_F64C_M0X0;
   L_F64C_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF64C, 1);
     op_tya();                                      /* $F64C TYA */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F64D); return; }
     goto L_F64D_M0X0;
   L_F64D_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_F6B6_M0X0; }  /* $F64D BEQ */
+    recomp_phase_begin(12, 0x81, 0xF64D, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6B6); return; } goto L_F6B6_M0X0; }  /* $F64D BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F64F); return; }
     goto L_F64F_M0X0;
   L_F64F_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_N) { recomp_tick(6); goto L_F657_M0X0; }  /* $F64F BPL */
+    recomp_phase_begin(12, 0x81, 0xF64F, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_N) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F657); return; } goto L_F657_M0X0; }  /* $F64F BPL */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F651); return; }
     goto L_F651_M0X0;
   L_F651_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF651, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0xFFFF); _a = (uint16_t)(_a ^ _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $F651 EOR */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F654); return; }
     goto L_F654_M0X0;
   L_F654_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF654, 1);
     { uint16_t _t = (uint16_t)((g_cpu.C) + 1); g_cpu.C = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $F654 INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F655); return; }
     goto L_F655_M0X0;
   L_F655_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF655, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $F655 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F656); return; }
     goto L_F656_M0X0;
   L_F656_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF656, 1);
     { uint16_t _t = (uint16_t)((g_cpu.X) + 1); g_cpu.X = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $F656 INX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F657); return; }
     goto L_F657_M0X0;
   L_F657_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0xF657, 2);
     bus_write16(0x00, (uint16_t)(g_cpu.DP + 0x02), (uint16_t)(g_cpu.C)); /* $F657 STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F659); return; }
     goto L_F659_M0X0;
   L_F659_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0xF659, 2);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x00))); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $F659 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F65B); return; }
     goto L_F65B_M0X0;
   L_F65B_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_C) { recomp_tick(6); goto L_F67A_M0X0; }  /* $F65B BCS */
+    recomp_phase_begin(12, 0x81, 0xF65B, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_C) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F67A); return; } goto L_F67A_M0X0; }  /* $F65B BCS */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F65D); return; }
     goto L_F65D_M0X0;
   L_F65D_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF65D, 3);
     { uint16_t _v = (uint16_t)(0x003F); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F65D LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F660); return; }
     goto L_F660_M0X0;
   L_F660_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0xF660, 2);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x00))); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $F660 CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F662); return; }
     goto L_F662_M0X0;
   L_F662_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_C) { recomp_tick(6); goto L_F66A_M0X0; }  /* $F662 BCS */
+    recomp_phase_begin(12, 0x81, 0xF662, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_C) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F66A); return; } goto L_F66A_M0X0; }  /* $F662 BCS */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F664); return; }
     goto L_F664_M0X0;
   L_F664_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x81, 0xF664, 2);
     { uint8_t _bk = (uint8_t)(0x00); uint16_t _ad = (uint16_t)((uint16_t)(g_cpu.DP + 0x00)); uint16_t _x = bus_read16(_bk, _ad); uint8_t _c = (uint8_t)(_x & 1); uint16_t _r = (uint16_t)(_x >> 1); bus_write16(_bk, _ad, _r); g_cpu.flag_C = _c; g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $F664 LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F666); return; }
     goto L_F666_M0X0;
   L_F666_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x81, 0xF666, 2);
     { uint8_t _bk = (uint8_t)(0x00); uint16_t _ad = (uint16_t)((uint16_t)(g_cpu.DP + 0x02)); uint16_t _x = bus_read16(_bk, _ad); uint8_t _c = (uint8_t)(_x & 1); uint16_t _r = (uint16_t)(_x >> 1); bus_write16(_bk, _ad, _r); g_cpu.flag_C = _c; g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $F666 LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F668); return; }
     goto L_F668_M0X0;
   L_F668_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF668, 2);
+    recomp_phase_end(0, 0);
     recomp_tick(6);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F660); return; }
     goto L_F660_M0X0;   /* $F668 BRA */
   L_F66A_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0xF66A, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x02))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F66A LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F66C); return; }
     goto L_F66C_M0X0;
   L_F66C_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF66C, 1);
     op_xba();                                      /* $F66C XBA */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F66D); return; }
     goto L_F66D_M0X0;
   L_F66D_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF66D, 1);
     { uint16_t _x = (uint16_t)(g_cpu.C); uint8_t _c = (uint8_t)(_x & 1); uint16_t _r = (uint16_t)(_x >> 1); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((_r) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $F66D LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F66E); return; }
     goto L_F66E_M0X0;
   L_F66E_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF66E, 1);
     { uint16_t _x = (uint16_t)(g_cpu.C); uint8_t _c = (uint8_t)(_x & 1); uint16_t _r = (uint16_t)(_x >> 1); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((_r) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $F66E LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F66F); return; }
     goto L_F66F_M0X0;
   L_F66F_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF66F, 1);
     g_cpu.flag_C = 0;                              /* $F66F CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F670); return; }
     goto L_F670_M0X0;
   L_F670_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0xF670, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x00))); smk_op_adc16(_v); } /* $F670 ADC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F672); return; }
     goto L_F672_M0X0;
   L_F672_M0X0:;
-    recomp_tick(40);
-    { uint16_t _t = bus_read16(0x81, (uint16_t)(0xF697 + g_cpu.X)); func_table_call_jsr(((uint32_t)0x81 << 16) | _t); }  /* $F672 JSR */
+    recomp_phase_begin(40, 0x81, 0xF672, 3);
+    { uint16_t _t = bus_read16(0x81, (uint16_t)(0xF697 + g_cpu.X));
+      recomp_phase_end(6, 2);
+      func_table_call_jsr(((uint32_t)0x81 << 16) | _t); }  /* $F672 JSR */
+    if (recomp_redirect_pending()) return;
     goto L_F675_M0X0;
   L_F675_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF675, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0xFF00); _a = (uint16_t)(_a & _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $F675 AND */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F678); return; }
     goto L_F678_M0X0;
   L_F678_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF678, 1);
     g_cpu.flag_C = 0;                              /* $F678 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F679); return; }
     goto L_F679_M0X0;
   L_F679_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF679, 1);
+    recomp_phase_end(12, 3);
     return;            /* $F679 RTL */
   L_F67A_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF67A, 3);
     { uint16_t _v = (uint16_t)(0x003F); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F67A LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F67D); return; }
     goto L_F67D_M0X0;
   L_F67D_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0xF67D, 2);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x02))); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $F67D CMP */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F67F); return; }
     goto L_F67F_M0X0;
   L_F67F_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_C) { recomp_tick(6); goto L_F687_M0X0; }  /* $F67F BCS */
+    recomp_phase_begin(12, 0x81, 0xF67F, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_C) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F687); return; } goto L_F687_M0X0; }  /* $F67F BCS */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F681); return; }
     goto L_F681_M0X0;
   L_F681_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x81, 0xF681, 2);
     { uint8_t _bk = (uint8_t)(0x00); uint16_t _ad = (uint16_t)((uint16_t)(g_cpu.DP + 0x00)); uint16_t _x = bus_read16(_bk, _ad); uint8_t _c = (uint8_t)(_x & 1); uint16_t _r = (uint16_t)(_x >> 1); bus_write16(_bk, _ad, _r); g_cpu.flag_C = _c; g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $F681 LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F683); return; }
     goto L_F683_M0X0;
   L_F683_M0X0:;
-    recomp_tick(50);
+    recomp_phase_begin(50, 0x81, 0xF683, 2);
     { uint8_t _bk = (uint8_t)(0x00); uint16_t _ad = (uint16_t)((uint16_t)(g_cpu.DP + 0x02)); uint16_t _x = bus_read16(_bk, _ad); uint8_t _c = (uint8_t)(_x & 1); uint16_t _r = (uint16_t)(_x >> 1); bus_write16(_bk, _ad, _r); g_cpu.flag_C = _c; g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $F683 LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F685); return; }
     goto L_F685_M0X0;
   L_F685_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF685, 2);
+    recomp_phase_end(0, 0);
     recomp_tick(6);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F67D); return; }
     goto L_F67D_M0X0;   /* $F685 BRA */
   L_F687_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0xF687, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x00))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F687 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F689); return; }
     goto L_F689_M0X0;
   L_F689_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF689, 1);
     op_xba();                                      /* $F689 XBA */
+    recomp_phase_end(12, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F68A); return; }
     goto L_F68A_M0X0;
   L_F68A_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF68A, 1);
     { uint16_t _x = (uint16_t)(g_cpu.C); uint8_t _c = (uint8_t)(_x & 1); uint16_t _r = (uint16_t)(_x >> 1); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((_r) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $F68A LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F68B); return; }
     goto L_F68B_M0X0;
   L_F68B_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF68B, 1);
     { uint16_t _x = (uint16_t)(g_cpu.C); uint8_t _c = (uint8_t)(_x & 1); uint16_t _r = (uint16_t)(_x >> 1); g_cpu.flag_C = _c; g_cpu.C = (uint16_t)((_r) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_r) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_r) == 0); } /* $F68B LSR */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F68C); return; }
     goto L_F68C_M0X0;
   L_F68C_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF68C, 1);
     g_cpu.flag_C = 0;                              /* $F68C CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F68D); return; }
     goto L_F68D_M0X0;
   L_F68D_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x81, 0xF68D, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x02))); smk_op_adc16(_v); } /* $F68D ADC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F68F); return; }
     goto L_F68F_M0X0;
   L_F68F_M0X0:;
-    recomp_tick(40);
-    { uint16_t _t = bus_read16(0x81, (uint16_t)(0xF69F + g_cpu.X)); func_table_call_jsr(((uint32_t)0x81 << 16) | _t); }  /* $F68F JSR */
+    recomp_phase_begin(40, 0x81, 0xF68F, 3);
+    { uint16_t _t = bus_read16(0x81, (uint16_t)(0xF69F + g_cpu.X));
+      recomp_phase_end(6, 2);
+      func_table_call_jsr(((uint32_t)0x81 << 16) | _t); }  /* $F68F JSR */
+    if (recomp_redirect_pending()) return;
     goto L_F692_M0X0;
   L_F692_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF692, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0xFF00); _a = (uint16_t)(_a & _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $F692 AND */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F695); return; }
     goto L_F695_M0X0;
   L_F695_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF695, 1);
     g_cpu.flag_C = 0;                              /* $F695 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F696); return; }
     goto L_F696_M0X0;
   L_F696_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF696, 1);
+    recomp_phase_end(12, 3);
     return;            /* $F696 RTL */
   L_F6A7_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6A7, 1);
     op_tya();                                      /* $F6A7 TYA */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6A8); return; }
     goto L_F6A8_M0X0;
   L_F6A8_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_F6C5_M0X0; }  /* $F6A8 BEQ */
+    recomp_phase_begin(12, 0x81, 0xF6A8, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6C5); return; } goto L_F6C5_M0X0; }  /* $F6A8 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6AA); return; }
     goto L_F6AA_M0X0;
   L_F6AA_M0X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_N) { recomp_tick(6); goto L_F6B1_M0X0; }  /* $F6AA BPL */
+    recomp_phase_begin(12, 0x81, 0xF6AA, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_N) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6B1); return; } goto L_F6B1_M0X0; }  /* $F6AA BPL */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6AC); return; }
     goto L_F6AC_M0X0;
   L_F6AC_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF6AC, 3);
     { uint16_t _v = (uint16_t)(0x0000); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F6AC LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6AF); return; }
     goto L_F6AF_M0X0;
   L_F6AF_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6AF, 1);
     g_cpu.flag_C = 0;                              /* $F6AF CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6B0); return; }
     goto L_F6B0_M0X0;
   L_F6B0_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF6B0, 1);
+    recomp_phase_end(12, 3);
     return;            /* $F6B0 RTL */
   L_F6B1_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF6B1, 3);
     { uint16_t _v = (uint16_t)(0x8000); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F6B1 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6B4); return; }
     goto L_F6B4_M0X0;
   L_F6B4_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6B4, 1);
     g_cpu.flag_C = 0;                              /* $F6B4 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6B5); return; }
     goto L_F6B5_M0X0;
   L_F6B5_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF6B5, 1);
+    recomp_phase_end(12, 3);
     return;            /* $F6B5 RTL */
   L_F6B6_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF6B6, 3);
     { uint16_t _a = (uint16_t)(g_cpu.X); uint16_t _v = (uint16_t)(0x0000); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $F6B6 CPX */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6B9); return; }
     goto L_F6B9_M0X0;
   L_F6B9_M0X0:;
-    recomp_tick(12);
-    if (g_cpu.flag_Z) { recomp_tick(6); goto L_F6C0_M0X0; }  /* $F6B9 BEQ */
+    recomp_phase_begin(12, 0x81, 0xF6B9, 2);
+    recomp_phase_end(0, 0);
+    if (g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6C0); return; } goto L_F6C0_M0X0; }  /* $F6B9 BEQ */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6BB); return; }
     goto L_F6BB_M0X0;
   L_F6BB_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF6BB, 3);
     { uint16_t _v = (uint16_t)(0xC000); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F6BB LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6BE); return; }
     goto L_F6BE_M0X0;
   L_F6BE_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6BE, 1);
     g_cpu.flag_C = 0;                              /* $F6BE CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6BF); return; }
     goto L_F6BF_M0X0;
   L_F6BF_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF6BF, 1);
+    recomp_phase_end(12, 3);
     return;            /* $F6BF RTL */
   L_F6C0_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF6C0, 3);
     { uint16_t _v = (uint16_t)(0x4000); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F6C0 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6C3); return; }
     goto L_F6C3_M0X0;
   L_F6C3_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6C3, 1);
     g_cpu.flag_C = 0;                              /* $F6C3 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6C4); return; }
     goto L_F6C4_M0X0;
   L_F6C4_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF6C4, 1);
+    recomp_phase_end(12, 3);
     return;            /* $F6C4 RTL */
   L_F6C5_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6C5, 1);
     g_cpu.flag_C = 1;                              /* $F6C5 SEC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6C6); return; }
     goto L_F6C6_M0X0;
   L_F6C6_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF6C6, 1);
+    recomp_phase_end(12, 3);
     return;            /* $F6C6 RTL */
 }
 
@@ -2149,27 +3123,38 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
 RECOMP_PATCH(smk_81F6C7, 0x81F6C7) {
     goto L_F6C7_M0X0;
   L_F6C7_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6C7, 1);
     op_tax();                                      /* $F6C7 TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6C8); return; }
     goto L_F6C8_M0X0;
   L_F6C8_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6C8, 1);
     g_cpu.flag_C = 0;                              /* $F6C8 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6C9); return; }
     goto L_F6C9_M0X0;
   L_F6C9_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF6C9, 3);
     { uint16_t _v = (uint16_t)(0x4000); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F6C9 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6CC); return; }
     goto L_F6CC_M0X0;
   L_F6CC_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x81, 0xF6CC, 4);
     { uint16_t _v = (uint16_t)(bus_read16(0x7F, (uint16_t)(0x8FFF + g_cpu.X))); smk_op_adc16(_v); } /* $F6CC ADC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6D0); return; }
     goto L_F6D0_M0X0;
   L_F6D0_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6D0, 1);
     g_cpu.flag_C = 0;                              /* $F6D0 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6D1); return; }
     goto L_F6D1_M0X0;
   L_F6D1_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF6D1, 1);
+    recomp_phase_end(18, 2);
     return;            /* $F6D1 RTS */
 }
 
@@ -2178,27 +3163,38 @@ RECOMP_PATCH(smk_81F6C7, 0x81F6C7) {
 RECOMP_PATCH(smk_81F6D2, 0x81F6D2) {
     goto L_F6D2_M0X0;
   L_F6D2_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6D2, 1);
     op_tax();                                      /* $F6D2 TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6D3); return; }
     goto L_F6D3_M0X0;
   L_F6D3_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF6D3, 3);
     { uint16_t _v = (uint16_t)(0x40FF); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F6D3 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6D6); return; }
     goto L_F6D6_M0X0;
   L_F6D6_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6D6, 1);
     g_cpu.flag_C = 1;                              /* $F6D6 SEC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6D7); return; }
     goto L_F6D7_M0X0;
   L_F6D7_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x81, 0xF6D7, 4);
     { uint16_t _v = (uint16_t)(bus_read16(0x7F, (uint16_t)(0x8FFF + g_cpu.X))); smk_op_sbc16(_v); } /* $F6D7 SBC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6DB); return; }
     goto L_F6DB_M0X0;
   L_F6DB_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6DB, 1);
     g_cpu.flag_C = 0;                              /* $F6DB CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6DC); return; }
     goto L_F6DC_M0X0;
   L_F6DC_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF6DC, 1);
+    recomp_phase_end(18, 2);
     return;            /* $F6DC RTS */
 }
 
@@ -2207,27 +3203,38 @@ RECOMP_PATCH(smk_81F6D2, 0x81F6D2) {
 RECOMP_PATCH(smk_81F6DD, 0x81F6DD) {
     goto L_F6DD_M0X0;
   L_F6DD_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6DD, 1);
     op_tax();                                      /* $F6DD TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6DE); return; }
     goto L_F6DE_M0X0;
   L_F6DE_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF6DE, 3);
     { uint16_t _v = (uint16_t)(0xC0FF); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F6DE LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6E1); return; }
     goto L_F6E1_M0X0;
   L_F6E1_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6E1, 1);
     g_cpu.flag_C = 1;                              /* $F6E1 SEC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6E2); return; }
     goto L_F6E2_M0X0;
   L_F6E2_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x81, 0xF6E2, 4);
     { uint16_t _v = (uint16_t)(bus_read16(0x7F, (uint16_t)(0x8FFF + g_cpu.X))); smk_op_sbc16(_v); } /* $F6E2 SBC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6E6); return; }
     goto L_F6E6_M0X0;
   L_F6E6_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6E6, 1);
     g_cpu.flag_C = 0;                              /* $F6E6 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6E7); return; }
     goto L_F6E7_M0X0;
   L_F6E7_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF6E7, 1);
+    recomp_phase_end(18, 2);
     return;            /* $F6E7 RTS */
 }
 
@@ -2236,27 +3243,38 @@ RECOMP_PATCH(smk_81F6DD, 0x81F6DD) {
 RECOMP_PATCH(smk_81F6E8, 0x81F6E8) {
     goto L_F6E8_M0X0;
   L_F6E8_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6E8, 1);
     op_tax();                                      /* $F6E8 TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6E9); return; }
     goto L_F6E9_M0X0;
   L_F6E9_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6E9, 1);
     g_cpu.flag_C = 0;                              /* $F6E9 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6EA); return; }
     goto L_F6EA_M0X0;
   L_F6EA_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF6EA, 3);
     { uint16_t _v = (uint16_t)(0xC000); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F6EA LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6ED); return; }
     goto L_F6ED_M0X0;
   L_F6ED_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x81, 0xF6ED, 4);
     { uint16_t _v = (uint16_t)(bus_read16(0x7F, (uint16_t)(0x8FFF + g_cpu.X))); smk_op_adc16(_v); } /* $F6ED ADC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6F1); return; }
     goto L_F6F1_M0X0;
   L_F6F1_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6F1, 1);
     g_cpu.flag_C = 0;                              /* $F6F1 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6F2); return; }
     goto L_F6F2_M0X0;
   L_F6F2_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF6F2, 1);
+    recomp_phase_end(18, 2);
     return;            /* $F6F2 RTS */
 }
 
@@ -2265,27 +3283,38 @@ RECOMP_PATCH(smk_81F6E8, 0x81F6E8) {
 RECOMP_PATCH(smk_81F6F3, 0x81F6F3) {
     goto L_F6F3_M0X0;
   L_F6F3_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6F3, 1);
     op_tax();                                      /* $F6F3 TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6F4); return; }
     goto L_F6F4_M0X0;
   L_F6F4_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6F4, 1);
     g_cpu.flag_C = 1;                              /* $F6F4 SEC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6F5); return; }
     goto L_F6F5_M0X0;
   L_F6F5_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF6F5, 3);
     { uint16_t _v = (uint16_t)(0x80FF); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F6F5 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6F8); return; }
     goto L_F6F8_M0X0;
   L_F6F8_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x81, 0xF6F8, 4);
     { uint16_t _v = (uint16_t)(bus_read16(0x7F, (uint16_t)(0x8FFF + g_cpu.X))); smk_op_sbc16(_v); } /* $F6F8 SBC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6FC); return; }
     goto L_F6FC_M0X0;
   L_F6FC_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6FC, 1);
     g_cpu.flag_C = 0;                              /* $F6FC CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6FD); return; }
     goto L_F6FD_M0X0;
   L_F6FD_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF6FD, 1);
+    recomp_phase_end(18, 2);
     return;            /* $F6FD RTS */
 }
 
@@ -2294,19 +3323,26 @@ RECOMP_PATCH(smk_81F6F3, 0x81F6F3) {
 RECOMP_PATCH(smk_81F6FE, 0x81F6FE) {
     goto L_F6FE_M0X0;
   L_F6FE_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF6FE, 1);
     op_tax();                                      /* $F6FE TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6FF); return; }
     goto L_F6FF_M0X0;
   L_F6FF_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x81, 0xF6FF, 4);
     { uint16_t _v = (uint16_t)(bus_read16(0x7F, (uint16_t)(0x8FFF + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F6FF LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F703); return; }
     goto L_F703_M0X0;
   L_F703_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF703, 1);
     g_cpu.flag_C = 0;                              /* $F703 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F704); return; }
     goto L_F704_M0X0;
   L_F704_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF704, 1);
+    recomp_phase_end(18, 2);
     return;            /* $F704 RTS */
 }
 
@@ -2315,27 +3351,38 @@ RECOMP_PATCH(smk_81F6FE, 0x81F6FE) {
 RECOMP_PATCH(smk_81F705, 0x81F705) {
     goto L_F705_M0X0;
   L_F705_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF705, 1);
     op_tax();                                      /* $F705 TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F706); return; }
     goto L_F706_M0X0;
   L_F706_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF706, 1);
     g_cpu.flag_C = 0;                              /* $F706 CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F707); return; }
     goto L_F707_M0X0;
   L_F707_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF707, 3);
     { uint16_t _v = (uint16_t)(0x8000); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F707 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F70A); return; }
     goto L_F70A_M0X0;
   L_F70A_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x81, 0xF70A, 4);
     { uint16_t _v = (uint16_t)(bus_read16(0x7F, (uint16_t)(0x8FFF + g_cpu.X))); smk_op_adc16(_v); } /* $F70A ADC */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F70E); return; }
     goto L_F70E_M0X0;
   L_F70E_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF70E, 1);
     g_cpu.flag_C = 0;                              /* $F70E CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F70F); return; }
     goto L_F70F_M0X0;
   L_F70F_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF70F, 1);
+    recomp_phase_end(18, 2);
     return;            /* $F70F RTS */
 }
 
@@ -2344,31 +3391,44 @@ RECOMP_PATCH(smk_81F705, 0x81F705) {
 RECOMP_PATCH(smk_81F710, 0x81F710) {
     goto L_F710_M0X0;
   L_F710_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF710, 1);
     op_tax();                                      /* $F710 TAX */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F711); return; }
     goto L_F711_M0X0;
   L_F711_M0X0:;
-    recomp_tick(40);
+    recomp_phase_begin(40, 0x81, 0xF711, 4);
     { uint16_t _v = (uint16_t)(bus_read16(0x7F, (uint16_t)(0x8FFF + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F711 LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F715); return; }
     goto L_F715_M0X0;
   L_F715_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF715, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0xFF00); _a = (uint16_t)(_a & _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $F715 AND */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F718); return; }
     goto L_F718_M0X0;
   L_F718_M0X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF718, 3);
     { uint16_t _a = (uint16_t)(g_cpu.C); uint16_t _v = (uint16_t)(0xFFFF); _a = (uint16_t)(_a ^ _v); g_cpu.C = (uint16_t)((_a) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_a) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_a) == 0); } /* $F718 EOR */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F71B); return; }
     goto L_F71B_M0X0;
   L_F71B_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF71B, 1);
     { uint16_t _t = (uint16_t)((g_cpu.C) + 1); g_cpu.C = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $F71B INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F71C); return; }
     goto L_F71C_M0X0;
   L_F71C_M0X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF71C, 1);
     g_cpu.flag_C = 0;                              /* $F71C CLC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F71D); return; }
     goto L_F71D_M0X0;
   L_F71D_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF71D, 1);
+    recomp_phase_end(18, 2);
     return;            /* $F71D RTS */
 }
 
@@ -2377,15 +3437,20 @@ RECOMP_PATCH(smk_81F710, 0x81F710) {
 RECOMP_PATCH(smk_8596DC, 0x8596DC) {
     goto L_96DC_M0X0;
   L_96DC_M0X0:;
-    recomp_tick(28);
+    recomp_phase_begin(28, 0x85, 0x96DC, 2);
     { uint16_t _v = (uint16_t)(bus_read16(0x00, (uint16_t)(g_cpu.DP + 0x7E + g_cpu.X))); g_cpu.C = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $96DC LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8596DE); return; }
     goto L_96DE_M0X0;
   L_96DE_M0X0:;
-    recomp_tick(30);
+    recomp_phase_begin(30, 0x85, 0x96DE, 3);
     bus_write16(g_cpu.DB, 0x2116, (uint16_t)(g_cpu.C)); /* $96DE STA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8596E1); return; }
     goto L_96E1_M0X0;
   L_96E1_M0X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x85, 0x96E1, 1);
+    recomp_phase_end(18, 2);
     return;            /* $96E1 RTS */
 }
 
@@ -2394,30 +3459,43 @@ RECOMP_PATCH(smk_8596DC, 0x8596DC) {
 RECOMP_PATCH(smk_81F56C, 0x81F56C) {
     goto L_F56C_M1X0;
   L_F56C_M1X0:;
-    recomp_tick(20);
+    recomp_phase_begin(20, 0x81, 0xF56C, 2);
     { uint8_t _v = (uint8_t)(smk_bus_read8_24(smk_ea_dpily(0x10))); g_cpu.C = (uint16_t)((g_cpu.C & 0xFF00) | ((_v) & 0xFF)); g_cpu.flag_N = (uint8_t)(((uint8_t)(_v) >> 7) & 1); g_cpu.flag_Z = (uint8_t)((uint8_t)(_v) == 0); } /* $F56C LDA */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F56E); return; }
     goto L_F56E_M1X0;
   L_F56E_M1X0:;
-    recomp_tick(12);
+    recomp_phase_begin(12, 0x81, 0xF56E, 1);
     { uint16_t _t = (uint16_t)((g_cpu.Y) + 1); g_cpu.Y = (uint16_t)((_t) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_t) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_t) == 0); } /* $F56E INY */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F56F); return; }
     goto L_F56F_M1X0;
   L_F56F_M1X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF56F, 3);
     { uint16_t _a = (uint16_t)(g_cpu.Y); uint16_t _v = (uint16_t)(0x8000); uint16_t _t = (uint16_t)(_a - _v); g_cpu.flag_C = (uint8_t)(_a >= _v); g_cpu.flag_Z = (uint8_t)(_a == _v); g_cpu.flag_N = (uint8_t)((_t >> 15) & 1); } /* $F56F CPY */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F572); return; }
     goto L_F572_M1X0;
   L_F572_M1X0:;
-    recomp_tick(12);
-    if (!g_cpu.flag_Z) { recomp_tick(6); goto L_F579_M1X0; }  /* $F572 BNE */
+    recomp_phase_begin(12, 0x81, 0xF572, 2);
+    recomp_phase_end(0, 0);
+    if (!g_cpu.flag_Z) { recomp_tick(6); if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F579); return; } goto L_F579_M1X0; }  /* $F572 BNE */
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F574); return; }
     goto L_F574_M1X0;
   L_F574_M1X0:;
-    recomp_tick(34);
+    recomp_phase_begin(34, 0x81, 0xF574, 2);
     op_inc_dp8(0x12);                              /* $F574 INC */
+    recomp_phase_end(6, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F576); return; }
     goto L_F576_M1X0;
   L_F576_M1X0:;
-    recomp_tick(18);
+    recomp_phase_begin(18, 0x81, 0xF576, 3);
     { uint16_t _v = (uint16_t)(0x0000); g_cpu.Y = (uint16_t)((_v) & 0xFFFF); g_cpu.flag_N = (uint8_t)(((uint16_t)(_v) >> 15) & 1); g_cpu.flag_Z = (uint8_t)((uint16_t)(_v) == 0); } /* $F576 LDY */
+    recomp_phase_end(0, 0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F579); return; }
     goto L_F579_M1X0;
   L_F579_M1X0:;
-    recomp_tick(24);
+    recomp_phase_begin(24, 0x81, 0xF579, 1);
+    recomp_phase_end(18, 2);
     return;            /* $F579 RTS */
 }

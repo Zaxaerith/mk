@@ -164,3 +164,9 @@ is the boundary that motivates the timed/cycle-accurate model.
   missing internal cycle. Sixteen generator tests pass and the default 18-function oracle gate
   remains green. `$81:F638` still diverges first at frame 1040, proving the remaining fault is
   phase/interrupt placement rather than a missing constant branch cost.
+- Added an opt-in bus-phase runtime (`SMK_RECOMP_BUSPHASE=1`). Generated instructions perform
+  timed ROM fetches, timed data reads/writes at their live addresses, internal idle phases, and
+  synthetic RTS/RTL stack phases; the flag-off path retains the validated aggregate model.
+  `JSR (abs,X)` now includes its two previously missing jump-table reads. The prototype is stable
+  but `$81:F638` remains red; safe NMI yield is gated separately until native nested calls place
+  their return PC on the emulated stack.

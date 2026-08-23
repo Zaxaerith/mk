@@ -80,6 +80,12 @@ penalty. The default 18-function set remains byte-identical after this change, b
 `$81:F638` closure still first diverges at frame 1040. This confirms aggregate whole-instruction
 ticks cannot reproduce an NMI that lands between fetch/read/write phases; bus-phase ordering and
 an interrupt-yield protocol are required rather than further constant-cycle tuning.
+An opt-in `SMK_RECOMP_BUSPHASE=1` prototype now places opcode/operand fetches, data accesses,
+internal idles, and synthetic return-stack phases on the LakeSnes clock. It also fixes the
+previously uncounted two table reads in `JSR (abs,X)`. The prototype runs the whole route but
+does not yet pass the `$81:F638` gate. `SMK_RECOMP_PHASE_YIELD=1` is deliberately separate and
+experimental: nested native JSRs must first materialize their real return addresses before an
+interrupt can safely resume their remaining ROM code.
 
 - Move from aggregate instruction costs to bus-phase-accurate fetch/read/write/idle timing.
 - Allow NMI/IRQ recognition at the same instruction boundaries as LakeSnes.

@@ -245,6 +245,26 @@ def _instr_cycles(insn, bank):
     return cyc
 
 
+def _phase_tail(insn):
+    """Return (internal master cycles, synthetic stack accesses) after semantics."""
+    op, name, mode = insn["op"], insn["name"], insn["mode"]
+    if name in _IDLE1:
+        return 6, 0
+    if name == "XBA":
+        return 12, 0
+    if name in _RMW:
+        return 6, 0
+    if name in ("PHA", "PHX", "PHY", "PHB", "PHP", "PHK", "PHD"):
+        return 6, 0
+    if name in ("PLA", "PLX", "PLY", "PLB", "PLP", "PLD"):
+        return 12, 0
+    if op == 0x60:                    # RTS: hook pops two bytes without timing
+        return 18, 2
+    if op == 0x6B:                    # RTL: hook pops PC + PB without timing
+        return 12, 3
+    return 0, 0
+
+
 def _reg_write(reg, w, v):
     if reg == "A":
         return (f"g_cpu.C = (uint16_t)(({v}) & 0xFFFF);" if w == 16
@@ -567,29 +587,50 @@ def generate(data, bank, addr, P, name):
         op = ins["op"]
         # Block moves repeat the opcode internally and therefore own their
         # per-byte ticks inside emit_body().
-        if ins["name"] not in ("MVN", "MVP"):
-            out.append(f"    recomp_tick({_instr_cycles(ins, bank)});")  # cycle-accurate (no-op unless enabled)
+        phase = (ins["name"] not in ("MVN", "MVP") and op not in TAILJMP)
+        if phase:
+            out.append(f"    recomp_phase_begin({_instr_cycles(ins, bank)}, 0x{bank:02X}, 0x{pc:04X}, {ins['total']});")
+        elif ins["name"] not in ("MVN", "MVP"):
+            out.append(f"    recomp_tick({_instr_cycles(ins, bank)});")
+        idle, stack = _phase_tail(ins)
         if op in TERMINALS:
+            out.append(f"    recomp_phase_end({idle}, {stack});")
             out.append(f"    return;            /* ${pc:04X} {ins['name']} */")
         elif op in CALL:
-            out.append(f"    {_transfer_stmt(ins, bank)}  /* ${pc:04X} {ins['name']} */")
+            if op == 0xFC:
+                # JSR (abs,X): table reads are part of the calling instruction,
+                # not the callee. Time them before its idle/stack-write phases.
+                out.append(f"    {{ uint16_t _t = bus_read16(0x{bank:02X}, (uint16_t)(0x{ins['val']:04X} + g_cpu.X));")
+                out.append("      recomp_phase_end(6, 2);")
+                out.append(f"      func_table_call_jsr(((uint32_t)0x{bank:02X} << 16) | _t); }}  /* ${pc:04X} {ins['name']} */")
+            else:
+                stack_accesses = 3 if op == 0x22 else 2
+                out.append(f"    recomp_phase_end(6, {stack_accesses});")
+                out.append(f"    {_transfer_stmt(ins, bank)}  /* ${pc:04X} {ins['name']} */")
+            out.append("    if (recomp_redirect_pending()) return;")
             out.append(f"    goto {_cfg_label(nxt, nm, nx)};")
         elif op in TAILJMP:
             out.append(f"    {_transfer_stmt(ins, bank)} return;  /* ${pc:04X} {ins['name']} (tail) */")
         elif op in UNCOND:
+            out.append(f"    recomp_phase_end({idle}, {stack});")
             # BRA/BRL spend one internal cycle after fetching the displacement.
             out.append("    recomp_tick(6);")
+            out.append(f"    if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(0x{(bank << 16) | ins['target']:06X}); return; }}")
             out.append(f"    goto {_cfg_label(ins['target'], nm, nx)};   /* ${pc:04X} {ins['name']} */")
         elif op in BRANCH:
+            out.append(f"    recomp_phase_end({idle}, {stack});")
             flag, want = BRANCH[op]
             cond = f"g_cpu.flag_{flag}" if want else f"!g_cpu.flag_{flag}"
             # A taken conditional branch has one extra internal cycle. Page-cross
             # penalties only apply in emulation mode and are added separately once
             # E-mode entry profiling is available.
-            out.append(f"    if ({cond}) {{ recomp_tick(6); goto {_cfg_label(ins['target'], nm, nx)}; }}  /* ${pc:04X} {ins['name']} */")
+            out.append(f"    if ({cond}) {{ recomp_tick(6); if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(0x{(bank << 16) | ins['target']:06X}); return; }} goto {_cfg_label(ins['target'], nm, nx)}; }}  /* ${pc:04X} {ins['name']} */")
+            out.append(f"    if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(0x{(bank << 16) | nxt:06X}); return; }}")
             out.append(f"    goto {_cfg_label(nxt, nm, nx)};")
         else:
             out.append(f"    {emit_body(ins, bank):<46s} /* ${pc:04X} {ins['name']} */")
+            out.append(f"    recomp_phase_end({idle}, {stack});")
+            out.append(f"    if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(0x{(bank << 16) | nxt:06X}); return; }}")
             out.append(f"    goto {_cfg_label(nxt, nm, nx)};")
     out.append("}")
     return "\n".join(out)

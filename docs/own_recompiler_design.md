@@ -98,8 +98,8 @@ while keeping LakeSnes/DSP-1/intercept/menu/netplay intact.
 - **autogen.py** decodes a function from ROM + trace-exact entry M/X (CFG walk, M/X
   threaded), and emits a `RECOMP_PATCH`: register/stack/flag ops via `op_*`; loads/stores/
   STZ/logical/compare/inc-dec/shift/BIT across all common addressing modes via inline
-  `bus_read/write` + flags; JSR/JSL via `func_table_call`; branches via labels/gotos.
-  Indirect dispatch / per-(M,X) re-entry → `Unsupported` (clean fallback).
+  `bus_read/write` + flags; JSR/JSL and computed jumps via `func_table_call`; branches via
+  labels/gotos. Per-(M,X) re-entry remains `Unsupported` (clean fallback).
 - **batch.py** runs autogen over a profile's `PROF <addr> <count> <P> [MULTI-MX]` lines
   (the profiler now records each call target's entry M/X), reports yield + skip reasons.
 - **Profiled through a real race** (input script `360:Y` + mash `START` to `$36=02`, then
@@ -124,3 +124,20 @@ while keeping LakeSnes/DSP-1/intercept/menu/netplay intact.
 So the auto-generator reaches gameplay/Mode-7 code and proves it function-by-function against
 the oracle; steady-state pure-logic composes without limit, while transition/IO-timing code
 is the boundary that motivates the timed/cycle-accurate model.
+
+## Correctness pass (2026-08)
+
+- Fixed CFGs whose real entry is above a shared lower-address block. Emission stays in address
+  order for fallthrough, but every generated function now jumps explicitly to its true entry.
+  `$80:8EED` is the real-ROM regression case: without the entry jump it returned through
+  `$80:8EEA`; with the fix it passed 1,400 frames / 2,030 observed calls byte-identically.
+- Added width-correct 8/16-bit PHA/PLA/PHX/PLX/PHY/PLY emission and stack-cycle costs, plus
+  PHK/PHD/PLD, TSB/TRB, and TSX/TXS/TXY/TYX/TCD/TDC/TCS/TSC. Seven synthetic CFG/opcode tests
+  cover the new rules and REP/SEP width changes.
+- Added `$81:BB70` (738 profiled calls) and `$80:8EED` to the generated/default set. The
+  18-function default made 6,801 native interceptions during a scripted 1,400-frame run and
+  matched interpreter WRAM/VRAM/CGRAM at every sampled frame.
+- Re-gating also corrected an optimistic historical classification: `$80:9EB2` diverges at
+  race init through its `$80:9FAC` callee, while `$81:81C4` and `$85:92F9` are transition
+  sensitive. Their generated bodies remain available for opt-in experiments, but they are no
+  longer enabled by default.

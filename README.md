@@ -60,6 +60,17 @@ A Dear ImGui menu bar (File / Graphics / Sound / Controller / Multiplayer / Help
 - Netplay polish: rollback / over-the-wire desync detection; "drop straight into 2-player on connect"
 - More recompiled functions (the long-term goal: replace real-frame with recompiled C)
 
+### Recent (August 2026)
+- **Auto-recompiler correctness pass** — fixed mid-function entries whose CFG branches into
+  lower-address shared blocks; added M/X-width-correct register stack operations, PHK/PHD/PLD,
+  TSB/TRB, and the remaining register transfers, with focused Python regression tests.
+- **Two more race-path functions recompiled** — `$80:8EED` (backward/shared CFG) and `$81:BB70`
+  (hot RTL bit-mixing leaf). The default 18-function timed-recomp set completed a scripted
+  1,400-frame title → menus → race → driving run with 6,801 native interceptions and
+  byte-identical WRAM/VRAM/CGRAM snapshots versus the ROM interpreter.
+- Transition-sensitive `$80:9EB2`, `$81:81C4`, and `$85:92F9` remain generated but opt-in;
+  the default set no longer claims them as oracle-safe.
+
 ### Recent (June 2026)
 - **Cracked the menu→race flow** — root-caused the long-standing menu blocker to a power-on
   WRAM fill (`$2E` game-mode read as 2-player on a zero-filled RAM); fixed with a `0x55` fill
@@ -80,7 +91,7 @@ A Dear ImGui menu bar (File / Graphics / Sound / Controller / Multiplayer / Help
 ┌─────────────────────────────────────────────────┐
 │                 smk_launcher                      │
 │  ┌──────────────────────────────────────────┐    │
-│  │  src/recomp/ — 48 Recompiled functions   │    │
+│  │  src/recomp/ — 70 Recompiled functions   │    │
 │  │  smk_boot.c  — NMI, state machine, input │    │
 │  │  smk_init.c  — Init, transition dispatch │    │
 │  │  smk_title.c — Decompressor, PPU, menus  │    │
@@ -151,7 +162,7 @@ The menu auto-disables in headless/scripted runs (`SMK_HEADLESS`/`SMK_SCRIPT`).
 ### Prerequisites
 - CMake 3.16+
 - Visual Studio 2022 (MSVC)
-- SDL2 via vcpkg: `vcpkg install sdl2:x64-windows`
+- vcpkg (SDL2 is declared and version-locked by `vcpkg.json`)
 - Python 3.10+ (for disassembler and analysis tools)
 
 ### Build
@@ -161,6 +172,12 @@ cmake -B build -G "Visual Studio 17 2022" -A x64 \
   -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
 
 cmake --build build --config Debug
+```
+
+Run the auto-recompiler regression tests with:
+
+```bash
+python -m unittest tools/recomp/test_autogen.py -v
 ```
 
 ### Run

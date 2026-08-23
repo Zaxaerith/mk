@@ -24,7 +24,9 @@ def main():
     out_path = sys.argv[3] if len(sys.argv) > 3 else None
 
     cands, skipped = [], collections.Counter()
-    for line in open(prof):
+    # Launcher logs may contain UTF-8 status text before the ASCII PROF rows.
+    # Do not let the host's legacy Windows code page make profiling unusable.
+    for line in open(prof, encoding="utf-8", errors="replace"):
         f = line.split()
         if not f or f[0] != "PROF":
             continue
@@ -64,7 +66,7 @@ def main():
         print(f"#   {addr}  x{count}", file=sys.stderr)
 
     if out_path:
-        with open(out_path, "w") as f:
+        with open(out_path, "w", encoding="utf-8", newline="\n") as f:
             f.write("/* batch-autogen output — validate each via the diff harness. */\n")
             for _, _, body in gen:
                 f.write(body + "\n\n")

@@ -16,8 +16,9 @@ v2 handles:
   - register/stack/flag ops via the existing op_* helpers,
   - intra-function branches (BEQ/BNE/BCS/BCC/BMI/BPL/BVS/BVC/BRA/BRL) via a CFG
     walk + C labels/gotos.
-Calls (JSR/JSL), computed/indirect jumps, and per-(M,X) re-entry with differing
-widths raise Unsupported -> the function falls back to a hand-port / interp.
+Calls (JSR/JSL), direct and computed jumps, and width-sensitive register-stack
+operations are supported. Per-(M,X) re-entry with differing widths still raises
+Unsupported -> the function falls back to a hand-port / interp.
 
 Usage:
   py tools/recomp/autogen.py <rom.sfc> <bank:addr> <entry_P_hex> [func_name]
@@ -186,7 +187,7 @@ def _data_time(insn):
 # data operand byte count (0 for imm/imp/branches), and whether the op is RMW.
 _READ = {"LDA", "LDX", "LDY", "AND", "ORA", "EOR", "ADC", "SBC", "CMP", "CPX", "CPY", "BIT"}
 _WRITE = {"STA", "STX", "STY", "STZ"}
-_RMW = {"INC", "DEC", "ASL", "LSR", "ROL", "ROR"}
+_RMW = {"INC", "DEC", "ASL", "LSR", "ROL", "ROR", "TSB", "TRB"}
 _IDLE1 = {"TAX", "TAY", "TXA", "TYA", "TSX", "TXS", "TXY", "TYX", "TCD", "TDC", "TCS", "TSC",
           "INX", "INY", "DEX", "DEY", "CLC", "SEC", "CLI", "SEI", "CLD", "SED", "CLV",
           "XCE", "NOP", "REP", "SEP"}
@@ -220,9 +221,15 @@ def _instr_cycles(insn, bank):
     elif op in (0x60, 0x6B):                            # RTS / RTL
         cyc += 18                                       # ~3 internal + stack reads
     elif name in ("PHA", "PHX", "PHY", "PHB", "PHP", "PHK", "PHD"):
-        cyc += 6 + 8                                    # 1 idle + 1 stack write
+        wide = (name == "PHD" or
+                (name == "PHA" and _wide(insn, "m")) or
+                (name in ("PHX", "PHY") and _wide(insn, "x")))
+        cyc += 6 + (16 if wide else 8)                  # idle + stack writes
     elif name in ("PLA", "PLX", "PLY", "PLB", "PLP", "PLD"):
-        cyc += 12 + 8                                   # 2 idle + 1 stack read
+        wide = (name == "PLD" or
+                (name == "PLA" and _wide(insn, "m")) or
+                (name in ("PLX", "PLY") and _wide(insn, "x")))
+        cyc += 12 + (16 if wide else 8)                 # idles + stack reads
     return cyc
 
 
@@ -352,14 +359,82 @@ def _store(insn, reg, kind):
     return f"bus_write{w}({bank}, {addr}, (uint{w}_t)({v}));"
 
 
-# register/stack/flag ops that already have an op_* helper
+def _stack(insn):
+    """Width-correct register and bank/direct-page stack operations."""
+    name = insn["name"]
+    if name in ("PHA", "PHX", "PHY"):
+        reg = {"PHA": "A", "PHX": "X", "PHY": "Y"}[name]
+        kind = "m" if name == "PHA" else "x"
+        w = 16 if _wide(insn, kind) else 8
+        if w == 16:
+            return f"op_{name.lower()}16();"
+        return (f"bus_wram_write8(g_cpu.S, (uint8_t)({_reg_read(reg, 8)})); "
+                "g_cpu.S--;")
+    if name in ("PLA", "PLX", "PLY"):
+        reg = {"PLA": "A", "PLX": "X", "PLY": "Y"}[name]
+        kind = "m" if name == "PLA" else "x"
+        w = 16 if _wide(insn, kind) else 8
+        if w == 16:
+            return f"op_{name.lower()}16();"
+        return ("{ uint8_t _v; g_cpu.S++; _v = bus_wram_read8(g_cpu.S); "
+                f"{_reg_write(reg, 8, '_v')} {_nz(8, '_v')} }}")
+    if name == "PHK":
+        return "bus_wram_write8(g_cpu.S, g_cpu.PB); g_cpu.S--;"
+    if name == "PHD":
+        return "g_cpu.S--; bus_wram_write16(g_cpu.S, g_cpu.DP); g_cpu.S--;"
+    if name == "PLD":
+        return ("{ g_cpu.S++; g_cpu.DP = bus_wram_read16(g_cpu.S); g_cpu.S++; "
+                f"{_nz(16, 'g_cpu.DP')} }}")
+    raise Unsupported(f"stack op {name}")
+
+
+def _transfer(insn):
+    """Transfers not covered by cpu_ops.h, with their architectural width."""
+    name = insn["name"]
+    if name == "TSX":
+        w = 16 if _wide(insn, "x") else 8
+        return f"{{ uint{w}_t _v = (uint{w}_t)g_cpu.S; {_reg_write('X', w, '_v')} {_nz(w, '_v')} }}"
+    if name == "TXS":
+        return ("if (g_cpu.flag_X) { g_cpu.S = (uint16_t)((g_cpu.S & 0xFF00) | (g_cpu.X & 0xFF)); "
+                "if (g_cpu.flag_E) g_cpu.S = (uint16_t)(0x0100 | (g_cpu.S & 0xFF)); } "
+                "else g_cpu.S = g_cpu.X;")
+    if name in ("TXY", "TYX"):
+        src, dst = ("X", "Y") if name == "TXY" else ("Y", "X")
+        w = 16 if _wide(insn, "x") else 8
+        return f"{{ uint{w}_t _v = (uint{w}_t)({_reg_read(src, w)}); {_reg_write(dst, w, '_v')} {_nz(w, '_v')} }}"
+    if name == "TCD":
+        return f"g_cpu.DP = g_cpu.C; {_nz(16, 'g_cpu.DP')}"
+    if name == "TDC":
+        return f"g_cpu.C = g_cpu.DP; {_nz(16, 'g_cpu.C')}"
+    if name == "TCS":
+        return ("g_cpu.S = g_cpu.flag_E ? (uint16_t)(0x0100 | (g_cpu.C & 0xFF)) "
+                ": g_cpu.C;")
+    if name == "TSC":
+        return f"g_cpu.C = g_cpu.S; {_nz(16, 'g_cpu.C')}"
+    raise Unsupported(f"transfer op {name}")
+
+
+def _tsb_trb(insn, set_bits):
+    """TSB/TRB: Z reflects A & old memory; memory receives A | M / ~A & M."""
+    w = 16 if _wide(insn, "m") else 8
+    if insn["mode"] not in MEM_MODES:
+        raise Unsupported(f"{insn['name']} {insn['mode']}")
+    bank, addr = _ea(insn["mode"], insn["val"])
+    expr = "(uint{w}_t)(_m | _a)" if set_bits else "(uint{w}_t)(_m & (uint{w}_t)~_a)"
+    expr = expr.format(w=w)
+    return (f"{{ uint8_t _bk = (uint8_t)({bank}); uint16_t _ad = (uint16_t)({addr}); "
+            f"uint{w}_t _m = bus_read{w}(_bk, _ad); uint{w}_t _a = (uint{w}_t)({_reg_read('A', w)}); "
+            f"g_cpu.flag_Z = (uint8_t)((_a & _m) == 0); bus_write{w}(_bk, _ad, {expr}); }}")
+
+
+# register/flag ops that already have an op_* helper
 _SIMPLE = {
     "XBA": "op_xba();", "XCE": "op_xce();",
     "TAX": "op_tax();", "TAY": "op_tay();", "TXA": "op_txa();", "TYA": "op_tya();",
-    "PHA": "op_pha16();", "PLA": "op_pla16();", "PHP": "op_php();", "PLP": "op_plp();",
-    "PHX": "op_phx16();", "PLX": "op_plx16();", "PHY": "op_phy16();", "PLY": "op_ply16();",
-    "PHB": "op_phb();", "PLB": "op_plb();",
+    "PHP": "op_php();", "PLP": "op_plp();", "PHB": "op_phb();", "PLB": "op_plb();",
 }
+_STACK = {"PHA", "PLA", "PHX", "PLX", "PHY", "PLY", "PHK", "PHD", "PLD"}
+_TRANSFER = {"TSX", "TXS", "TXY", "TYX", "TCD", "TDC", "TCS", "TSC"}
 _LOADS = {"LDA": ("A", "m"), "LDX": ("X", "x"), "LDY": ("Y", "x")}
 _STORES = {"STA": ("A", "m"), "STX": ("X", "x"), "STY": ("Y", "x"), "STZ": (None, "m")}
 _LOGIC = {"AND": "&", "ORA": "|", "EOR": "^"}
@@ -372,6 +447,10 @@ def emit_body(insn):
         return f"op_{name.lower()}(0x{insn['val']:02X});"
     if name in _SIMPLE:
         return _SIMPLE[name]
+    if name in _STACK:
+        return _stack(insn)
+    if name in _TRANSFER:
+        return _transfer(insn)
     if name in _LOADS:
         return _load(insn, *_LOADS[name])
     if name in _STORES:
@@ -392,6 +471,8 @@ def emit_body(insn):
         return _shift(insn, name)
     if name == "BIT":
         return _bit(insn)
+    if name in ("TSB", "TRB"):
+        return _tsb_trb(insn, name == "TSB")
     if name in ("INC", "DEC"):
         if name == "INC" and insn["mode"] == "dp":
             return f"op_inc_dp{16 if _wide(insn, 'm') else 8}(0x{insn['val']:02X});"
@@ -413,6 +494,12 @@ def generate(data, bank, addr, P, name):
     out.append(f"/* Auto-generated by tools/recomp/autogen.py from ${bank:02X}:{addr:04X}")
     out.append(f" * entry M={int(m8)} X={int(x8)} (P=${P:02X}). Validate with the diff harness. */")
     out.append(f"RECOMP_PATCH({name}, 0x{pc24:06X}) {{")
+    # CFG blocks are emitted in address order so ordinary fallthrough remains
+    # natural C fallthrough. Some SMK routines enter in the middle and branch
+    # backward into a shared lower-address tail; explicitly select the real
+    # entry instead of accidentally executing the numerically first block.
+    out.append(f"    goto L_{addr:04X};")
+    targets.add(addr)
     for pc in sorted(insns):
         ins = insns[pc]
         if pc in targets:

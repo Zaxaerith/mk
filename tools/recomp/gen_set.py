@@ -17,13 +17,14 @@ def main():
     if len(data) % 1024 == 512:
         data = data[512:]
     rows = []
-    for line in open(prof):
+    for line in open(prof, encoding="utf-8", errors="replace"):
         f = line.split()
         if len(f) >= 4 and f[0] == "PROF" and "recompiled" not in line and "MULTI-MX" not in line:
             rows.append((f[1], int(f[3], 16)))
-    hdr = ('/*\n * smk_autogen.c - autogen.py output (cycle-accurate recomp_tick calls; no-op\n'
-           ' * unless SMK_RECOMP_CYCLEACCURATE). Each gated byte-identical to the emulation\n'
-           ' * oracle through a race. Regenerate: py tools/recomp/gen_set.py <rom> <prof> <this>\n */\n'
+    hdr = ('/*\n * smk_autogen.c - autogen.py output (cycle-accurate recomp_tick calls).\n'
+           ' * Entry flags come from a real-ROM profile; main.c selects the oracle-gated\n'
+           ' * default subset. Other generated bodies remain opt-in for focused work.\n'
+           ' * Regenerate: py tools/recomp/gen_set.py <rom> <prof> <this>\n */\n'
            '#include "smk/functions.h"\n#include <snesrecomp/snesrecomp.h>\n'
            '#include <snesrecomp/func_table.h>\n#include <stdint.h>\n\n'
            '/* Link anchor: forces this static-lib TU (and its registrations) to link. */\n'
@@ -36,7 +37,8 @@ def main():
             n += 1
         except autogen.Unsupported as e:
             print("skip %s: %s" % (addr, e), file=sys.stderr)
-    open(out, "w").write("\n".join(parts))
+    with open(out, "w", encoding="utf-8", newline="\n") as f:
+        f.write("\n".join(parts))
     print("wrote %d functions -> %s" % (n, out))
 
 if __name__ == "__main__":

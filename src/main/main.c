@@ -211,7 +211,7 @@ int main(int argc, char *argv[]) {
             char buf[256];
             strncpy(buf, iv, sizeof(buf) - 1); buf[sizeof(buf) - 1] = 0;
             for (char *t = strtok(buf, ","); t; t = strtok(NULL, ",")) {
-                bool is_long = (strchr(t, 'L') || strchr(t, 'l')) != NULL;
+                bool is_long = strchr(t, 'L') != NULL || strchr(t, 'l') != NULL;
                 uint32_t a = (uint32_t)strtoul(t, NULL, 16);
                 recomp_timed_add_intercept(a, is_long);
                 printf("smk: intercept $%06X (%s)\n", a, is_long ? "RTL" : "RTS");
@@ -239,18 +239,22 @@ int main(int argc, char *argv[]) {
             recomp_timed_add_intercept(0x80BA50, false);
             recomp_timed_add_intercept(0x808D83, false);
             recomp_timed_add_intercept(0x80B7EB, false);
-            recomp_timed_add_intercept(0x809EB2, false);   /* (calls $9FAC) */
+            /* $809EB2 is intentionally not in the default set: despite being
+             * pure game logic itself, its $809FAC callee crosses a transition
+             * timing boundary and diverges at race init. Keep it available via
+             * SMK_RECOMP_INTERCEPTS for focused work. */
             recomp_timed_add_intercept(0x8584D1, false);   /* counter $64 */
             recomp_timed_add_intercept(0x858EE9, false);
             recomp_timed_add_intercept(0x85B945, false);
             recomp_timed_add_intercept(0x858FB8, false);   /* per-object init */
             recomp_timed_add_intercept(0x858B7A, false);   /* anim state-machine: JMP ($8BB4,x) */
-            recomp_timed_add_intercept(0x8181C4, false);   /* race-start transition (cycle-accurate) */
-            recomp_timed_add_intercept(0x8592F9, false);   /* cycle-accurate rescue */
+            recomp_timed_add_intercept(0x808EED, false);   /* shared backward CFG blocks */
+            recomp_timed_add_intercept(0x81BB70, true);    /* hot RTL bit-mixing leaf */
+            /* $8181C4/$8592F9 are transition-sensitive and remain opt-in. */
             /* ($80C25A also rescues individually but the approximate cost model's
              * accumulated error trips combined sets >~19; add via SMK_RECOMP_INTERCEPTS
              * — exact per-instruction costs would lift this.) */
-            printf("smk: intercept 19 autogen funcs (Mode-7 + indirect + transitions), race-validated\n");
+            printf("smk: intercept 18 autogen funcs (Mode-7 + indirect), race-validated\n");
         }
     }
 

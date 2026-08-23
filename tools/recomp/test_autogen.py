@@ -120,13 +120,41 @@ class AdditionalOpcodeTests(unittest.TestCase):
 
     def test_indirect_jsr_times_table_before_stack_and_callee(self):
         source = generate([0xFC, 0x00, 0x82, 0x6B])
-        begin = source.index("recomp_phase_begin(40,")
+        begin = source.index("recomp_phase_begin(52,")
         table = source.index("bus_read16(0x80")
-        stack = source.index("recomp_phase_end(6, 2);")
-        call = source.index("func_table_call_jsr")
+        stack = source.index("recomp_phase_call_enter(0x8102, 0x80, 0x80, false)")
+        call = source.index("func_table_call_with_frame")
         self.assertLess(begin, table)
         self.assertLess(table, stack)
         self.assertLess(stack, call)
+        self.assertIn("recomp_set_redirect(((uint32_t)0x80 << 16) | _t)", source)
+        self.assertIn("recomp_phase_call_leave(_frame, _frame_consumed);", source)
+        self.assertIn("recomp_set_redirect(0x808103)", source)
+
+    def test_fastrom_return_and_indirect_jsr_aggregate_cycles(self):
+        def cycles(code):
+            rom = bytearray(512 * 1024)
+            bank, addr = 0x81, 0x8100
+            offset = ((bank & 0x3F) << 16) | addr
+            rom[offset:offset + len(code)] = bytes(code)
+            insn, _, _ = autogen._decode_at(rom, bank, addr, False, False)
+            return autogen._instr_cycles(insn, bank)
+
+        self.assertEqual(cycles([0x60]), 40)              # RTS
+        self.assertEqual(cycles([0x6B]), 42)              # RTL
+        self.assertEqual(cycles([0xFC, 0x00, 0x82]), 52)  # JSR ($8200,X)
+
+    def test_direct_calls_materialize_correct_return_frames(self):
+        jsr = generate([0x20, 0x04, 0x81, 0x6B, 0x60])
+        self.assertIn("recomp_phase_call_enter(0x8102, 0x80, 0x80, false)", jsr)
+        self.assertIn("func_table_call_with_frame(0x808104, false", jsr)
+        self.assertIn("recomp_phase_call_leave(_frame_8100_M0X0, _frame_consumed_8100_M0X0)", jsr)
+
+        jsl = generate([0x22, 0x05, 0x81, 0x81, 0x6B, 0x6B])
+        self.assertIn("recomp_phase_call_enter(0x8103, 0x80, 0x81, true)", jsl)
+        self.assertIn("func_table_call_with_frame(0x818105, true", jsl)
+        self.assertIn("recomp_phase_call_leave(_frame_8100_M0X0, _frame_consumed_8100_M0X0)", jsl)
+        self.assertIn("recomp_set_redirect(0x818105)", jsl)
 
     def test_multi_entry_dispatches_from_live_mx_flags(self):
         rom = bytearray(512 * 1024)

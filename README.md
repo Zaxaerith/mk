@@ -62,7 +62,7 @@ A Dear ImGui menu bar (File / Graphics / Sound / Controller / Multiplayer / Help
 
 ### Recent (August 2026)
 - **Measured full-C baseline and roadmap** — the standard 1,400-frame route reaches 361 direct
-  call targets. 80 C entries are registered (31 auto-generated), but only the strict 18-function
+  call targets. 81 C entries are registered (32 auto-generated), but only the strict 18-function
   combined set is default oracle-gated; see [`docs/recompilation_roadmap.md`](docs/recompilation_roadmap.md).
 - **Generator arithmetic expansion** — added runtime-decimal-correct 8/16-bit ADC/SBC for
   existing memory modes plus NOP. This unlocks several high-frequency math routines; the
@@ -73,8 +73,9 @@ A Dear ImGui menu bar (File / Graphics / Sound / Controller / Multiplayer / Help
   TSB/TRB, and the remaining register transfers, with focused Python regression tests.
 - **Two more race-path functions recompiled** — `$80:8EED` (backward/shared CFG) and `$81:BB70`
   (hot RTL bit-mixing leaf). The default 18-function timed-recomp set completed a scripted
-  1,400-frame title → menus → race → driving run with 6,801 native interceptions and
-  byte-identical WRAM/VRAM/CGRAM snapshots versus the ROM interpreter.
+  1,400-frame title → menus → race → driving run with 11,794 native interceptions and
+  byte-identical WRAM/VRAM/CGRAM snapshots versus the ROM interpreter outside the documented
+  dead stack-scratch range `$1F00-$1FFF`.
 - Transition-sensitive `$80:9EB2`, `$81:81C4`, and `$85:92F9` remain generated but opt-in;
   the default set no longer claims them as oracle-safe.
 
@@ -213,6 +214,21 @@ SMK_SHELLS=1 build/Debug/smk_launcher.exe           # recompiled per-frame shell
 Set `SMK_RECOMP_PROFILE=1` to rank direct call targets. The default report shows 40 rows;
 `SMK_RECOMP_PROFILE_TOP=1000` exports the complete observed set. Targets seen under more than
 one accumulator/index width include an exact `VARIANTS=...` list for safe CFG generation.
+
+Timed native validation can replace selected ROM routines while retaining LakeSnes's real frame
+loop. When validating a complete generated call closure, disable interpreter force explicitly;
+otherwise registered children are intentionally routed through the untimed diagnostic fallback:
+
+```bash
+SMK_RECOMP=1 SMK_INTERP=0 SMK_RECOMP_BUSPHASE=1 SMK_RECOMP_PHASE_YIELD=1 \
+SMK_RECOMP_INTERCEPTS=81F638:L build/Debug/smk_launcher.exe
+```
+
+`$81:F638` and its eight indirect JSR targets are the first exact-timing closure gated this way:
+2,715 interceptions match the 1,400-frame WRAM/VRAM/CGRAM oracle at all 140 sampled frames. The
+generated call-frame token preserves caller SP/PB, prevents interpreter fallback from pushing a
+second return frame, and suspends the timed hook while fallback executes. The bus-phase/yield path
+is still opt-in while exact interrupt sampling and remaining bus-order cases are implemented.
 
 ## Decompressor
 

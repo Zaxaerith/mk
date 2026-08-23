@@ -97,8 +97,9 @@ RECOMP_PATCH(smk_80F90A, 0x80F90A) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F923); return; }
     goto L_F923_M0X0;
   L_F923_M0X0:;
-    recomp_phase_begin(24, 0x80, 0xF923, 1);
+    recomp_phase_begin(40, 0x80, 0xF923, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F923 RTS */
   L_F924_M0X0:;
     recomp_phase_begin(12, 0x80, 0xF924, 1);
@@ -137,8 +138,9 @@ RECOMP_PATCH(smk_80F90A, 0x80F90A) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80F92F); return; }
     goto L_F92F_M0X0;
   L_F92F_M0X0:;
-    recomp_phase_begin(24, 0x80, 0xF92F, 1);
+    recomp_phase_begin(40, 0x80, 0xF92F, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F92F RTS */
 }
 
@@ -160,9 +162,12 @@ RECOMP_PATCH(smk_80A01F, 0x80A01F) {
     goto L_A022_M0X0;
   L_A022_M0X0:;
     recomp_phase_begin(40, 0x80, 0xA022, 3);
-    recomp_phase_end(6, 2);
-    func_table_call_jsr(0x80A027);  /* $A022 JSR */
+    recomp_call_frame_t _frame_A022_M0X0 = recomp_phase_call_enter(0xA024, 0x80, 0x80, false);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A027); return; }
+    bool _frame_consumed_A022_M0X0 = func_table_call_with_frame(0x80A027, false, &_frame_A022_M0X0);  /* $A022 JSR */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_A022_M0X0, _frame_consumed_A022_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A025); return; }
     goto L_A025_M0X0;
   L_A025_M0X0:;
     recomp_phase_begin(34, 0x80, 0xA025, 1);
@@ -171,8 +176,9 @@ RECOMP_PATCH(smk_80A01F, 0x80A01F) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A026); return; }
     goto L_A026_M0X0;
   L_A026_M0X0:;
-    recomp_phase_begin(24, 0x80, 0xA026, 1);
+    recomp_phase_begin(40, 0x80, 0xA026, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $A026 RTS */
 }
 
@@ -349,8 +355,9 @@ RECOMP_PATCH(smk_80A027, 0x80A027) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80A05B); return; }
     goto L_A05B_M0X0;
   L_A05B_M0X0:;
-    recomp_phase_begin(24, 0x80, 0xA05B, 1);
+    recomp_phase_begin(40, 0x80, 0xA05B, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $A05B RTS */
 }
 
@@ -425,8 +432,9 @@ RECOMP_PATCH(smk_818902, 0x818902) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81891A); return; }
     goto L_891A_M0X0;
   L_891A_M0X0:;
-    recomp_phase_begin(24, 0x81, 0x891A, 1);
+    recomp_phase_begin(40, 0x81, 0x891A, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $891A RTS */
 }
 
@@ -561,8 +569,9 @@ RECOMP_PATCH(smk_81B9A8, 0x81B9A8) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81B9CA); return; }
     goto L_B9CA_M1X0;
   L_B9CA_M1X0:;
-    recomp_phase_begin(24, 0x81, 0xB9CA, 1);
+    recomp_phase_begin(40, 0x81, 0xB9CA, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $B9CA RTS */
 }
 
@@ -655,8 +664,9 @@ RECOMP_PATCH(smk_808BBF, 0x808BBF) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808BE9); return; }
     goto L_8BE9_M1X1;
   L_8BE9_M1X1:;
-    recomp_phase_begin(24, 0x80, 0x8BE9, 1);
+    recomp_phase_begin(40, 0x80, 0x8BE9, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $8BE9 RTS */
 }
 
@@ -791,8 +801,9 @@ RECOMP_PATCH(smk_8086A0, 0x8086A0) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8086CB); return; }
     goto L_86CB_M0X0;
   L_86CB_M0X0:;
-    recomp_phase_begin(24, 0x80, 0x86CB, 1);
+    recomp_phase_begin(40, 0x80, 0x86CB, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $86CB RTS */
 }
 
@@ -844,9 +855,12 @@ RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
     goto L_BBDE_M0X0;
   L_BBDE_M0X0:;
     recomp_phase_begin(54, 0x80, 0xBBDE, 4);
-    recomp_phase_end(6, 3);
-    func_table_call(0x81AF50);  /* $BBDE JSL */
+    recomp_call_frame_t _frame_BBDE_M0X0 = recomp_phase_call_enter(0xBBE1, 0x80, 0x81, true);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81AF50); return; }
+    bool _frame_consumed_BBDE_M0X0 = func_table_call_with_frame(0x81AF50, true, &_frame_BBDE_M0X0);  /* $BBDE JSL */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_BBDE_M0X0, _frame_consumed_BBDE_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBE2); return; }
     goto L_BBE2_M0X0;
   L_BBE2_M0X0:;
     recomp_phase_begin(18, 0x80, 0xBBE2, 3);
@@ -862,9 +876,12 @@ RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
     goto L_BBE8_M0X0;
   L_BBE8_M0X0:;
     recomp_phase_begin(54, 0x80, 0xBBE8, 4);
-    recomp_phase_end(6, 3);
-    func_table_call(0x81BB4A);  /* $BBE8 JSL */
+    recomp_call_frame_t _frame_BBE8_M0X0 = recomp_phase_call_enter(0xBBEB, 0x80, 0x81, true);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB4A); return; }
+    bool _frame_consumed_BBE8_M0X0 = func_table_call_with_frame(0x81BB4A, true, &_frame_BBE8_M0X0);  /* $BBE8 JSL */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_BBE8_M0X0, _frame_consumed_BBE8_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBEC); return; }
     goto L_BBEC_M0X0;
   L_BBEC_M0X0:;
     recomp_phase_begin(18, 0x80, 0xBBEC, 3);
@@ -874,9 +891,12 @@ RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
     goto L_BBEF_M0X0;
   L_BBEF_M0X0:;
     recomp_phase_begin(54, 0x80, 0xBBEF, 4);
-    recomp_phase_end(6, 3);
-    func_table_call(0x81CC26);  /* $BBEF JSL */
+    recomp_call_frame_t _frame_BBEF_M0X0 = recomp_phase_call_enter(0xBBF2, 0x80, 0x81, true);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81CC26); return; }
+    bool _frame_consumed_BBEF_M0X0 = func_table_call_with_frame(0x81CC26, true, &_frame_BBEF_M0X0);  /* $BBEF JSL */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_BBEF_M0X0, _frame_consumed_BBEF_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBF3); return; }
     goto L_BBF3_M0X0;
   L_BBF3_M0X0:;
     recomp_phase_begin(18, 0x80, 0xBBF3, 3);
@@ -886,19 +906,26 @@ RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
     goto L_BBF6_M0X0;
   L_BBF6_M0X0:;
     recomp_phase_begin(54, 0x80, 0xBBF6, 4);
-    recomp_phase_end(6, 3);
-    func_table_call(0x81CC26);  /* $BBF6 JSL */
+    recomp_call_frame_t _frame_BBF6_M0X0 = recomp_phase_call_enter(0xBBF9, 0x80, 0x81, true);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81CC26); return; }
+    bool _frame_consumed_BBF6_M0X0 = func_table_call_with_frame(0x81CC26, true, &_frame_BBF6_M0X0);  /* $BBF6 JSL */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_BBF6_M0X0, _frame_consumed_BBF6_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBFA); return; }
     goto L_BBFA_M0X0;
   L_BBFA_M0X0:;
     recomp_phase_begin(54, 0x80, 0xBBFA, 4);
-    recomp_phase_end(6, 3);
-    func_table_call(0x81AFB4);  /* $BBFA JSL */
+    recomp_call_frame_t _frame_BBFA_M0X0 = recomp_phase_call_enter(0xBBFD, 0x80, 0x81, true);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81AFB4); return; }
+    bool _frame_consumed_BBFA_M0X0 = func_table_call_with_frame(0x81AFB4, true, &_frame_BBFA_M0X0);  /* $BBFA JSL */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_BBFA_M0X0, _frame_consumed_BBFA_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBFE); return; }
     goto L_BBFE_M0X0;
   L_BBFE_M0X0:;
-    recomp_phase_begin(24, 0x80, 0xBBFE, 1);
+    recomp_phase_begin(40, 0x80, 0xBBFE, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $BBFE RTS */
 }
 
@@ -938,9 +965,12 @@ RECOMP_PATCH(smk_80BA50, 0x80BA50) {
     goto L_BA5A_M0X0;
   L_BA5A_M0X0:;
     recomp_phase_begin(54, 0x80, 0xBA5A, 4);
-    recomp_phase_end(6, 3);
-    func_table_call(0x85DFB4);  /* $BA5A JSL */
+    recomp_call_frame_t _frame_BA5A_M0X0 = recomp_phase_call_enter(0xBA5D, 0x80, 0x85, true);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85DFB4); return; }
+    bool _frame_consumed_BA5A_M0X0 = func_table_call_with_frame(0x85DFB4, true, &_frame_BA5A_M0X0);  /* $BA5A JSL */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_BA5A_M0X0, _frame_consumed_BA5A_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BA5E); return; }
     goto L_BA5E_M0X0;
   L_BA5E_M0X0:;
     recomp_phase_begin(26, 0x80, 0xBA5E, 1);
@@ -949,8 +979,9 @@ RECOMP_PATCH(smk_80BA50, 0x80BA50) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BA5F); return; }
     goto L_BA5F_M0X0;
   L_BA5F_M0X0:;
-    recomp_phase_begin(24, 0x80, 0xBA5F, 1);
+    recomp_phase_begin(40, 0x80, 0xBA5F, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $BA5F RTS */
 }
 
@@ -1151,8 +1182,9 @@ RECOMP_PATCH(smk_808D83, 0x808D83) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808DD0); return; }
     goto L_8DD0_M0X0;
   L_8DD0_M0X0:;
-    recomp_phase_begin(24, 0x80, 0x8DD0, 1);
+    recomp_phase_begin(40, 0x80, 0x8DD0, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $8DD0 RTS */
 }
 
@@ -1197,8 +1229,9 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7F6); return; }
     goto L_B7F6_M0X0;
   L_B7F6_M0X0:;
-    recomp_phase_begin(24, 0x80, 0xB7F6, 1);
+    recomp_phase_begin(40, 0x80, 0xB7F6, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $B7F6 RTS */
   L_B7F7_M0X0:;
     recomp_phase_begin(12, 0x80, 0xB7F7, 1);
@@ -1219,14 +1252,18 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B7FC); return; }
     goto L_B7FC_M0X0;
   L_B7FC_M0X0:;
-    recomp_phase_begin(24, 0x80, 0xB7FC, 1);
+    recomp_phase_begin(40, 0x80, 0xB7FC, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $B7FC RTS */
   L_B7FD_M0X0:;
     recomp_phase_begin(40, 0x80, 0xB7FD, 3);
-    recomp_phase_end(6, 2);
-    func_table_call_jsr(0x80B847);  /* $B7FD JSR */
+    recomp_call_frame_t _frame_B7FD_M0X0 = recomp_phase_call_enter(0xB7FF, 0x80, 0x80, false);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B847); return; }
+    bool _frame_consumed_B7FD_M0X0 = func_table_call_with_frame(0x80B847, false, &_frame_B7FD_M0X0);  /* $B7FD JSR */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_B7FD_M0X0, _frame_consumed_B7FD_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B800); return; }
     goto L_B800_M0X0;
   L_B800_M0X0:;
     recomp_phase_begin(28, 0x80, 0xB800, 2);
@@ -1242,9 +1279,12 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     goto L_B826_M0X0;   /* $B802 BRA */
   L_B804_M0X0:;
     recomp_phase_begin(40, 0x80, 0xB804, 3);
-    recomp_phase_end(6, 2);
-    func_table_call_jsr(0x80B847);  /* $B804 JSR */
+    recomp_call_frame_t _frame_B804_M0X0 = recomp_phase_call_enter(0xB806, 0x80, 0x80, false);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B847); return; }
+    bool _frame_consumed_B804_M0X0 = func_table_call_with_frame(0x80B847, false, &_frame_B804_M0X0);  /* $B804 JSR */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_B804_M0X0, _frame_consumed_B804_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B807); return; }
     goto L_B807_M0X0;
   L_B807_M0X0:;
     recomp_phase_begin(18, 0x80, 0xB807, 3);
@@ -1272,9 +1312,12 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     goto L_B815_M0X0;   /* $B80D BRA */
   L_B80F_M0X0:;
     recomp_phase_begin(40, 0x80, 0xB80F, 3);
-    recomp_phase_end(6, 2);
-    func_table_call_jsr(0x80B847);  /* $B80F JSR */
+    recomp_call_frame_t _frame_B80F_M0X0 = recomp_phase_call_enter(0xB811, 0x80, 0x80, false);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B847); return; }
+    bool _frame_consumed_B80F_M0X0 = func_table_call_with_frame(0x80B847, false, &_frame_B80F_M0X0);  /* $B80F JSR */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_B80F_M0X0, _frame_consumed_B80F_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B812); return; }
     goto L_B812_M0X0;
   L_B812_M0X0:;
     recomp_phase_begin(28, 0x80, 0xB812, 2);
@@ -1283,8 +1326,9 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B814); return; }
     goto L_B814_M0X0;
   L_B814_M0X0:;
-    recomp_phase_begin(24, 0x80, 0xB814, 1);
+    recomp_phase_begin(40, 0x80, 0xB814, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $B814 RTS */
   L_B815_M0X0:;
     recomp_phase_begin(28, 0x80, 0xB815, 2);
@@ -1335,8 +1379,9 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B825); return; }
     goto L_B825_M0X0;
   L_B825_M0X0:;
-    recomp_phase_begin(24, 0x80, 0xB825, 1);
+    recomp_phase_begin(40, 0x80, 0xB825, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $B825 RTS */
   L_B826_M0X0:;
     recomp_phase_begin(28, 0x80, 0xB826, 2);
@@ -1387,8 +1432,9 @@ RECOMP_PATCH(smk_80B7EB, 0x80B7EB) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80B836); return; }
     goto L_B836_M0X0;
   L_B836_M0X0:;
-    recomp_phase_begin(24, 0x80, 0xB836, 1);
+    recomp_phase_begin(40, 0x80, 0xB836, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $B836 RTS */
 }
 
@@ -1428,9 +1474,12 @@ RECOMP_PATCH(smk_809EB2, 0x809EB2) {
     goto L_9EBE_M0X0;
   L_9EBE_M0X0:;
     recomp_phase_begin(40, 0x80, 0x9EBE, 3);
-    recomp_phase_end(6, 2);
-    func_table_call_jsr(0x809FAC);  /* $9EBE JSR */
+    recomp_call_frame_t _frame_9EBE_M0X0 = recomp_phase_call_enter(0x9EC0, 0x80, 0x80, false);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x809FAC); return; }
+    bool _frame_consumed_9EBE_M0X0 = func_table_call_with_frame(0x809FAC, false, &_frame_9EBE_M0X0);  /* $9EBE JSR */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_9EBE_M0X0, _frame_consumed_9EBE_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x809EC1); return; }
     goto L_9EC1_M0X0;
   L_9EC1_M0X0:;
     recomp_phase_begin(18, 0x80, 0x9EC1, 3);
@@ -1440,13 +1489,17 @@ RECOMP_PATCH(smk_809EB2, 0x809EB2) {
     goto L_9EC4_M0X0;
   L_9EC4_M0X0:;
     recomp_phase_begin(40, 0x80, 0x9EC4, 3);
-    recomp_phase_end(6, 2);
-    func_table_call_jsr(0x809FAC);  /* $9EC4 JSR */
+    recomp_call_frame_t _frame_9EC4_M0X0 = recomp_phase_call_enter(0x9EC6, 0x80, 0x80, false);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x809FAC); return; }
+    bool _frame_consumed_9EC4_M0X0 = func_table_call_with_frame(0x809FAC, false, &_frame_9EC4_M0X0);  /* $9EC4 JSR */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_9EC4_M0X0, _frame_consumed_9EC4_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x809EC7); return; }
     goto L_9EC7_M0X0;
   L_9EC7_M0X0:;
-    recomp_phase_begin(24, 0x80, 0x9EC7, 1);
+    recomp_phase_begin(40, 0x80, 0x9EC7, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $9EC7 RTS */
 }
 
@@ -1473,8 +1526,9 @@ RECOMP_PATCH(smk_8584D1, 0x8584D1) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8584D7); return; }
     goto L_84D7_M1X1;
   L_84D7_M1X1:;
-    recomp_phase_begin(24, 0x85, 0x84D7, 1);
+    recomp_phase_begin(40, 0x85, 0x84D7, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $84D7 RTS */
 }
 
@@ -1582,8 +1636,9 @@ RECOMP_PATCH(smk_858EE9, 0x858EE9) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858F0A); return; }
     goto L_8F0A_M0X0;
   L_8F0A_M0X0:;
-    recomp_phase_begin(24, 0x85, 0x8F0A, 1);
+    recomp_phase_begin(40, 0x85, 0x8F0A, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $8F0A RTS */
 }
 
@@ -1616,8 +1671,9 @@ RECOMP_PATCH(smk_85B945, 0x85B945) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85B949); return; }
     goto L_B949_M0X0;
   L_B949_M0X0:;
-    recomp_phase_begin(24, 0x85, 0xB949, 1);
+    recomp_phase_begin(40, 0x85, 0xB949, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $B949 RTS */
 }
 
@@ -1704,8 +1760,9 @@ RECOMP_PATCH(smk_858FB8, 0x858FB8) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858FD7); return; }
     goto L_8FD7_M0X0;
   L_8FD7_M0X0:;
-    recomp_phase_begin(24, 0x85, 0x8FD7, 1);
+    recomp_phase_begin(40, 0x85, 0x8FD7, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $8FD7 RTS */
 }
 
@@ -1726,14 +1783,18 @@ RECOMP_PATCH(smk_858B7A, 0x858B7A) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B7F); return; }
     goto L_8B7F_M0X0;
   L_8B7F_M0X0:;
-    recomp_phase_begin(24, 0x85, 0x8B7F, 1);
+    recomp_phase_begin(40, 0x85, 0x8B7F, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $8B7F RTS */
   L_8B80_M0X0:;
     recomp_phase_begin(40, 0x85, 0x8B80, 3);
-    recomp_phase_end(6, 2);
-    func_table_call_jsr(0x858EE9);  /* $8B80 JSR */
+    recomp_call_frame_t _frame_8B80_M0X0 = recomp_phase_call_enter(0x8B82, 0x85, 0x85, false);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858EE9); return; }
+    bool _frame_consumed_8B80_M0X0 = func_table_call_with_frame(0x858EE9, false, &_frame_8B80_M0X0);  /* $8B80 JSR */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_8B80_M0X0, _frame_consumed_8B80_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x858B83); return; }
     goto L_8B83_M0X0;
   L_8B83_M0X0:;
     recomp_phase_begin(18, 0x85, 0x8B83, 3);
@@ -1976,8 +2037,9 @@ RECOMP_PATCH(smk_8181C4, 0x8181C4) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8181FA); return; }
     goto L_81FA_M0X0;
   L_81FA_M0X0:;
-    recomp_phase_begin(24, 0x81, 0x81FA, 1);
+    recomp_phase_begin(40, 0x81, 0x81FA, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $81FA RTS */
 }
 
@@ -2083,13 +2145,17 @@ RECOMP_PATCH(smk_8592F9, 0x8592F9) {
     goto L_931C_M0X0;
   L_931C_M0X0:;
     recomp_phase_begin(40, 0x85, 0x931C, 3);
-    recomp_phase_end(6, 2);
-    func_table_call_jsr(0x859336);  /* $931C JSR */
+    recomp_call_frame_t _frame_931C_M0X0 = recomp_phase_call_enter(0x931E, 0x85, 0x85, false);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859336); return; }
+    bool _frame_consumed_931C_M0X0 = func_table_call_with_frame(0x859336, false, &_frame_931C_M0X0);  /* $931C JSR */
     if (recomp_redirect_pending()) return;
+    recomp_phase_call_leave(_frame_931C_M0X0, _frame_consumed_931C_M0X0);
+    if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85931F); return; }
     goto L_931F_M0X0;
   L_931F_M0X0:;
-    recomp_phase_begin(24, 0x85, 0x931F, 1);
+    recomp_phase_begin(40, 0x85, 0x931F, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $931F RTS */
   L_9320_M0X0:;
     recomp_phase_begin(28, 0x85, 0x9320, 2);
@@ -2143,8 +2209,9 @@ RECOMP_PATCH(smk_8592F9, 0x8592F9) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x859335); return; }
     goto L_9335_M0X0;
   L_9335_M0X0:;
-    recomp_phase_begin(24, 0x85, 0x9335, 1);
+    recomp_phase_begin(40, 0x85, 0x9335, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $9335 RTS */
 }
 
@@ -2159,8 +2226,9 @@ RECOMP_PATCH(smk_808EED, 0x808EED) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808EEC); return; }
     goto L_8EEC_M0X0;
   L_8EEC_M0X0:;
-    recomp_phase_begin(24, 0x80, 0x8EEC, 1);
+    recomp_phase_begin(40, 0x80, 0x8EEC, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $8EEC RTS */
   L_8EED_M0X0:;
     recomp_phase_begin(50, 0x80, 0x8EED, 2);
@@ -2577,8 +2645,9 @@ RECOMP_PATCH(smk_808EED, 0x808EED) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x808F7A); return; }
     goto L_8F7A_M0X0;
   L_8F7A_M0X0:;
-    recomp_phase_begin(24, 0x80, 0x8F7A, 1);
+    recomp_phase_begin(40, 0x80, 0x8F7A, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $8F7A RTS */
 }
 
@@ -2677,8 +2746,9 @@ RECOMP_PATCH(smk_81BB70, 0x81BB70) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB92); return; }
     goto L_BB92_M0X0;
   L_BB92_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xBB92, 1);
+    recomp_phase_begin(42, 0x81, 0xBB92, 1);
     recomp_phase_end(12, 3);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $BB92 RTL */
   L_BB93_M0X0:;
     recomp_phase_begin(18, 0x81, 0xBB93, 3);
@@ -2699,8 +2769,9 @@ RECOMP_PATCH(smk_81BB70, 0x81BB70) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB9B); return; }
     goto L_BB9B_M0X0;
   L_BB9B_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xBB9B, 1);
+    recomp_phase_begin(42, 0x81, 0xBB9B, 1);
     recomp_phase_end(12, 3);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $BB9B RTL */
 }
 
@@ -2895,11 +2966,14 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F672); return; }
     goto L_F672_M0X0;
   L_F672_M0X0:;
-    recomp_phase_begin(40, 0x81, 0xF672, 3);
+    recomp_phase_begin(52, 0x81, 0xF672, 3);
     { uint16_t _t = bus_read16(0x81, (uint16_t)(0xF697 + g_cpu.X));
-      recomp_phase_end(6, 2);
-      func_table_call_jsr(((uint32_t)0x81 << 16) | _t); }  /* $F672 JSR */
-    if (recomp_redirect_pending()) return;
+      recomp_call_frame_t _frame = recomp_phase_call_enter(0xF674, 0x81, 0x81, false);
+      if (recomp_phase_interrupt_pending()) { recomp_set_redirect(((uint32_t)0x81 << 16) | _t); return; }
+      bool _frame_consumed = func_table_call_with_frame(((uint32_t)0x81 << 16) | _t, false, &_frame);
+      if (recomp_redirect_pending()) return;
+      recomp_phase_call_leave(_frame, _frame_consumed);
+      if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F675); return; } }  /* $F672 JSR */
     goto L_F675_M0X0;
   L_F675_M0X0:;
     recomp_phase_begin(18, 0x81, 0xF675, 3);
@@ -2914,8 +2988,9 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F679); return; }
     goto L_F679_M0X0;
   L_F679_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF679, 1);
+    recomp_phase_begin(42, 0x81, 0xF679, 1);
     recomp_phase_end(12, 3);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F679 RTL */
   L_F67A_M0X0:;
     recomp_phase_begin(18, 0x81, 0xF67A, 3);
@@ -2990,11 +3065,14 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F68F); return; }
     goto L_F68F_M0X0;
   L_F68F_M0X0:;
-    recomp_phase_begin(40, 0x81, 0xF68F, 3);
+    recomp_phase_begin(52, 0x81, 0xF68F, 3);
     { uint16_t _t = bus_read16(0x81, (uint16_t)(0xF69F + g_cpu.X));
-      recomp_phase_end(6, 2);
-      func_table_call_jsr(((uint32_t)0x81 << 16) | _t); }  /* $F68F JSR */
-    if (recomp_redirect_pending()) return;
+      recomp_call_frame_t _frame = recomp_phase_call_enter(0xF691, 0x81, 0x81, false);
+      if (recomp_phase_interrupt_pending()) { recomp_set_redirect(((uint32_t)0x81 << 16) | _t); return; }
+      bool _frame_consumed = func_table_call_with_frame(((uint32_t)0x81 << 16) | _t, false, &_frame);
+      if (recomp_redirect_pending()) return;
+      recomp_phase_call_leave(_frame, _frame_consumed);
+      if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F692); return; } }  /* $F68F JSR */
     goto L_F692_M0X0;
   L_F692_M0X0:;
     recomp_phase_begin(18, 0x81, 0xF692, 3);
@@ -3009,8 +3087,9 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F696); return; }
     goto L_F696_M0X0;
   L_F696_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF696, 1);
+    recomp_phase_begin(42, 0x81, 0xF696, 1);
     recomp_phase_end(12, 3);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F696 RTL */
   L_F6A7_M0X0:;
     recomp_phase_begin(12, 0x81, 0xF6A7, 1);
@@ -3043,8 +3122,9 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6B0); return; }
     goto L_F6B0_M0X0;
   L_F6B0_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF6B0, 1);
+    recomp_phase_begin(42, 0x81, 0xF6B0, 1);
     recomp_phase_end(12, 3);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F6B0 RTL */
   L_F6B1_M0X0:;
     recomp_phase_begin(18, 0x81, 0xF6B1, 3);
@@ -3059,8 +3139,9 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6B5); return; }
     goto L_F6B5_M0X0;
   L_F6B5_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF6B5, 1);
+    recomp_phase_begin(42, 0x81, 0xF6B5, 1);
     recomp_phase_end(12, 3);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F6B5 RTL */
   L_F6B6_M0X0:;
     recomp_phase_begin(18, 0x81, 0xF6B6, 3);
@@ -3087,8 +3168,9 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6BF); return; }
     goto L_F6BF_M0X0;
   L_F6BF_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF6BF, 1);
+    recomp_phase_begin(42, 0x81, 0xF6BF, 1);
     recomp_phase_end(12, 3);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F6BF RTL */
   L_F6C0_M0X0:;
     recomp_phase_begin(18, 0x81, 0xF6C0, 3);
@@ -3103,8 +3185,9 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6C4); return; }
     goto L_F6C4_M0X0;
   L_F6C4_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF6C4, 1);
+    recomp_phase_begin(42, 0x81, 0xF6C4, 1);
     recomp_phase_end(12, 3);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F6C4 RTL */
   L_F6C5_M0X0:;
     recomp_phase_begin(12, 0x81, 0xF6C5, 1);
@@ -3113,8 +3196,9 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6C6); return; }
     goto L_F6C6_M0X0;
   L_F6C6_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF6C6, 1);
+    recomp_phase_begin(42, 0x81, 0xF6C6, 1);
     recomp_phase_end(12, 3);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F6C6 RTL */
 }
 
@@ -3153,8 +3237,9 @@ RECOMP_PATCH(smk_81F6C7, 0x81F6C7) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6D1); return; }
     goto L_F6D1_M0X0;
   L_F6D1_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF6D1, 1);
+    recomp_phase_begin(40, 0x81, 0xF6D1, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F6D1 RTS */
 }
 
@@ -3193,8 +3278,9 @@ RECOMP_PATCH(smk_81F6D2, 0x81F6D2) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6DC); return; }
     goto L_F6DC_M0X0;
   L_F6DC_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF6DC, 1);
+    recomp_phase_begin(40, 0x81, 0xF6DC, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F6DC RTS */
 }
 
@@ -3233,8 +3319,9 @@ RECOMP_PATCH(smk_81F6DD, 0x81F6DD) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6E7); return; }
     goto L_F6E7_M0X0;
   L_F6E7_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF6E7, 1);
+    recomp_phase_begin(40, 0x81, 0xF6E7, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F6E7 RTS */
 }
 
@@ -3273,8 +3360,9 @@ RECOMP_PATCH(smk_81F6E8, 0x81F6E8) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6F2); return; }
     goto L_F6F2_M0X0;
   L_F6F2_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF6F2, 1);
+    recomp_phase_begin(40, 0x81, 0xF6F2, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F6F2 RTS */
 }
 
@@ -3313,8 +3401,9 @@ RECOMP_PATCH(smk_81F6F3, 0x81F6F3) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F6FD); return; }
     goto L_F6FD_M0X0;
   L_F6FD_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF6FD, 1);
+    recomp_phase_begin(40, 0x81, 0xF6FD, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F6FD RTS */
 }
 
@@ -3341,8 +3430,9 @@ RECOMP_PATCH(smk_81F6FE, 0x81F6FE) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F704); return; }
     goto L_F704_M0X0;
   L_F704_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF704, 1);
+    recomp_phase_begin(40, 0x81, 0xF704, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F704 RTS */
 }
 
@@ -3381,8 +3471,9 @@ RECOMP_PATCH(smk_81F705, 0x81F705) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F70F); return; }
     goto L_F70F_M0X0;
   L_F70F_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF70F, 1);
+    recomp_phase_begin(40, 0x81, 0xF70F, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F70F RTS */
 }
 
@@ -3427,8 +3518,9 @@ RECOMP_PATCH(smk_81F710, 0x81F710) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F71D); return; }
     goto L_F71D_M0X0;
   L_F71D_M0X0:;
-    recomp_phase_begin(24, 0x81, 0xF71D, 1);
+    recomp_phase_begin(40, 0x81, 0xF71D, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F71D RTS */
 }
 
@@ -3449,8 +3541,9 @@ RECOMP_PATCH(smk_8596DC, 0x8596DC) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x8596E1); return; }
     goto L_96E1_M0X0;
   L_96E1_M0X0:;
-    recomp_phase_begin(24, 0x85, 0x96E1, 1);
+    recomp_phase_begin(40, 0x85, 0x96E1, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $96E1 RTS */
 }
 
@@ -3495,7 +3588,8 @@ RECOMP_PATCH(smk_81F56C, 0x81F56C) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F579); return; }
     goto L_F579_M1X0;
   L_F579_M1X0:;
-    recomp_phase_begin(24, 0x81, 0xF579, 1);
+    recomp_phase_begin(40, 0x81, 0xF579, 1);
     recomp_phase_end(18, 2);
+    (void)recomp_phase_interrupt_pending();
     return;            /* $F579 RTS */
 }

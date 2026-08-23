@@ -168,5 +168,23 @@ is the boundary that motivates the timed/cycle-accurate model.
   timed ROM fetches, timed data reads/writes at their live addresses, internal idle phases, and
   synthetic RTS/RTL stack phases; the flag-off path retains the validated aggregate model.
   `JSR (abs,X)` now includes its two previously missing jump-table reads. The prototype is stable
-  but `$81:F638` remains red; safe NMI yield is gated separately until native nested calls place
-  their return PC on the emulated stack.
+  and generated nested calls now materialize their return PC on the emulated stack before they
+  can yield. Aggregate totals are pinned by tests at RTS=40, RTL=42, and FastROM
+  `JSR (abs,X)`=52 master cycles.
+- Closed the `$81:F638` timing regression as a full C call closure. The original red run left
+  `SMK_INTERP` at its default ON setting, so all eight registered children used the untimed
+  interpreter and made every observed standard-route root call exactly 134 master cycles short.
+  With `SMK_INTERP=0`,
+  bus-phase timing and native children enabled, 2,715 root interceptions match every one of the
+  140 standard-route snapshots through frame 1400 byte-for-byte, including stack WRAM. The
+  default 18-function gate also remains green when its documented dead stack scratch is ignored.
+  Twenty generator tests pass. General checkInt micro-phases and exact stack/RMW/JSL bus ordering
+  are still M3 work; this result proves the first difficult closure, not the whole timing model.
+- Replaced the generated-call integer byte count with an explicit caller-SP/PB frame token.
+  Aggregate JSL now enters and restores the target program bank correctly; bus-phase interpreter
+  fallback consumes the already-materialized frame rather than pushing a second sentinel. The
+  fallback temporarily suspends the timed recomp hook and preserves pending interrupt semantics,
+  so force/depth fallback no longer recursively intercepts itself. Re-gating the default set now
+  executes 11,794 native interceptions (the earlier 6,801 count was before PB correction) while
+  retaining byte-identical state outside `$1F00-$1FFF`; the exact `$81:F638` closure remains
+  byte-identical including stack WRAM for all 2,715 calls.

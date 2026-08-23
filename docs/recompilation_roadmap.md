@@ -36,18 +36,22 @@ the live CPU flags. On the standard route, all 305 not-yet-registered direct tar
 combined with 56 registered targets this is 361/361 observed-target generation coverage.
 Important gaps remain:
 
-- exact dynamic cycle accounting: taken branches, page/direct-page penalties, interrupt
-  recognition points, DMA stalls, and nested call costs;
+- general exact timing: page/direct-page penalties, per-opcode interrupt recognition points,
+  DMA stalls, and the precise bus order of stack, RMW, jump, and block-move instructions;
 - complete discovery of indirect call-table targets and all entry flag variants;
 - a C-owned reset/NMI/main-frame scheduler that can finish race initialization without
   falling back to `snes_runFrame`;
 - scenario coverage for all game modes and long-running races.
 
-One useful negative result is `$81:F638`: the function and all eight indirect JSR targets can
-be generated as C, but their 2,715-call race-initialization burst diverges at frame 1040 because
-the approximate cycle model reaches the NMI boundary at a different point. This closure remains
-opt-in and is a regression target for the exact-timing milestone. `$85:96DC` similarly has two
-transition-only divergence frames (1010 and 1030) and is not default-enabled.
+The first hard nested-call timing regression is now green: `$81:F638` plus all eight indirect
+JSR targets execute as a true C closure for 2,715 intercepted calls and match WRAM, VRAM, and
+CGRAM across all 140 sampled frames of the standard route. This requires
+`SMK_INTERP=0 SMK_RECOMP_BUSPHASE=1 SMK_RECOMP_PHASE_YIELD=1`; leaving the default interpreter
+force enabled sends each registered child through the untimed fallback and, in the observed
+standard-route `$81:F638` burst, loses exactly 134 master cycles per call. The closure remains
+opt-in while the bus-phase runtime is generalized.
+`$85:96DC` still has two transition-only divergence frames (1010 and 1030) and is not
+default-enabled.
 
 ## Milestones and acceptance gates
 
@@ -75,17 +79,31 @@ default-set regression remains byte-identical across all 140 sampled frames afte
 
 ### M3 — Exact timed native execution
 
-Progress: taken conditional branches and `BRA`/`BRL` now pay their dynamic internal-cycle
-penalty. The default 18-function set remains byte-identical after this change, but the
-`$81:F638` closure still first diverges at frame 1040. This confirms aggregate whole-instruction
-ticks cannot reproduce an NMI that lands between fetch/read/write phases; bus-phase ordering and
-an interrupt-yield protocol are required rather than further constant-cycle tuning.
-An opt-in `SMK_RECOMP_BUSPHASE=1` prototype now places opcode/operand fetches, data accesses,
-internal idles, and synthetic return-stack phases on the LakeSnes clock. It also fixes the
-previously uncounted two table reads in `JSR (abs,X)`. The prototype runs the whole route but
-does not yet pass the `$81:F638` gate. `SMK_RECOMP_PHASE_YIELD=1` is deliberately separate and
-experimental: nested native JSRs must first materialize their real return addresses before an
-interrupt can safely resume their remaining ROM code.
+Progress: taken conditional branches and `BRA`/`BRL` pay their dynamic internal-cycle penalty.
+The aggregate model now includes complete return and computed-call totals (`RTS=40`, `RTL=42`,
+FastROM `JSR (abs,X)=52` master cycles). An opt-in `SMK_RECOMP_BUSPHASE=1` runtime places
+opcode/operand fetches, data accesses, internal idles, and return-stack phases on the LakeSnes
+clock. Nested generated JSR/JSL calls carry a caller-SP/PB token and materialize their emulated
+return frames in bus-phase mode. Cross-bank JSL also switches/restores PB in aggregate mode. A
+token-aware fallback consumes an existing physical frame instead of pushing a second sentinel,
+preserves live interrupt state, and suspends the timed hook to avoid recursive interception.
+Instruction boundaries can redirect back to the remaining ROM PC when a frame boundary is crossed.
+
+The `$81:F638` eight-target closure now passes the first M3 hard gate. The earlier apparent
+frame-1040 failure was a validation configuration error: with the default `SMK_INTERP=ON`, each
+registered indirect child ran through the untimed interpreter fallback. Its six-instruction
+path costs exactly 134 master cycles, matching the measured per-call drift. With
+`SMK_INTERP=0`, entry timing, registers, stack state, and frame-end PC/H/V positions align with
+the ROM oracle, and all 140 sampled snapshots through frame 1400 are byte-identical without an
+ignored region. The default 18-function set also remains byte-identical outside its documented
+dead stack-scratch range; after the PB/fallback correction it executes 11,794 native
+interceptions on the same route (up from the earlier 6,801 checkpoint).
+
+This is a closure-specific success, not completion of M3. `SMK_RECOMP_PHASE_YIELD=1` remains
+experimental until every opcode samples NMI/IRQ at LakeSnes' exact micro-phase and JSL, RMW,
+indirect jumps, block moves, open-bus behavior, and fallback calls all use exact bus order. The
+fallback call-frame protocol is now stack-safe, but fallback execution remains intentionally
+untimed and therefore is not part of the exact-closure claim.
 
 - Move from aggregate instruction costs to bus-phase-accurate fetch/read/write/idle timing.
 - Allow NMI/IRQ recognition at the same instruction boundaries as LakeSnes.

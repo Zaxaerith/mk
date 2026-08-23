@@ -221,6 +221,13 @@ int main(int argc, char *argv[]) {
     bool recomp  = (getenv("SMK_RECOMP") != NULL);
     bool profile = (getenv("SMK_RECOMP_PROFILE") != NULL);
     if (recomp || profile) realframe = true;
+    const char *busphase = getenv("SMK_RECOMP_BUSPHASE");
+    if (recomp && busphase && atoi(busphase) != 0 && recomp_interp_force()) {
+        fprintf(stderr,
+                "smk: warning: bus-phase timing with interpreter force ON only times "
+                "the intercepted root; registered nested calls use the untimed fallback. "
+                "Set SMK_INTERP=0 when validating a fully recompiled call closure.\n");
+    }
 
     /* === Run the boot chain (shell mode only) === */
     if (!realframe) {
@@ -477,6 +484,9 @@ int main(int argc, char *argv[]) {
         const char *profile_top = getenv("SMK_RECOMP_PROFILE_TOP");
         if (profile_top && atoi(profile_top) > 0) top = atoi(profile_top);
         recomp_timed_profile_dump(top);
+    }
+    if (recomp) {
+        printf("smk: final intercept_hits=%lu\n", recomp_timed_intercept_hits());
     }
 
     printf("Shutting down...\n");

@@ -226,12 +226,17 @@ def _instr_cycles(insn, bank):
         cyc += 12
     elif name in _RMW and mode == "imp":               # accumulator RMW
         cyc += 6
-    elif op in (0x20, 0xFC):                            # JSR / JSR(abs,x)
+    elif op == 0x20:                                    # JSR abs
         cyc += 6 + 2 * 8                                # 1 idle + 2 stack writes
+    elif op == 0xFC:                                    # JSR (abs,x)
+        table_time = _access_time(bank, insn["val"])
+        cyc += 6 + 2 * 8 + 2 * table_time               # idle + stack + table reads
     elif op == 0x22:                                   # JSL
         cyc += 6 + 3 * 8
-    elif op in (0x60, 0x6B):                            # RTS / RTL
-        cyc += 18                                       # ~3 internal + stack reads
+    elif op == 0x60:                                    # RTS
+        cyc += 18 + 2 * 8                               # 3 idles + 2 stack reads
+    elif op == 0x6B:                                    # RTL
+        cyc += 12 + 3 * 8                               # 2 idles + 3 stack reads
     elif name in ("PHA", "PHX", "PHY", "PHB", "PHP", "PHK", "PHD"):
         wide = (name == "PHD" or
                 (name == "PHA" and _wide(insn, "m")) or
@@ -595,19 +600,31 @@ def generate(data, bank, addr, P, name):
         idle, stack = _phase_tail(ins)
         if op in TERMINALS:
             out.append(f"    recomp_phase_end({idle}, {stack});")
+            out.append("    (void)recomp_phase_interrupt_pending();")
             out.append(f"    return;            /* ${pc:04X} {ins['name']} */")
         elif op in CALL:
             if op == 0xFC:
                 # JSR (abs,X): table reads are part of the calling instruction,
                 # not the callee. Time them before its idle/stack-write phases.
                 out.append(f"    {{ uint16_t _t = bus_read16(0x{bank:02X}, (uint16_t)(0x{ins['val']:04X} + g_cpu.X));")
-                out.append("      recomp_phase_end(6, 2);")
-                out.append(f"      func_table_call_jsr(((uint32_t)0x{bank:02X} << 16) | _t); }}  /* ${pc:04X} {ins['name']} */")
+                out.append(f"      recomp_call_frame_t _frame = recomp_phase_call_enter(0x{(nxt - 1) & 0xFFFF:04X}, 0x{bank:02X}, 0x{bank:02X}, false);")
+                out.append(f"      if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(((uint32_t)0x{bank:02X} << 16) | _t); return; }}")
+                out.append(f"      bool _frame_consumed = func_table_call_with_frame(((uint32_t)0x{bank:02X} << 16) | _t, false, &_frame);")
+                out.append("      if (recomp_redirect_pending()) return;")
+                out.append(f"      recomp_phase_call_leave(_frame, _frame_consumed);")
+                out.append(f"      if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(0x{(bank << 16) | nxt:06X}); return; }} }}  /* ${pc:04X} {ins['name']} */")
             else:
-                stack_accesses = 3 if op == 0x22 else 2
-                out.append(f"    recomp_phase_end(6, {stack_accesses});")
-                out.append(f"    {_transfer_stmt(ins, bank)}  /* ${pc:04X} {ins['name']} */")
-            out.append("    if (recomp_redirect_pending()) return;")
+                is_long = op == 0x22
+                frame_var = f"_frame_{pc:04X}_M{int(state_m)}X{int(state_x)}"
+                direct_target = _call_target(ins, bank)
+                target_bank = (direct_target >> 16) & 0xFF
+                consumed_var = f"_frame_consumed_{pc:04X}_M{int(state_m)}X{int(state_x)}"
+                out.append(f"    recomp_call_frame_t {frame_var} = recomp_phase_call_enter(0x{(nxt - 1) & 0xFFFF:04X}, 0x{bank:02X}, 0x{target_bank:02X}, {'true' if is_long else 'false'});")
+                out.append(f"    if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(0x{direct_target:06X}); return; }}")
+                out.append(f"    bool {consumed_var} = func_table_call_with_frame(0x{direct_target:06X}, {'true' if is_long else 'false'}, &{frame_var});  /* ${pc:04X} {ins['name']} */")
+                out.append("    if (recomp_redirect_pending()) return;")
+                out.append(f"    recomp_phase_call_leave({frame_var}, {consumed_var});")
+                out.append(f"    if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(0x{(bank << 16) | nxt:06X}); return; }}")
             out.append(f"    goto {_cfg_label(nxt, nm, nx)};")
         elif op in TAILJMP:
             out.append(f"    {_transfer_stmt(ins, bank)} return;  /* ${pc:04X} {ins['name']} (tail) */")

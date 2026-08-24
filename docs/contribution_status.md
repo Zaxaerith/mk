@@ -32,9 +32,9 @@ state when the documented dead stack-scratch range `$1F00-$1FFF` is excluded.
 - It does not yet replace the LakeSnes-owned reset/NMI/main-frame scheduler.
 - Bus-phase timing remains opt-in. Generated immediate, implied, branch, data-access, RMW,
   stack, JSR/JSL, RTS, and RTL paths now place `checkInt` at their LakeSnes micro-phase, but
-  indirect jumps, block moves, RTI, DMA stalls, page/direct-page penalties, and open-bus behavior
-  still need exact modeling. JSL's delayed bank-operand order is implemented, but still needs a
-  standard-route all-C child closure for ROM-level validation.
+  block moves, RTI, DMA stalls, page/direct-page penalties, and open-bus behavior still need exact
+  modeling. JSL and indirect JMP/JML ordering are implemented, but still need standard-route
+  all-C child closures for ROM-level validation.
 - Passing the standard route does not prove every game mode, character, cup, track, multiplayer
   path, or long-running race.
 - Interpreter fallback is stack-safe but intentionally untimed; it is excluded from exact-closure
@@ -126,5 +126,5 @@ Before pushing this branch, the following were checked:
 - no absolute local filesystem paths, credentials, access tokens, or private keys are present in
   the branch diff;
 - the generated source is reproducible from the checked-in generator/profile;
-- the 26 Python generator tests and the Visual Studio Release build pass;
+- the 30 Python generator tests and the Visual Studio Release build pass;
 - the parent gitlink resolves to the published `snesrecomp` contribution branch.

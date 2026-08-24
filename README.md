@@ -236,10 +236,12 @@ SMK_RECOMP_INTERCEPTS=81F638:L build/Debug/smk_launcher.exe
 generated call-frame token preserves caller SP/PB, prevents interpreter fallback from pushing a
 second return frame, and suspends the timed hook while fallback executes. The bus-phase/yield path
 is still opt-in. Its generated immediate, data, implied, branch, RMW, stack, call, and return
-paths now use LakeSnes-style `checkInt` micro-phases; indirect jumps, block moves,
+paths now use LakeSnes-style `checkInt` micro-phases; block moves, RTI,
 page/direct-page penalties, DMA stalls, and open-bus cases remain M3 work. JSL and
 `JSR (abs,X)` now also preserve their non-linear operand/stack fetch order; an all-C JSL child
 closure is still needed for the same ROM-level proof already held by the indirect-JSR closure.
+All five JMP/JML tail forms now have ordered bus-phase emission, with local decoded targets kept
+inside the C CFG; indirect-tail closures still need isolated ROM-level timing gates.
 
 ## Decompressor
 

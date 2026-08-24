@@ -201,3 +201,9 @@ is the boundary that motivates the timed/cycle-accurate model.
   sequence twice per root invocation and remains raw-byte-identical across 2,715 calls. JSL has
   generator/build coverage, while a fully registered child closure is still needed for its
   ROM-level timing gate.
+- Added bus-phase emission for direct JMP/JML and all three indirect tail forms. Checks now occur
+  between the correct operand/table bytes, `JMP (abs,X)` idles before its checked table read, and
+  JML `[abs]` samples before the bank byte. Direct targets already decoded in the same CFG become
+  local C gotos; this removes three unnecessary fallback exits in the generated set. Thirty
+  generator tests and both standard ROM gates remain green; the default set's only raw changes
+  are dead stack scratch caused by avoiding those fallback return frames.

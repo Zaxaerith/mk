@@ -37,7 +37,7 @@ combined with 56 registered targets this is 361/361 observed-target generation c
 Important gaps remain:
 
 - general exact timing: page/direct-page penalties, the remaining interrupt recognition cases,
-  DMA stalls, and the precise bus order of jumps and block-move instructions;
+  DMA stalls, and the precise bus order of block-move/interrupt instructions;
 - complete discovery of indirect call-table targets and all entry flag variants;
 - a C-owned reset/NMI/main-frame scheduler that can finish race initialization without
   falling back to `snes_runFrame`;
@@ -104,6 +104,14 @@ fetches operand-high, idles, and performs the checked table-word read. The F638 
 the latter twice per root call and remains byte-identical; the JSL sequence is structurally tested
 and compiled, but still needs an all-C JSL child closure for an equivalent ROM gate.
 
+All five JMP/JML forms now participate in bus-phase timing. Direct JMP/JML sample between their
+documented operand bytes; indirect forms preserve same-bank pointer wrapping, indexed idle
+placement, checked word reads, and JML's low/high/check/bank sequence. Three direct JMP targets
+already present in the same generated CFG now remain as C `goto` edges instead of leaving through
+the fallback table. The standard generated set contains five direct JMPs and one indexed indirect
+JMP; all compile, while a fully registered indirect-tail target closure is still needed for an
+isolated bus-phase ROM gate.
+
 The `$81:F638` eight-target closure now passes the first M3 hard gate. The earlier apparent
 frame-1040 failure was a validation configuration error: with the default `SMK_INTERP=ON`, each
 registered indirect child ran through the untimed interpreter fallback. Its six-instruction
@@ -115,9 +123,9 @@ dead stack-scratch range; after the PB/fallback correction it executes 11,794 na
 interceptions on the same route (up from the earlier 6,801 checkpoint).
 
 This is a closure-specific success, not completion of M3. The new micro-phase layer is covered by
-26 generator tests, and the `$81:F638` closure still passes all 140 raw snapshots after the
+30 generator tests, and the `$81:F638` closure still passes all 140 raw snapshots after the
 change. `SMK_RECOMP_PHASE_YIELD=1` remains experimental until the remaining generated/control
-cases and exact indirect-jump, block-move, page/direct-page, DMA-stall, and open-bus ordering are
+cases and exact block-move, RTI, page/direct-page, DMA-stall, and open-bus ordering are
 modeled. The fallback call-frame protocol is stack-safe, but fallback execution remains
 intentionally untimed and therefore is not part of the exact-closure claim.
 

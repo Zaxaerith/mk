@@ -233,6 +233,14 @@ def _instr_cycles(insn, bank):
         cyc += 6 + 2 * 8 + 2 * table_time               # idle + stack + table reads
     elif op == 0x22:                                   # JSL
         cyc += 6 + 3 * 8
+    elif op == 0x6C:                                   # JMP (abs)
+        cyc += (_access_time(0x00, insn["val"]) +
+                _access_time(0x00, (insn["val"] + 1) & 0xFFFF))
+    elif op == 0x7C:                                   # JMP (abs,X)
+        cyc += 6 + 2 * _access_time(bank, insn["val"])
+    elif op == 0xDC:                                   # JML [abs]
+        cyc += sum(_access_time(0x00, (insn["val"] + i) & 0xFFFF)
+                   for i in range(3))
     elif op == 0x60:                                    # RTS
         cyc += 18 + 2 * 8                               # 3 idles + 2 stack reads
     elif op == 0x6B:                                    # RTL
@@ -274,6 +282,10 @@ def _fetch_check_after(insn):
     checks between its low and high bytes.
     """
     name, mode = insn["name"], insn["mode"]
+    if insn["op"] == 0x4C:       # JMP abs: between operand bytes
+        return 2
+    if insn["op"] == 0x5C:       # JML long: before bank operand
+        return 3
     if name in ("REP", "SEP"):
         return insn["total"]
     if mode in ("imm8", "immA", "immX") and name != "PEA":
@@ -641,7 +653,7 @@ def generate(data, bank, addr, P, name):
         op = ins["op"]
         # Block moves repeat the opcode internally and therefore own their
         # per-byte ticks inside emit_body().
-        phase = (ins["name"] not in ("MVN", "MVP") and op not in TAILJMP)
+        phase = ins["name"] not in ("MVN", "MVP")
         if phase:
             # JSL defers its bank operand until after PB push + idle. JSR
             # (abs,X) defers operand-high until after its return-word push.
@@ -694,7 +706,40 @@ def generate(data, bank, addr, P, name):
                 out.append(f"    if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(0x{(bank << 16) | nxt:06X}); return; }}")
             out.append(f"    goto {_cfg_label(nxt, nm, nx)};")
         elif op in TAILJMP:
-            out.append(f"    {_transfer_stmt(ins, bank)} return;  /* ${pc:04X} {ins['name']} (tail) */")
+            if op in (0x4C, 0x5C):
+                direct_target = _call_target(ins, bank)
+                out.append("    recomp_phase_end(0, 0);")
+                out.append(f"    if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(0x{direct_target:06X}); return; }}")
+                local_key = (direct_target & 0xFFFF, nm, nx)
+                if op == 0x4C and local_key in insns:
+                    out.append(f"    goto {_cfg_label(direct_target & 0xFFFF, nm, nx)};  /* ${pc:04X} {ins['name']} (local tail) */")
+                else:
+                    out.append(f"    {_transfer_stmt(ins, bank)} return;  /* ${pc:04X} {ins['name']} (tail) */")
+            elif op in (0x6C, 0x7C):
+                ptr_bank = 0x00 if op == 0x6C else bank
+                ptr_expr = (f"0x{ins['val']:04X}" if op == 0x6C else
+                            f"(uint16_t)(0x{ins['val']:04X} + g_cpu.X)")
+                out.append(f"    {{ uint16_t _ad = {ptr_expr};")
+                if op == 0x7C:
+                    out.append("      recomp_phase_idle(6);")
+                out.append(f"      uint8_t _lo = bus_read8(0x{ptr_bank:02X}, _ad);")
+                out.append("      recomp_phase_check_int();")
+                out.append(f"      uint8_t _hi = bus_read8(0x{ptr_bank:02X}, (uint16_t)(_ad + 1));")
+                out.append("      uint16_t _t = (uint16_t)(_lo | ((uint16_t)_hi << 8));")
+                out.append("      recomp_phase_end(0, 0);")
+                out.append(f"      uint32_t _target = ((uint32_t)0x{bank:02X} << 16) | _t;")
+                out.append("      if (recomp_phase_interrupt_pending()) { recomp_set_redirect(_target); return; }")
+                out.append(f"      func_table_call_jsr(_target); return; }}  /* ${pc:04X} {ins['name']} (tail) */")
+            else:  # JML [abs]
+                out.append(f"    {{ uint16_t _ad = 0x{ins['val']:04X};")
+                out.append("      uint8_t _lo = bus_read8(0x00, _ad);")
+                out.append("      uint8_t _hi = bus_read8(0x00, (uint16_t)(_ad + 1));")
+                out.append("      recomp_phase_check_int();")
+                out.append("      uint8_t _bk = bus_read8(0x00, (uint16_t)(_ad + 2));")
+                out.append("      uint32_t _target = (uint32_t)_lo | ((uint32_t)_hi << 8) | ((uint32_t)_bk << 16);")
+                out.append("      recomp_phase_end(0, 0);")
+                out.append("      if (recomp_phase_interrupt_pending()) { recomp_set_redirect(_target); return; }")
+                out.append(f"      func_table_call(_target); return; }}  /* ${pc:04X} {ins['name']} (tail) */")
         elif op in UNCOND:
             out.append(f"    recomp_phase_end({idle}, {stack});")
             # BRA/BRL spend one internal cycle after fetching the displacement.

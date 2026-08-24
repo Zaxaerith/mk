@@ -273,6 +273,45 @@ class CheckIntMicrophaseTests(unittest.TestCase):
         self.assertLess(pull, check)
         self.assertLess(check, flags)
 
+    def test_direct_tail_jumps_check_during_operand_fetch(self):
+        jmp = generate([0x4C, 0x34, 0x12])
+        self.assertIn("recomp_phase_begin_checked(18, 0x80, 0x8100, 3, 2)", jmp)
+        self.assertIn("recomp_set_redirect(0x801234)", jmp)
+
+        jml = generate([0x5C, 0x34, 0x12, 0x81])
+        self.assertIn("recomp_phase_begin_checked(24, 0x80, 0x8100, 4, 3)", jml)
+        self.assertIn("recomp_set_redirect(0x811234)", jml)
+
+    def test_indirect_tail_jumps_order_table_checks(self):
+        indirect = generate([0x6C, 0x00, 0x20])
+        low = indirect.index("_lo = bus_read8(0x00, _ad)")
+        check = indirect.index("recomp_phase_check_int();", low)
+        high = indirect.index("_hi = bus_read8(0x00", check)
+        self.assertLess(low, check)
+        self.assertLess(check, high)
+
+        indexed = generate([0x7C, 0x00, 0x82])
+        idle = indexed.index("recomp_phase_idle(6);")
+        low = indexed.index("_lo = bus_read8(0x80, _ad)")
+        self.assertLess(idle, low)
+        self.assertIn("recomp_phase_begin(36,", indexed)
+
+    def test_indirect_long_jump_checks_before_bank_byte(self):
+        source = generate([0xDC, 0x00, 0x20])
+        high = source.index("_hi = bus_read8")
+        check = source.index("recomp_phase_check_int();", high)
+        bank = source.index("_bk = bus_read8", check)
+        self.assertLess(high, check)
+        self.assertLess(check, bank)
+        self.assertIn("recomp_phase_begin(36,", source)
+
+    def test_direct_tail_jump_keeps_reachable_local_target_in_c(self):
+        # BNE reaches $8105 directly; the fallthrough JMP reaches the same
+        # already-decoded block and should not leave C through func_table.
+        source = generate([0xD0, 0x03, 0x4C, 0x05, 0x81, 0x6B])
+        self.assertIn("goto L_8105_M0X0;  /* $8102 JMP (local tail) */", source)
+        self.assertNotIn("func_table_call_jsr(0x808105)", source)
+
 
 if __name__ == "__main__":
     unittest.main()

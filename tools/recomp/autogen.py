@@ -233,6 +233,10 @@ def _instr_cycles(insn, bank):
         cyc += 6 + 2 * 8 + 2 * table_time               # idle + stack + table reads
     elif op == 0x22:                                   # JSL
         cyc += 6 + 3 * 8
+    elif name in ("MVN", "MVP"):                     # one repeated byte
+        dest = insn["val"] & 0xFF
+        src = (insn["val"] >> 8) & 0xFF
+        cyc += _access_time(src, 0) + _access_time(dest, 0) + 12
     elif op == 0x6C:                                   # JMP (abs)
         cyc += (_access_time(0x00, insn["val"]) +
                 _access_time(0x00, (insn["val"] + 1) & 0xFFFF))
@@ -245,6 +249,8 @@ def _instr_cycles(insn, bank):
         cyc += 18 + 2 * 8                               # 3 idles + 2 stack reads
     elif op == 0x6B:                                    # RTL
         cyc += 12 + 3 * 8                               # 2 idles + 3 stack reads
+    elif op == 0x40:                                    # RTI
+        cyc += 12 + 4 * 8                               # 2 idles + P/PC/PB pulls
     elif name in ("PHA", "PHX", "PHY", "PHB", "PHP", "PHK", "PHD"):
         wide = (name == "PHD" or
                 (name == "PHA" and _wide(insn, "m")) or
@@ -370,21 +376,16 @@ def _arithmetic(insn, name):  # ADC/SBC, including runtime decimal mode
             f"smk_op_{name.lower()}{w}(_v); }}")
 
 
-def _block_move(insn, forward, bank):  # MVN/MVP repeat until A wraps to $FFFF
+def _block_move(insn, forward):  # one MVN/MVP byte; the CFG emits the repeat
     dest = insn["val"] & 0xFF
     src = (insn["val"] >> 8) & 0xFF
     delta = "+ 1" if forward else "- 1"
-    # Each repeated byte refetches opcode+operands, performs one read/write,
-    # then two internal cycles.  Exact interrupt boundaries are an M3 concern,
-    # but ticking per byte avoids treating a large transfer as one instruction.
-    cycles = (3 * _access_time(bank, insn["pc"]) +
-              _access_time(src, 0) + _access_time(dest, 0) + 12)
     xmask = " g_cpu.X &= 0x00FF; g_cpu.Y &= 0x00FF;" if insn["x8"] else ""
-    return (f"do {{ recomp_tick({cycles}); uint8_t _v = bus_read8(0x{src:02X}, g_cpu.X); "
-            f"bus_write8(0x{dest:02X}, g_cpu.Y, _v); g_cpu.DB = 0x{dest:02X}; "
+    return (f"{{ g_cpu.DB = 0x{dest:02X}; uint8_t _v = bus_read8(0x{src:02X}, g_cpu.X); "
+            f"bus_write8(0x{dest:02X}, g_cpu.Y, _v); "
             f"g_cpu.C--; g_cpu.X = (uint16_t)(g_cpu.X {delta}); "
             f"g_cpu.Y = (uint16_t)(g_cpu.Y {delta});{xmask} "
-            f"}} while (g_cpu.C != 0xFFFF);")
+            f"}}")
 
 
 def _cmp(insn, reg, kind):  # CMP/CPX/CPY: flags from reg - src
@@ -587,7 +588,7 @@ def emit_body(insn, bank=0):
     if name in ("ADC", "SBC"):
         return _arithmetic(insn, name)
     if name in ("MVN", "MVP"):
-        return _block_move(insn, name == "MVN", bank)
+        return _block_move(insn, name == "MVN")
     if name == "CMP":
         return _cmp(insn, "A", "m")
     if name == "CPX":
@@ -651,31 +652,47 @@ def generate(data, bank, addr, P, name):
         nxt = (pc + ins["total"]) & 0xFFFF
         out.append(f"  {_cfg_label(pc, state_m, state_x)}:;")
         op = ins["op"]
-        # Block moves repeat the opcode internally and therefore own their
-        # per-byte ticks inside emit_body().
-        phase = ins["name"] not in ("MVN", "MVP")
-        if phase:
-            # JSL defers its bank operand until after PB push + idle. JSR
-            # (abs,X) defers operand-high until after its return-word push.
-            phase_fetches = ins["total"] - 1 if op in (0x22, 0xFC) else ins["total"]
-            if op in BRANCH:
-                flag, want = BRANCH[op]
-                branch_cond = f"g_cpu.flag_{flag}" if want else f"!g_cpu.flag_{flag}"
-                check_after = f"({branch_cond}) ? {ins['total']} : 1"
-            elif op in UNCOND:
-                check_after = str(ins["total"])
-            else:
-                check_after = _fetch_check_after(ins)
-            if check_after is None:
-                out.append(f"    recomp_phase_begin({_instr_cycles(ins, bank)}, 0x{bank:02X}, 0x{pc:04X}, {phase_fetches});")
-            else:
-                out.append(f"    recomp_phase_begin_checked({_instr_cycles(ins, bank)}, 0x{bank:02X}, 0x{pc:04X}, {phase_fetches}, {check_after});")
-        elif ins["name"] not in ("MVN", "MVP"):
-            out.append(f"    recomp_tick({_instr_cycles(ins, bank)});")
+        # JSL defers its bank operand until after PB push + idle. JSR
+        # (abs,X) defers operand-high until after its return-word push.
+        phase_fetches = ins["total"] - 1 if op in (0x22, 0xFC) else ins["total"]
+        if op in BRANCH:
+            flag, want = BRANCH[op]
+            branch_cond = f"g_cpu.flag_{flag}" if want else f"!g_cpu.flag_{flag}"
+            check_after = f"({branch_cond}) ? {ins['total']} : 1"
+        elif op in UNCOND:
+            check_after = str(ins["total"])
+        else:
+            check_after = _fetch_check_after(ins)
+        if check_after is None:
+            out.append(f"    recomp_phase_begin({_instr_cycles(ins, bank)}, 0x{bank:02X}, 0x{pc:04X}, {phase_fetches});")
+        else:
+            out.append(f"    recomp_phase_begin_checked({_instr_cycles(ins, bank)}, 0x{bank:02X}, 0x{pc:04X}, {phase_fetches}, {check_after});")
         idle, stack = _phase_tail(ins)
-        if op in TERMINALS:
+        if ins["name"] in ("MVN", "MVP"):
+            # The hardware rewinds PC and refetches all three bytes for each
+            # transferred byte.  End every iteration with idle/check/idle so
+            # an interrupt or video boundary resumes at the correct PC.
+            out.append(f"    {emit_body(ins, bank):<46s} /* ${pc:04X} {ins['name']} */")
+            out.append("    recomp_phase_idle(6);")
+            out.append("    recomp_phase_check_int();")
+            out.append("    recomp_phase_idle(6);")
+            out.append("    recomp_phase_end(0, 0);")
+            out.append(f"    if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(g_cpu.C != 0xFFFF ? 0x{(bank << 16) | pc:06X} : 0x{(bank << 16) | nxt:06X}); return; }}")
+            out.append(f"    if (g_cpu.C != 0xFFFF) goto {_cfg_label(pc, state_m, state_x)};")
+            out.append(f"    goto {_cfg_label(nxt, nm, nx)};")
+        elif op in TERMINALS:
             if op in (0x60, 0x6B):
                 out.append(f"    recomp_phase_return({'true' if op == 0x6B else 'false'});")
+            elif op == 0x40:
+                out.append("    recomp_phase_idle(12);")
+                out.append("    { uint8_t _p = recomp_stack_pull8();")
+                out.append("      cpu_set_p(_p);")
+                out.append("      uint16_t _pc = recomp_stack_pull16(false);")
+                out.append("      recomp_phase_check_int();")
+                out.append("      uint8_t _pb = recomp_stack_pull8();")
+                out.append("      g_cpu.PB = _pb;")
+                out.append("      recomp_phase_end(0, 0);")
+                out.append("      recomp_set_redirect(((uint32_t)_pb << 16) | _pc); }")
             else:
                 out.append(f"    recomp_phase_end({idle}, {stack});")
             out.append("    (void)recomp_phase_interrupt_pending();")

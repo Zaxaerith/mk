@@ -207,3 +207,12 @@ is the boundary that motivates the timed/cycle-accurate model.
   local C gotos; this removes three unnecessary fallback exits in the generated set. Thirty
   generator tests and both standard ROM gates remain green; the default set's only raw changes
   are dead stack scratch caused by avoiding those fallback return frames.
+- Replaced aggregate MVN/MVP loops with one bus-visible iteration per C CFG pass. Each byte now
+  refetches the three-byte instruction, sets DB before the source read, performs the destination
+  write, updates A/X/Y, and ends with LakeSnes's idle/check/idle sequence. A timing yield resumes
+  at the block-move opcode until A wraps, then at the following PC. RTI now idles twice, restores
+  P and PC, samples interrupts with the restored I flag, pulls PB, and leaves through the redirect
+  protocol rather than the interception hook's synthetic RTS/RTL. `cpu_set_p` also enforces E-mode
+  M/X and immediate X/Y narrowing. Thirty-one generator tests, the Release build, the 2,715-hit
+  raw F638 gate, and the 11,794-hit default gate remain green. The standard 32 generated functions
+  contain none of MVN/MVP/RTI, so focused synthetic coverage is not yet a ROM-level proof.

@@ -122,12 +122,20 @@ ignored region. The default 18-function set also remains byte-identical outside 
 dead stack-scratch range; after the PB/fallback correction it executes 11,794 native
 interceptions on the same route (up from the earlier 6,801 checkpoint).
 
+MVN/MVP now run as individually timed hardware iterations: each byte refetches the instruction,
+sets DB before source access, performs the ordered read/write and register updates, then executes
+idle/check/idle. A boundary yield resumes at the opcode while A has not wrapped. RTI now restores
+P/PC/PB using the LakeSnes idle/pull/check sequence and redirects without a synthetic RTS/RTL;
+status restoration also enforces emulation-mode M/X and index narrowing. These opcodes have
+focused synthetic tests but are absent from the current 32 generated functions, so a real ROM
+closure containing them remains an explicit gate rather than an inferred success.
+
 This is a closure-specific success, not completion of M3. The new micro-phase layer is covered by
-30 generator tests, and the `$81:F638` closure still passes all 140 raw snapshots after the
-change. `SMK_RECOMP_PHASE_YIELD=1` remains experimental until the remaining generated/control
-cases and exact block-move, RTI, page/direct-page, DMA-stall, and open-bus ordering are
-modeled. The fallback call-frame protocol is stack-safe, but fallback execution remains
-intentionally untimed and therefore is not part of the exact-closure claim.
+31 generator tests, and the `$81:F638` closure still passes all 140 raw snapshots after the
+change. `SMK_RECOMP_PHASE_YIELD=1` remains experimental until the remaining page/direct-page,
+DMA-stall, open-bus, and unexercised control cases are modeled and gated. The fallback call-frame
+protocol is stack-safe, but fallback execution remains intentionally untimed and therefore is not
+part of the exact-closure claim.
 
 - Move from aggregate instruction costs to bus-phase-accurate fetch/read/write/idle timing.
 - Allow NMI/IRQ recognition at the same instruction boundaries as LakeSnes.

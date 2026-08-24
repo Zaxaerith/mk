@@ -36,8 +36,9 @@ the live CPU flags. On the standard route, all 305 not-yet-registered direct tar
 combined with 56 registered targets this is 361/361 observed-target generation coverage.
 Important gaps remain:
 
-- general exact timing: the remaining interrupt recognition cases, DMA stalls, open-bus
-  behavior, and ROM closures for the newly ordered block-move/RTI/control cases;
+- general exact timing: the remaining interrupt recognition cases, aggregate-path DMA/open-bus
+  approximations, direct internal-latch validation, and ROM closures for the newly ordered
+  block-move/RTI/control cases;
 - complete discovery of indirect call-table targets and all entry flag variants;
 - a C-owned reset/NMI/main-frame scheduler that can finish race initialization without
   falling back to `snes_runFrame`;
@@ -127,7 +128,7 @@ sets DB before source access, performs the ordered read/write and register updat
 idle/check/idle. A boundary yield resumes at the opcode while A has not wrapped. RTI now restores
 P/PC/PB using the LakeSnes idle/pull/check sequence and redirects without a synthetic RTS/RTL;
 status restoration also enforces emulation-mode M/X and index narrowing. These opcodes have
-focused synthetic tests but are absent from the current 32 generated functions, so a real ROM
+focused synthetic tests but are absent from the current 33 generated functions, so a real ROM
 closure containing them remains an explicit gate rather than an inferred success.
 
 Generated addressing modes now reproduce LakeSnes's runtime-dependent idle phases. A nonzero DP
@@ -138,11 +139,19 @@ always idle; and stack-relative indirect places one idle on each side of its poi
 runtime penalty helper performs a true CPU idle in bus-phase mode and an extra aggregate tick
 otherwise. Regenerating the standard set emits 224 potential penalty sites.
 
+The hardware-touching `$80:946E` OAM-DMA leaf is now generated instead of using its old instant
+hand-written body. Its write to `$420B` and the next instruction's opcode/operand fetches are
+separate LakeSnes bus operations, preserving the emulator's deferred DMA arm/execute sequence.
+The focused gate executes 1,071 native interceptions and matches all 140 raw snapshots through
+frame 1,400. Bus-phase reads and writes also inherit LakeSnes's open-bus updates directly. This
+closes the exercised DMA-stall case, while the aggregate path remains approximate and the
+snapshot format still does not directly assert internal open-bus/DMA latch state.
+
 This is a closure-specific success, not completion of M3. The new micro-phase layer is covered by
-34 generator tests, and the `$81:F638` closure still passes all 140 raw snapshots after the
+35 generator tests, and the `$81:F638` closure still passes all 140 raw snapshots after the
 change. The default 18-function gate also remains identical outside `$1F00-$1FFF` across all 140
-samples. `SMK_RECOMP_PHASE_YIELD=1` remains experimental until DMA-stall, open-bus, and
-unexercised control cases are modeled and gated. The fallback call-frame
+samples. `SMK_RECOMP_PHASE_YIELD=1` remains experimental until the remaining interrupt,
+internal-latch, aggregate-path, and unexercised control cases are modeled and gated. The fallback call-frame
 protocol is stack-safe, but fallback execution remains intentionally untimed and therefore is not
 part of the exact-closure claim.
 

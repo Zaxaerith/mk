@@ -225,3 +225,11 @@ is the boundary that motivates the timed/cycle-accurate model.
   set. Thirty-four generator tests, Release, the raw 2,715-hit F638 gate, and the functional
   11,794-hit default gate all pass; the latter's remaining raw bytes stay solely in dead stack
   scratch `$1F00-$1FFF`.
+- Replaced the hand-written `$80:946E` OAM-DMA approximation with a generated bus-phase body.
+  The `STA $420B` trigger, following opcode fetch, and following operand fetch now traverse
+  LakeSnes separately, so its deferred DMA state machine stalls the CPU before `REP` executes;
+  the same direct bus calls preserve LakeSnes open-bus updates. The focused gate executes 1,071
+  interceptions and matches 140/140 raw snapshots through frame 1,400, superseding the old
+  86-frame limit. Thirty-five generator tests, Release, the 2,715-hit raw F638 gate, and the
+  11,794-hit functional default gate remain green. The aggregate path and internal-latch-only
+  assertions remain outside this exact claim.

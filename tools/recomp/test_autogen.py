@@ -321,6 +321,20 @@ class CheckIntMicrophaseTests(unittest.TestCase):
         self.assertIn("smk_ea_sr(0x11)", stack)
         self.assertIn("smk_ea_sriy(0x12)", stack)
 
+    def test_dma_trigger_is_followed_by_real_instruction_fetch_phases(self):
+        # STA $420B starts DMA only after its own write. The following REP's
+        # opcode fetch arms LakeSnes's state machine and its operand fetch lets
+        # the transfer stall the CPU, so both fetches must remain explicit.
+        source = generate([0x8D, 0x0B, 0x42, 0xC2, 0x30, 0x60], p=0x30)
+        trigger = source.index("bus_write8_checked(g_cpu.DB, 0x420B")
+        end = source.index("recomp_phase_end(0, 0);", trigger)
+        next_fetches = source.index(
+            "recomp_phase_begin_checked(18, 0x80, 0x8103, 2, 2);", end)
+        rep = source.index("op_rep(0x30);", next_fetches)
+        self.assertLess(trigger, end)
+        self.assertLess(end, next_fetches)
+        self.assertLess(next_fetches, rep)
+
     def test_branch_check_depends_on_taken_path(self):
         source = generate([0xF0, 0x01, 0xEA, 0x6B])
         self.assertIn("recomp_phase_begin_checked(12, 0x80, 0x8100, 2, (g_cpu.flag_Z) ? 2 : 1)", source)

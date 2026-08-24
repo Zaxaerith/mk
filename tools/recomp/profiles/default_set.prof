@@ -1,5 +1,8 @@
 # Profiled functions emitted into smk_autogen.c. main.c owns the smaller
 # oracle-gated default interception set; transition-sensitive bodies stay opt-in.
+# Hardware-touching OAM DMA leaf: generated here so its CPU accesses drive the
+# LakeSnes DMA state machine one bus phase at a time. It remains opt-in.
+PROF 80946E 0        30
 PROF 80F90A 4840     00 
 PROF 80A01F 1870     00 
 PROF 80A027 1870     00 

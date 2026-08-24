@@ -239,10 +239,14 @@ is still opt-in. Its generated immediate, data, implied, branch, RMW, stack, cal
 paths now use LakeSnes-style `checkInt` micro-phases. MVN/MVP now execute one hardware-style
 iteration at a time (including opcode refetch, read/write, idle/check/idle, and resumable PC),
 and RTI restores P/PC/PB in LakeSnes pull/check order. These three opcodes have focused generator
-coverage but do not occur in the current 32-function generated set, so they still need a ROM-level
+coverage but do not occur in the current 33-function generated set, so they still need a ROM-level
 closure gate. Generated memory modes now also place LakeSnes's dynamic DP-low, DP-index,
 absolute-index page/write/width, and stack-relative idle penalties before the correct pointer or
-data access. DMA stalls and open-bus cases remain M3 work. JSL and
+data access. The generated `$80:946E` OAM-DMA leaf now drives LakeSnes one bus phase at a time:
+1,071 interceptions match all 140 raw snapshots of the 1,400-frame oracle. Because those bus
+accesses call LakeSnes directly, its DMA stall state machine and open-bus updates are preserved;
+the legacy aggregate path remains approximate, and internal bus latches are not part of the
+snapshot format. JSL and
 `JSR (abs,X)` now also preserve their non-linear operand/stack fetch order; an all-C JSL child
 closure is still needed for the same ROM-level proof already held by the indirect-JSR closure.
 All five JMP/JML tail forms now have ordered bus-phase emission, with local decoded targets kept

@@ -33,10 +33,11 @@ state when the documented dead stack-scratch range `$1F00-$1FFF` is excluded.
 - Bus-phase timing remains opt-in. Generated immediate, implied, branch, data-access, RMW,
   stack, JSR/JSL, RTS, and RTL paths now place `checkInt` at their LakeSnes micro-phase. MVN/MVP
   and RTI now also have ordered micro-phase implementations. They do not occur in the current 32
-  generated functions, however, so ROM-level closure coverage is still missing. DMA stalls,
-  page/direct-page penalties, and open-bus behavior still need exact modeling. JSL and indirect
-  JMP/JML ordering are implemented, but still need standard-route all-C child closures for
-  ROM-level validation.
+  generated functions, however, so ROM-level closure coverage is still missing. Generated direct
+  page, absolute-indexed, direct-page-indirect, and stack-relative modes now apply their dynamic
+  LakeSnes addressing idles in bus order. DMA stalls and open-bus behavior still need exact
+  modeling. JSL and indirect JMP/JML ordering are implemented, but still need standard-route
+  all-C child closures for ROM-level validation.
 - Passing the standard route does not prove every game mode, character, cup, track, multiplayer
   path, or long-running race.
 - Interpreter fallback is stack-safe but intentionally untimed; it is excluded from exact-closure
@@ -121,7 +122,7 @@ state.
 
 ## Publication checks
 
-The current M3e commits remain local. The working tree was audited for the first five items below;
+The current M3f commits remain local. The working tree was audited for the first five items below;
 before any future push, repeat the audit and publish the submodule commit before its parent gitlink:
 
 - the ROM is ignored and absent from the Git index;
@@ -129,5 +130,5 @@ before any future push, repeat the audit and publish the submodule commit before
 - no absolute local filesystem paths, credentials, access tokens, or private keys are present in
   the branch diff;
 - the generated source is reproducible from the checked-in generator/profile;
-- the 31 Python generator tests and the Visual Studio Release build pass;
+- the 34 Python generator tests and the Visual Studio Release build pass;
 - the parent gitlink must resolve to a published `snesrecomp` contribution-branch commit.

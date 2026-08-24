@@ -240,7 +240,9 @@ paths now use LakeSnes-style `checkInt` micro-phases. MVN/MVP now execute one ha
 iteration at a time (including opcode refetch, read/write, idle/check/idle, and resumable PC),
 and RTI restores P/PC/PB in LakeSnes pull/check order. These three opcodes have focused generator
 coverage but do not occur in the current 32-function generated set, so they still need a ROM-level
-closure gate. Page/direct-page penalties, DMA stalls, and open-bus cases remain M3 work. JSL and
+closure gate. Generated memory modes now also place LakeSnes's dynamic DP-low, DP-index,
+absolute-index page/write/width, and stack-relative idle penalties before the correct pointer or
+data access. DMA stalls and open-bus cases remain M3 work. JSL and
 `JSR (abs,X)` now also preserve their non-linear operand/stack fetch order; an all-C JSL child
 closure is still needed for the same ROM-level proof already held by the indirect-JSR closure.
 All five JMP/JML tail forms now have ordered bus-phase emission, with local decoded targets kept

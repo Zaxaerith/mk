@@ -283,6 +283,44 @@ class CheckIntMicrophaseTests(unittest.TestCase):
         self.assertLess(read, idle)
         self.assertLess(idle, write)
 
+    def test_direct_page_and_index_penalties_precede_data_access(self):
+        dp = generate([0xA5, 0x10, 0x6B], p=0x30)
+        begin = dp.index("recomp_phase_begin(20,")
+        penalty = dp.index("if (g_cpu.DP & 0x00FF) recomp_phase_penalty(6);", begin)
+        read = dp.index("bus_read8_checked", penalty)
+        self.assertLess(begin, penalty)
+        self.assertLess(penalty, read)
+
+        dpx = generate([0xB5, 0x10, 0x6B], p=0x30)
+        dp_penalty = dpx.index("if (g_cpu.DP & 0x00FF) recomp_phase_penalty(6);")
+        index_penalty = dpx.index("recomp_phase_penalty(6);", dp_penalty + 1)
+        read = dpx.index("bus_read8_checked", index_penalty)
+        self.assertLess(dp_penalty, index_penalty)
+        self.assertLess(index_penalty, read)
+
+    def test_absolute_index_penalty_distinguishes_reads_and_writes(self):
+        read = generate([0xBD, 0xF0, 0x12, 0x6B], p=0x30)
+        condition = ("if (!g_cpu.flag_X || ((0x12F0 >> 8) != "
+                     "((0x12F0 + (uint32_t)g_cpu.X) >> 8))) "
+                     "recomp_phase_penalty(6);")
+        self.assertIn(condition, read)
+        self.assertLess(read.index(condition), read.index("bus_read8_checked"))
+
+        write = generate([0x9D, 0xF0, 0x12, 0x6B], p=0x30)
+        self.assertNotIn("!g_cpu.flag_X", write)
+        self.assertLess(write.index("recomp_phase_penalty(6);"),
+                        write.index("bus_write8_checked"))
+
+    def test_indirect_index_helpers_receive_access_kind(self):
+        read = generate([0xB1, 0x10, 0x6B], p=0x30)
+        self.assertIn("smk_ea_dpiy(0x10, false)", read)
+        write = generate([0x91, 0x10, 0x6B], p=0x30)
+        self.assertIn("smk_ea_dpiy(0x10, true)", write)
+
+        stack = generate([0xA3, 0x11, 0xB3, 0x12, 0x6B], p=0x30)
+        self.assertIn("smk_ea_sr(0x11)", stack)
+        self.assertIn("smk_ea_sriy(0x12)", stack)
+
     def test_branch_check_depends_on_taken_path(self):
         source = generate([0xF0, 0x01, 0xEA, 0x6B])
         self.assertIn("recomp_phase_begin_checked(12, 0x80, 0x8100, 2, (g_cpu.flag_Z) ? 2 : 1)", source)

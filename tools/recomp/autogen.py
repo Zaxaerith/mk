@@ -301,9 +301,38 @@ def _fetch_check_after(insn):
     return None
 
 
+def _address_phase_prelude(insn):
+    """LakeSnes addressing idles that occur after operand fetches.
+
+    Indirect modes own their idles in smk_ea_* because some penalties occur
+    after pointer reads. Static modes can emit them before the data semantics.
+    """
+    name, mode, val = insn["name"], insn["mode"], insn["val"]
+    out = []
+    if mode in ("dp", "dpx", "dpy"):
+        out.append("if (g_cpu.DP & 0x00FF) recomp_phase_penalty(6);")
+        if mode in ("dpx", "dpy"):
+            out.append("recomp_phase_penalty(6);")
+    elif mode in ("absx", "absy"):
+        write = name in _WRITE or name in _RMW or name in ("TSB", "TRB")
+        index = "g_cpu.X" if mode == "absx" else "g_cpu.Y"
+        if write:
+            out.append("recomp_phase_penalty(6);")
+        else:
+            out.append(
+                f"if (!g_cpu.flag_X || ((0x{val:04X} >> 8) != "
+                f"((0x{val:04X} + (uint32_t){index}) >> 8))) "
+                "recomp_phase_penalty(6);"
+            )
+    # Stack-relative forms are represented by smk_ea_sr/sriy helpers, which
+    # own their idles so indirect timing can straddle the pointer reads.
+    return out
+
+
 def _phase_prelude(insn):
     """Timed microphases that precede the C-level architectural semantics."""
     name = insn["name"]
+    out = _address_phase_prelude(insn)
     pushes = {"PHA", "PHX", "PHY", "PHD"}
     pulls = {"PLA", "PLX", "PLY", "PLD"}
     byte_pushes = {"PHP", "PHB", "PHK"}
@@ -311,18 +340,18 @@ def _phase_prelude(insn):
     if name in pushes:
         kind = "m" if name == "PHA" else "x"
         wide = name == "PHD" or _wide(insn, kind)
-        return ["recomp_phase_idle(6);"] + ([] if wide else ["recomp_phase_check_int();"])
+        out += ["recomp_phase_idle(6);"] + ([] if wide else ["recomp_phase_check_int();"])
     if name in pulls:
         kind = "m" if name == "PLA" else "x"
         wide = name == "PLD" or _wide(insn, kind)
-        return ["recomp_phase_idle(12);"] + ([] if wide else ["recomp_phase_check_int();"])
+        out += ["recomp_phase_idle(12);"] + ([] if wide else ["recomp_phase_check_int();"])
     if name in byte_pushes:
-        return ["recomp_phase_idle(6);", "recomp_phase_check_int();"]
+        out += ["recomp_phase_idle(6);", "recomp_phase_check_int();"]
     if name in byte_pulls:
-        return ["recomp_phase_idle(12);", "recomp_phase_check_int();"]
+        out += ["recomp_phase_idle(12);", "recomp_phase_check_int();"]
     if name == "XBA":
-        return ["recomp_phase_idle(6);", "recomp_phase_check_int();"]
-    return []
+        out += ["recomp_phase_idle(6);", "recomp_phase_check_int();"]
+    return out
 
 
 def _reg_write(reg, w, v):
@@ -354,7 +383,8 @@ def _src(insn, w):
         bank, addr = _ea(mode, val)
         return f"bus_read{w}_checked({bank}, {addr})"
     if mode in INDIRECT_MODES:
-        return f"smk_bus_read{w}_24_checked(smk_ea_{mode}(0x{val:02X}))"
+        write_arg = ", false" if mode == "dpiy" else ""
+        return f"smk_bus_read{w}_24_checked(smk_ea_{mode}(0x{val:02X}{write_arg}))"
     raise Unsupported(f"{insn['name']} {mode}")
 
 
@@ -471,7 +501,8 @@ def _store(insn, reg, kind):
         raise Unsupported(f"{insn['name']} {mode}")
     v = "0" if reg is None else _reg_read(reg, w)
     if mode in INDIRECT_MODES:
-        return f"smk_bus_write{w}_24_checked(smk_ea_{mode}(0x{val:02X}), (uint{w}_t)({v}));"
+        write_arg = ", true" if mode == "dpiy" else ""
+        return f"smk_bus_write{w}_24_checked(smk_ea_{mode}(0x{val:02X}{write_arg}), (uint{w}_t)({v}));"
     bank, addr = _ea(mode, val)
     return f"bus_write{w}_checked({bank}, {addr}, (uint{w}_t)({v}));"
 

@@ -216,3 +216,12 @@ is the boundary that motivates the timed/cycle-accurate model.
   M/X and immediate X/Y narrowing. Thirty-one generator tests, the Release build, the 2,715-hit
   raw F638 gate, and the 11,794-hit default gate remain green. The standard 32 generated functions
   contain none of MVN/MVP/RTI, so focused synthetic coverage is not yet a ROM-level proof.
+- Added dynamic addressing-mode penalties in their LakeSnes bus positions. Direct-page forms idle
+  when DP's low byte is nonzero; DP-indexed and stack-relative forms perform their fixed idles;
+  `(dp),Y` and absolute indexed reads test live X width and page crossing, while writes/RMW always
+  idle. Indirect helpers keep penalties on the correct side of pointer reads. The shared runtime
+  helper becomes a CPU idle in bus-phase mode and an aggregate tick otherwise, so generated code
+  does not double-count either path. Regeneration adds 224 potential penalty sites to the standard
+  set. Thirty-four generator tests, Release, the raw 2,715-hit F638 gate, and the functional
+  11,794-hit default gate all pass; the latter's remaining raw bytes stay solely in dead stack
+  scratch `$1F00-$1FFF`.

@@ -73,34 +73,49 @@ static inline uint32_t smk_dp_pointer24(uint16_t address) {
 }
 
 static inline uint32_t smk_ea_dpi(uint8_t operand) {
+    if (g_cpu.DP & 0x00FF) recomp_phase_penalty(6);
     uint16_t pointer = smk_dp_pointer16((uint16_t)(g_cpu.DP + operand));
     return ((uint32_t)g_cpu.DB << 16) | pointer;
 }
 
 static inline uint32_t smk_ea_dpxi(uint8_t operand) {
+    if (g_cpu.DP & 0x00FF) recomp_phase_penalty(6);
+    recomp_phase_penalty(6);
     uint16_t address = (uint16_t)(g_cpu.DP + operand + g_cpu.X);
     uint16_t pointer = smk_dp_pointer16(address);
     return ((uint32_t)g_cpu.DB << 16) | pointer;
 }
 
-static inline uint32_t smk_ea_dpiy(uint8_t operand) {
-    return (smk_ea_dpi(operand) + g_cpu.Y) & 0xFFFFFFu;
+static inline uint32_t smk_ea_dpiy(uint8_t operand, bool write) {
+    if (g_cpu.DP & 0x00FF) recomp_phase_penalty(6);
+    uint16_t pointer = smk_dp_pointer16((uint16_t)(g_cpu.DP + operand));
+    if (write || !g_cpu.flag_X ||
+        ((pointer >> 8) != ((pointer + (uint32_t)g_cpu.Y) >> 8))) {
+        recomp_phase_penalty(6);
+    }
+    return (((uint32_t)g_cpu.DB << 16) + pointer + g_cpu.Y) & 0xFFFFFFu;
 }
 
 static inline uint32_t smk_ea_dpil(uint8_t operand) {
+    if (g_cpu.DP & 0x00FF) recomp_phase_penalty(6);
     return smk_dp_pointer24((uint16_t)(g_cpu.DP + operand));
 }
 
 static inline uint32_t smk_ea_dpily(uint8_t operand) {
-    return (smk_ea_dpil(operand) + g_cpu.Y) & 0xFFFFFFu;
+    if (g_cpu.DP & 0x00FF) recomp_phase_penalty(6);
+    return (smk_dp_pointer24((uint16_t)(g_cpu.DP + operand)) + g_cpu.Y) &
+           0xFFFFFFu;
 }
 
 static inline uint32_t smk_ea_sr(uint8_t operand) {
+    recomp_phase_penalty(6);
     return (uint16_t)(g_cpu.S + operand);
 }
 
 static inline uint32_t smk_ea_sriy(uint8_t operand) {
+    recomp_phase_penalty(6);
     uint16_t pointer = smk_dp_pointer16((uint16_t)(g_cpu.S + operand));
+    recomp_phase_penalty(6);
     return (((uint32_t)g_cpu.DB << 16) + pointer + g_cpu.Y) & 0xFFFFFFu;
 }
 

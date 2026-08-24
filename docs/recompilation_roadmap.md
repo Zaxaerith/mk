@@ -36,8 +36,8 @@ the live CPU flags. On the standard route, all 305 not-yet-registered direct tar
 combined with 56 registered targets this is 361/361 observed-target generation coverage.
 Important gaps remain:
 
-- general exact timing: page/direct-page penalties, the remaining interrupt recognition cases,
-  DMA stalls, and the precise bus order of block-move/interrupt instructions;
+- general exact timing: the remaining interrupt recognition cases, DMA stalls, open-bus
+  behavior, and ROM closures for the newly ordered block-move/RTI/control cases;
 - complete discovery of indirect call-table targets and all entry flag variants;
 - a C-owned reset/NMI/main-frame scheduler that can finish race initialization without
   falling back to `snes_runFrame`;
@@ -130,10 +130,19 @@ status restoration also enforces emulation-mode M/X and index narrowing. These o
 focused synthetic tests but are absent from the current 32 generated functions, so a real ROM
 closure containing them remains an explicit gate rather than an inferred success.
 
+Generated addressing modes now reproduce LakeSnes's runtime-dependent idle phases. A nonzero DP
+low byte adds its idle before direct-page address/pointer access; DP-indexed forms add their fixed
+index idle; `(dp),Y` distinguishes reads from writes and tests X width/page crossing after its
+pointer word; absolute indexed reads use the same live-width/page test while writes and RMW forms
+always idle; and stack-relative indirect places one idle on each side of its pointer read. A new
+runtime penalty helper performs a true CPU idle in bus-phase mode and an extra aggregate tick
+otherwise. Regenerating the standard set emits 224 potential penalty sites.
+
 This is a closure-specific success, not completion of M3. The new micro-phase layer is covered by
-31 generator tests, and the `$81:F638` closure still passes all 140 raw snapshots after the
-change. `SMK_RECOMP_PHASE_YIELD=1` remains experimental until the remaining page/direct-page,
-DMA-stall, open-bus, and unexercised control cases are modeled and gated. The fallback call-frame
+34 generator tests, and the `$81:F638` closure still passes all 140 raw snapshots after the
+change. The default 18-function gate also remains identical outside `$1F00-$1FFF` across all 140
+samples. `SMK_RECOMP_PHASE_YIELD=1` remains experimental until DMA-stall, open-bus, and
+unexercised control cases are modeled and gated. The fallback call-frame
 protocol is stack-safe, but fallback execution remains intentionally untimed and therefore is not
 part of the exact-closure claim.
 

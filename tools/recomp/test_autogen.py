@@ -116,15 +116,17 @@ class AdditionalOpcodeTests(unittest.TestCase):
         self.assertLess(read, end)
         self.assertIn("recomp_phase_interrupt_pending()", source)
 
-    def test_indirect_jsr_times_table_before_stack_and_callee(self):
+    def test_indirect_jsr_pushes_before_operand_high_and_table(self):
         source = generate([0xFC, 0x00, 0x82, 0x6B])
-        begin = source.index("recomp_phase_begin(52,")
+        begin = source.index("recomp_phase_begin(52, 0x80, 0x8100, 2)")
+        stack = source.index("recomp_phase_call_enter_indirect(0x8102, 0x80)")
         table = source.index("bus_read16_checked(0x80")
-        stack = source.index("recomp_phase_call_enter(0x8102, 0x80, 0x80, false, false)")
+        end = source.index("recomp_phase_end(0, 0);", table)
         call = source.index("func_table_call_with_frame")
-        self.assertLess(begin, table)
-        self.assertLess(table, stack)
-        self.assertLess(stack, call)
+        self.assertLess(begin, stack)
+        self.assertLess(stack, table)
+        self.assertLess(table, end)
+        self.assertLess(end, call)
         self.assertIn("recomp_set_redirect(((uint32_t)0x80 << 16) | _t)", source)
         self.assertIn("recomp_phase_call_leave(_frame, _frame_consumed);", source)
         self.assertIn("recomp_set_redirect(0x808103)", source)
@@ -149,6 +151,7 @@ class AdditionalOpcodeTests(unittest.TestCase):
         self.assertIn("recomp_phase_call_leave(_frame_8100_M0X0, _frame_consumed_8100_M0X0)", jsr)
 
         jsl = generate([0x22, 0x05, 0x81, 0x81, 0x6B, 0x6B])
+        self.assertIn("recomp_phase_begin(54, 0x80, 0x8100, 3)", jsl)
         self.assertIn("recomp_phase_call_enter(0x8103, 0x80, 0x81, true, true)", jsl)
         self.assertIn("func_table_call_with_frame(0x818105, true", jsl)
         self.assertIn("recomp_phase_call_leave(_frame_8100_M0X0, _frame_consumed_8100_M0X0)", jsl)

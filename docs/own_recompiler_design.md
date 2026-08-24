@@ -195,3 +195,9 @@ is the boundary that motivates the timed/cycle-accurate model.
   RTL. The suite now has 26 focused generator tests. Rebuilding all 32 generated functions keeps
   the `$81:F638` closure raw-byte-identical for 140/140 snapshots and the default 18-function
   set byte-identical outside its documented dead stack scratch.
+- Split the two non-linear call fetch sequences. JSL now delays its bank operand until after the
+  old PB push and idle; `JSR (abs,X)` pushes its return word between the low and high operand
+  fetches, then idles before the checked jump-table word. The F638 closure executes that indirect
+  sequence twice per root invocation and remains raw-byte-identical across 2,715 calls. JSL has
+  generator/build coverage, while a fully registered child closure is still needed for its
+  ROM-level timing gate.

@@ -37,7 +37,7 @@ combined with 56 registered targets this is 361/361 observed-target generation c
 Important gaps remain:
 
 - general exact timing: page/direct-page penalties, the remaining interrupt recognition cases,
-  DMA stalls, and the precise bus order of long calls, jumps, and block-move instructions;
+  DMA stalls, and the precise bus order of jumps and block-move instructions;
 - complete discovery of indirect call-table targets and all entry flag variants;
 - a C-owned reset/NMI/main-frame scheduler that can finish race initialization without
   falling back to `snes_runFrame`;
@@ -97,6 +97,13 @@ different fetch phases; and stack, JSR/JSL, RTS, and RTL paths sample between th
 push/pull phases. Sampling only latches LakeSnes `intWanted`; yielding remains an instruction-
 boundary operation, so a partially executed C instruction is never exposed.
 
+Call fetch ordering is now split where the 65C816 sequence is non-linear. JSL fetches only its
+opcode and 16-bit address before pushing PB, idles, fetches the bank operand, then pushes the
+checked return word. `JSR (abs,X)` fetches opcode+operand-low, pushes its unchecked return word,
+fetches operand-high, idles, and performs the checked table-word read. The F638 closure exercises
+the latter twice per root call and remains byte-identical; the JSL sequence is structurally tested
+and compiled, but still needs an all-C JSL child closure for an equivalent ROM gate.
+
 The `$81:F638` eight-target closure now passes the first M3 hard gate. The earlier apparent
 frame-1040 failure was a validation configuration error: with the default `SMK_INTERP=ON`, each
 registered indirect child ran through the untimed interpreter fallback. Its six-instruction
@@ -110,9 +117,9 @@ interceptions on the same route (up from the earlier 6,801 checkpoint).
 This is a closure-specific success, not completion of M3. The new micro-phase layer is covered by
 26 generator tests, and the `$81:F638` closure still passes all 140 raw snapshots after the
 change. `SMK_RECOMP_PHASE_YIELD=1` remains experimental until the remaining generated/control
-cases and exact long-call operand, indirect-jump, block-move, page/direct-page, DMA-stall, and
-open-bus ordering are modeled. The fallback call-frame protocol is stack-safe, but fallback
-execution remains intentionally untimed and therefore is not part of the exact-closure claim.
+cases and exact indirect-jump, block-move, page/direct-page, DMA-stall, and open-bus ordering are
+modeled. The fallback call-frame protocol is stack-safe, but fallback execution remains
+intentionally untimed and therefore is not part of the exact-closure claim.
 
 - Move from aggregate instruction costs to bus-phase-accurate fetch/read/write/idle timing.
 - Allow NMI/IRQ recognition at the same instruction boundaries as LakeSnes.

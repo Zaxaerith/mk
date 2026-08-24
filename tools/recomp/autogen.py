@@ -643,6 +643,9 @@ def generate(data, bank, addr, P, name):
         # per-byte ticks inside emit_body().
         phase = (ins["name"] not in ("MVN", "MVP") and op not in TAILJMP)
         if phase:
+            # JSL defers its bank operand until after PB push + idle. JSR
+            # (abs,X) defers operand-high until after its return-word push.
+            phase_fetches = ins["total"] - 1 if op in (0x22, 0xFC) else ins["total"]
             if op in BRANCH:
                 flag, want = BRANCH[op]
                 branch_cond = f"g_cpu.flag_{flag}" if want else f"!g_cpu.flag_{flag}"
@@ -652,9 +655,9 @@ def generate(data, bank, addr, P, name):
             else:
                 check_after = _fetch_check_after(ins)
             if check_after is None:
-                out.append(f"    recomp_phase_begin({_instr_cycles(ins, bank)}, 0x{bank:02X}, 0x{pc:04X}, {ins['total']});")
+                out.append(f"    recomp_phase_begin({_instr_cycles(ins, bank)}, 0x{bank:02X}, 0x{pc:04X}, {phase_fetches});")
             else:
-                out.append(f"    recomp_phase_begin_checked({_instr_cycles(ins, bank)}, 0x{bank:02X}, 0x{pc:04X}, {ins['total']}, {check_after});")
+                out.append(f"    recomp_phase_begin_checked({_instr_cycles(ins, bank)}, 0x{bank:02X}, 0x{pc:04X}, {phase_fetches}, {check_after});")
         elif ins["name"] not in ("MVN", "MVP"):
             out.append(f"    recomp_tick({_instr_cycles(ins, bank)});")
         idle, stack = _phase_tail(ins)
@@ -667,10 +670,11 @@ def generate(data, bank, addr, P, name):
             out.append(f"    return;            /* ${pc:04X} {ins['name']} */")
         elif op in CALL:
             if op == 0xFC:
-                # JSR (abs,X): table reads are part of the calling instruction,
-                # not the callee. Time them before its idle/stack-write phases.
-                out.append(f"    {{ uint16_t _t = bus_read16_checked(0x{bank:02X}, (uint16_t)(0x{ins['val']:04X} + g_cpu.X));")
-                out.append(f"      recomp_call_frame_t _frame = recomp_phase_call_enter(0x{(nxt - 1) & 0xFFFF:04X}, 0x{bank:02X}, 0x{bank:02X}, false, false);")
+                # JSR (abs,X): opcode+operand-low, return-word push,
+                # operand-high, idle, checked jump-table word.
+                out.append(f"    {{ recomp_call_frame_t _frame = recomp_phase_call_enter_indirect(0x{(nxt - 1) & 0xFFFF:04X}, 0x{bank:02X});")
+                out.append(f"      uint16_t _t = bus_read16_checked(0x{bank:02X}, (uint16_t)(0x{ins['val']:04X} + g_cpu.X));")
+                out.append("      recomp_phase_end(0, 0);")
                 out.append(f"      if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(((uint32_t)0x{bank:02X} << 16) | _t); return; }}")
                 out.append(f"      bool _frame_consumed = func_table_call_with_frame(((uint32_t)0x{bank:02X} << 16) | _t, false, &_frame);")
                 out.append("      if (recomp_redirect_pending()) return;")

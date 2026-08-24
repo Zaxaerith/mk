@@ -859,7 +859,7 @@ RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBDE); return; }
     goto L_BBDE_M0X0;
   L_BBDE_M0X0:;
-    recomp_phase_begin(54, 0x80, 0xBBDE, 4);
+    recomp_phase_begin(54, 0x80, 0xBBDE, 3);
     recomp_call_frame_t _frame_BBDE_M0X0 = recomp_phase_call_enter(0xBBE1, 0x80, 0x81, true, true);
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81AF50); return; }
     bool _frame_consumed_BBDE_M0X0 = func_table_call_with_frame(0x81AF50, true, &_frame_BBDE_M0X0);  /* $BBDE JSL */
@@ -880,7 +880,7 @@ RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBE8); return; }
     goto L_BBE8_M0X0;
   L_BBE8_M0X0:;
-    recomp_phase_begin(54, 0x80, 0xBBE8, 4);
+    recomp_phase_begin(54, 0x80, 0xBBE8, 3);
     recomp_call_frame_t _frame_BBE8_M0X0 = recomp_phase_call_enter(0xBBEB, 0x80, 0x81, true, true);
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81BB4A); return; }
     bool _frame_consumed_BBE8_M0X0 = func_table_call_with_frame(0x81BB4A, true, &_frame_BBE8_M0X0);  /* $BBE8 JSL */
@@ -895,7 +895,7 @@ RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBEF); return; }
     goto L_BBEF_M0X0;
   L_BBEF_M0X0:;
-    recomp_phase_begin(54, 0x80, 0xBBEF, 4);
+    recomp_phase_begin(54, 0x80, 0xBBEF, 3);
     recomp_call_frame_t _frame_BBEF_M0X0 = recomp_phase_call_enter(0xBBF2, 0x80, 0x81, true, true);
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81CC26); return; }
     bool _frame_consumed_BBEF_M0X0 = func_table_call_with_frame(0x81CC26, true, &_frame_BBEF_M0X0);  /* $BBEF JSL */
@@ -910,7 +910,7 @@ RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBF6); return; }
     goto L_BBF6_M0X0;
   L_BBF6_M0X0:;
-    recomp_phase_begin(54, 0x80, 0xBBF6, 4);
+    recomp_phase_begin(54, 0x80, 0xBBF6, 3);
     recomp_call_frame_t _frame_BBF6_M0X0 = recomp_phase_call_enter(0xBBF9, 0x80, 0x81, true, true);
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81CC26); return; }
     bool _frame_consumed_BBF6_M0X0 = func_table_call_with_frame(0x81CC26, true, &_frame_BBF6_M0X0);  /* $BBF6 JSL */
@@ -919,7 +919,7 @@ RECOMP_PATCH(smk_80BBCC, 0x80BBCC) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BBFA); return; }
     goto L_BBFA_M0X0;
   L_BBFA_M0X0:;
-    recomp_phase_begin(54, 0x80, 0xBBFA, 4);
+    recomp_phase_begin(54, 0x80, 0xBBFA, 3);
     recomp_call_frame_t _frame_BBFA_M0X0 = recomp_phase_call_enter(0xBBFD, 0x80, 0x81, true, true);
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81AFB4); return; }
     bool _frame_consumed_BBFA_M0X0 = func_table_call_with_frame(0x81AFB4, true, &_frame_BBFA_M0X0);  /* $BBFA JSL */
@@ -971,7 +971,7 @@ RECOMP_PATCH(smk_80BA50, 0x80BA50) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x80BA5A); return; }
     goto L_BA5A_M0X0;
   L_BA5A_M0X0:;
-    recomp_phase_begin(54, 0x80, 0xBA5A, 4);
+    recomp_phase_begin(54, 0x80, 0xBA5A, 3);
     recomp_call_frame_t _frame_BA5A_M0X0 = recomp_phase_call_enter(0xBA5D, 0x80, 0x85, true, true);
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x85DFB4); return; }
     bool _frame_consumed_BA5A_M0X0 = func_table_call_with_frame(0x85DFB4, true, &_frame_BA5A_M0X0);  /* $BA5A JSL */
@@ -2995,9 +2995,10 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F672); return; }
     goto L_F672_M0X0;
   L_F672_M0X0:;
-    recomp_phase_begin(52, 0x81, 0xF672, 3);
-    { uint16_t _t = bus_read16_checked(0x81, (uint16_t)(0xF697 + g_cpu.X));
-      recomp_call_frame_t _frame = recomp_phase_call_enter(0xF674, 0x81, 0x81, false, false);
+    recomp_phase_begin(52, 0x81, 0xF672, 2);
+    { recomp_call_frame_t _frame = recomp_phase_call_enter_indirect(0xF674, 0x81);
+      uint16_t _t = bus_read16_checked(0x81, (uint16_t)(0xF697 + g_cpu.X));
+      recomp_phase_end(0, 0);
       if (recomp_phase_interrupt_pending()) { recomp_set_redirect(((uint32_t)0x81 << 16) | _t); return; }
       bool _frame_consumed = func_table_call_with_frame(((uint32_t)0x81 << 16) | _t, false, &_frame);
       if (recomp_redirect_pending()) return;
@@ -3096,9 +3097,10 @@ RECOMP_PATCH(smk_81F638, 0x81F638) {
     if (recomp_phase_interrupt_pending()) { recomp_set_redirect(0x81F68F); return; }
     goto L_F68F_M0X0;
   L_F68F_M0X0:;
-    recomp_phase_begin(52, 0x81, 0xF68F, 3);
-    { uint16_t _t = bus_read16_checked(0x81, (uint16_t)(0xF69F + g_cpu.X));
-      recomp_call_frame_t _frame = recomp_phase_call_enter(0xF691, 0x81, 0x81, false, false);
+    recomp_phase_begin(52, 0x81, 0xF68F, 2);
+    { recomp_call_frame_t _frame = recomp_phase_call_enter_indirect(0xF691, 0x81);
+      uint16_t _t = bus_read16_checked(0x81, (uint16_t)(0xF69F + g_cpu.X));
+      recomp_phase_end(0, 0);
       if (recomp_phase_interrupt_pending()) { recomp_set_redirect(((uint32_t)0x81 << 16) | _t); return; }
       bool _frame_consumed = func_table_call_with_frame(((uint32_t)0x81 << 16) | _t, false, &_frame);
       if (recomp_redirect_pending()) return;

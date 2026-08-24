@@ -17,10 +17,20 @@ static inline uint8_t smk_bus_read8_24(uint32_t address) {
     return bus_read8((uint8_t)(address >> 16), (uint16_t)address);
 }
 
+static inline uint8_t smk_bus_read8_24_checked(uint32_t address) {
+    address &= 0xFFFFFFu;
+    return bus_read8_checked((uint8_t)(address >> 16), (uint16_t)address);
+}
+
 static inline uint16_t smk_bus_read16_24(uint32_t address) {
     uint8_t lo = smk_bus_read8_24(address);
     uint8_t hi = smk_bus_read8_24((address + 1) & 0xFFFFFFu);
     return (uint16_t)(lo | ((uint16_t)hi << 8));
+}
+
+static inline uint16_t smk_bus_read16_24_checked(uint32_t address) {
+    address &= 0xFFFFFFu;
+    return bus_read16_checked((uint8_t)(address >> 16), (uint16_t)address);
 }
 
 static inline void smk_bus_write8_24(uint32_t address, uint8_t value) {
@@ -28,9 +38,26 @@ static inline void smk_bus_write8_24(uint32_t address, uint8_t value) {
     bus_write8((uint8_t)(address >> 16), (uint16_t)address, value);
 }
 
+static inline void smk_bus_write8_24_checked(uint32_t address, uint8_t value) {
+    address &= 0xFFFFFFu;
+    bus_write8_checked((uint8_t)(address >> 16), (uint16_t)address, value);
+}
+
 static inline void smk_bus_write16_24(uint32_t address, uint16_t value) {
     smk_bus_write8_24(address, (uint8_t)value);
     smk_bus_write8_24((address + 1) & 0xFFFFFFu, (uint8_t)(value >> 8));
+}
+
+static inline void smk_bus_write16_24_checked(uint32_t address, uint16_t value) {
+    address &= 0xFFFFFFu;
+    bus_write16_checked((uint8_t)(address >> 16), (uint16_t)address, value);
+}
+
+static inline void smk_bus_write16_24_reversed_checked(uint32_t address,
+                                                       uint16_t value) {
+    address &= 0xFFFFFFu;
+    bus_write16_reversed_checked((uint8_t)(address >> 16),
+                                 (uint16_t)address, value);
 }
 
 static inline uint16_t smk_dp_pointer16(uint16_t address) {

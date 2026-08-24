@@ -36,8 +36,8 @@ the live CPU flags. On the standard route, all 305 not-yet-registered direct tar
 combined with 56 registered targets this is 361/361 observed-target generation coverage.
 Important gaps remain:
 
-- general exact timing: page/direct-page penalties, per-opcode interrupt recognition points,
-  DMA stalls, and the precise bus order of stack, RMW, jump, and block-move instructions;
+- general exact timing: page/direct-page penalties, the remaining interrupt recognition cases,
+  DMA stalls, and the precise bus order of long calls, jumps, and block-move instructions;
 - complete discovery of indirect call-table targets and all entry flag variants;
 - a C-owned reset/NMI/main-frame scheduler that can finish race initialization without
   falling back to `snes_runFrame`;
@@ -89,6 +89,14 @@ token-aware fallback consumes an existing physical frame instead of pushing a se
 preserves live interrupt state, and suspends the timed hook to avoid recursive interception.
 Instruction boundaries can redirect back to the remaining ROM PC when a frame boundary is crossed.
 
+The next M3 layer now mirrors LakeSnes's explicit `checkInt` micro-phases for the generated
+instruction families used by the standard set. Immediate operands sample before an 8-bit value
+or between 16-bit bytes; data reads/writes use the equivalent before/between access point; RMW
+instructions idle and sample between their reversed writes; taken/not-taken branches select
+different fetch phases; and stack, JSR/JSL, RTS, and RTL paths sample between their documented
+push/pull phases. Sampling only latches LakeSnes `intWanted`; yielding remains an instruction-
+boundary operation, so a partially executed C instruction is never exposed.
+
 The `$81:F638` eight-target closure now passes the first M3 hard gate. The earlier apparent
 frame-1040 failure was a validation configuration error: with the default `SMK_INTERP=ON`, each
 registered indirect child ran through the untimed interpreter fallback. Its six-instruction
@@ -99,11 +107,12 @@ ignored region. The default 18-function set also remains byte-identical outside 
 dead stack-scratch range; after the PB/fallback correction it executes 11,794 native
 interceptions on the same route (up from the earlier 6,801 checkpoint).
 
-This is a closure-specific success, not completion of M3. `SMK_RECOMP_PHASE_YIELD=1` remains
-experimental until every opcode samples NMI/IRQ at LakeSnes' exact micro-phase and JSL, RMW,
-indirect jumps, block moves, open-bus behavior, and fallback calls all use exact bus order. The
-fallback call-frame protocol is now stack-safe, but fallback execution remains intentionally
-untimed and therefore is not part of the exact-closure claim.
+This is a closure-specific success, not completion of M3. The new micro-phase layer is covered by
+26 generator tests, and the `$81:F638` closure still passes all 140 raw snapshots after the
+change. `SMK_RECOMP_PHASE_YIELD=1` remains experimental until the remaining generated/control
+cases and exact long-call operand, indirect-jump, block-move, page/direct-page, DMA-stall, and
+open-bus ordering are modeled. The fallback call-frame protocol is stack-safe, but fallback
+execution remains intentionally untimed and therefore is not part of the exact-closure claim.
 
 - Move from aggregate instruction costs to bus-phase-accurate fetch/read/write/idle timing.
 - Allow NMI/IRQ recognition at the same instruction boundaries as LakeSnes.

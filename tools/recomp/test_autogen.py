@@ -21,17 +21,15 @@ def generate(code, p=0x00, addr=0x8100):
 class WidthSensitiveStackTests(unittest.TestCase):
     def test_16_bit_stack_helpers_and_cycles(self):
         source = generate([0x48, 0x68, 0xDA, 0xFA, 0x5A, 0x7A, 0x6B])
-        for helper in ("op_pha16", "op_pla16", "op_phx16", "op_plx16",
-                       "op_phy16", "op_ply16"):
-            self.assertIn(helper + "();", source)
+        self.assertEqual(source.count("recomp_stack_push16("), 3)
+        self.assertEqual(source.count("recomp_stack_pull16(true)"), 3)
         self.assertIn("recomp_phase_begin(28,", source)  # 16-bit push
         self.assertIn("recomp_phase_begin(34,", source)  # 16-bit pull
 
     def test_8_bit_stack_preserves_b_and_uses_one_byte(self):
         source = generate([0x48, 0x68, 0xDA, 0xFA, 0x5A, 0x7A, 0x6B], p=0x30)
-        self.assertNotIn("op_pha16", source)
-        self.assertNotIn("op_phx16", source)
-        self.assertIn("bus_wram_write8(g_cpu.S", source)
+        self.assertNotIn("recomp_stack_push16", source)
+        self.assertIn("recomp_stack_push8", source)
         self.assertIn("g_cpu.C & 0xFF00", source)
         self.assertIn("recomp_phase_begin(20,", source)  # 8-bit push
         self.assertIn("recomp_phase_begin(26,", source)  # 8-bit pull
@@ -39,9 +37,9 @@ class WidthSensitiveStackTests(unittest.TestCase):
     def test_rep_sep_changes_following_stack_width(self):
         source = generate([0xE2, 0x30, 0x48, 0xDA, 0xC2, 0x30,
                            0x48, 0xDA, 0x6B])
-        self.assertEqual(source.count("bus_wram_write8(g_cpu.S"), 2)
-        self.assertIn("op_pha16();", source)
-        self.assertIn("op_phx16();", source)
+        self.assertEqual(source.count("recomp_stack_push8"), 2)
+        self.assertIn("recomp_stack_push16(g_cpu.C, true);", source)
+        self.assertIn("recomp_stack_push16(g_cpu.X, true);", source)
 
 
 class AdditionalOpcodeTests(unittest.TestCase):
@@ -121,8 +119,8 @@ class AdditionalOpcodeTests(unittest.TestCase):
     def test_indirect_jsr_times_table_before_stack_and_callee(self):
         source = generate([0xFC, 0x00, 0x82, 0x6B])
         begin = source.index("recomp_phase_begin(52,")
-        table = source.index("bus_read16(0x80")
-        stack = source.index("recomp_phase_call_enter(0x8102, 0x80, 0x80, false)")
+        table = source.index("bus_read16_checked(0x80")
+        stack = source.index("recomp_phase_call_enter(0x8102, 0x80, 0x80, false, false)")
         call = source.index("func_table_call_with_frame")
         self.assertLess(begin, table)
         self.assertLess(table, stack)
@@ -146,12 +144,12 @@ class AdditionalOpcodeTests(unittest.TestCase):
 
     def test_direct_calls_materialize_correct_return_frames(self):
         jsr = generate([0x20, 0x04, 0x81, 0x6B, 0x60])
-        self.assertIn("recomp_phase_call_enter(0x8102, 0x80, 0x80, false)", jsr)
+        self.assertIn("recomp_phase_call_enter(0x8102, 0x80, 0x80, false, true)", jsr)
         self.assertIn("func_table_call_with_frame(0x808104, false", jsr)
         self.assertIn("recomp_phase_call_leave(_frame_8100_M0X0, _frame_consumed_8100_M0X0)", jsr)
 
         jsl = generate([0x22, 0x05, 0x81, 0x81, 0x6B, 0x6B])
-        self.assertIn("recomp_phase_call_enter(0x8103, 0x80, 0x81, true)", jsl)
+        self.assertIn("recomp_phase_call_enter(0x8103, 0x80, 0x81, true, true)", jsl)
         self.assertIn("func_table_call_with_frame(0x818105, true", jsl)
         self.assertIn("recomp_phase_call_leave(_frame_8100_M0X0, _frame_consumed_8100_M0X0)", jsl)
         self.assertIn("recomp_set_redirect(0x818105)", jsl)
@@ -183,8 +181,8 @@ class AdditionalOpcodeTests(unittest.TestCase):
     def test_bank_and_direct_page_stack_ops(self):
         source = generate([0x4B, 0x0B, 0x2B, 0x6B])  # PHK, PHD, PLD, RTL
         self.assertIn("g_cpu.PB", source)
-        self.assertIn("bus_wram_write16(g_cpu.S, g_cpu.DP)", source)
-        self.assertIn("g_cpu.DP = bus_wram_read16(g_cpu.S)", source)
+        self.assertIn("recomp_stack_push16(g_cpu.DP, true)", source)
+        self.assertIn("g_cpu.DP = recomp_stack_pull16(true)", source)
 
     def test_tsb_trb_emit_read_modify_write_and_z(self):
         source = generate([0x04, 0x20, 0x14, 0x22, 0x6B])
@@ -225,6 +223,52 @@ class AdditionalOpcodeTests(unittest.TestCase):
         self.assertIn("g_cpu.DP = g_cpu.C", source)
         self.assertIn("g_cpu.C = g_cpu.DP", source)
         self.assertIn("g_cpu.C = g_cpu.S", source)
+
+
+class CheckIntMicrophaseTests(unittest.TestCase):
+    def test_immediate_checks_match_operand_width(self):
+        source16 = generate([0xA9, 0x34, 0x12, 0x6B])
+        self.assertIn("recomp_phase_begin_checked(18, 0x80, 0x8100, 3, 2)", source16)
+
+        source8 = generate([0xA9, 0x34, 0x6B], p=0x20)
+        self.assertIn("recomp_phase_begin_checked(12, 0x80, 0x8100, 2, 1)", source8)
+
+    def test_memory_checks_are_attached_to_final_data_access(self):
+        source16 = generate([0xA5, 0x10, 0x85, 0x12, 0x6B])
+        self.assertIn("bus_read16_checked", source16)
+        self.assertIn("bus_write16_checked", source16)
+
+        source8 = generate([0xA5, 0x10, 0x85, 0x12, 0x6B], p=0x20)
+        self.assertIn("bus_read8_checked", source8)
+        self.assertIn("bus_write8_checked", source8)
+
+    def test_rmw_checks_between_reversed_writes(self):
+        source = generate([0x46, 0x10, 0x6B])  # LSR $10
+        read = source.index("bus_read16(")
+        idle = source.index("recomp_phase_idle(6);", read)
+        write = source.index("bus_write16_reversed_checked", idle)
+        self.assertLess(read, idle)
+        self.assertLess(idle, write)
+
+    def test_branch_check_depends_on_taken_path(self):
+        source = generate([0xF0, 0x01, 0xEA, 0x6B])
+        self.assertIn("recomp_phase_begin_checked(12, 0x80, 0x8100, 2, (g_cpu.flag_Z) ? 2 : 1)", source)
+        bra = generate([0x80, 0x01, 0xEA, 0x6B])
+        self.assertIn("recomp_phase_begin_checked(12, 0x80, 0x8100, 2, 2)", bra)
+
+    def test_returns_use_ordered_return_microphase(self):
+        rts = generate([0x60])
+        self.assertIn("recomp_phase_return(false);", rts)
+        rtl = generate([0x6B])
+        self.assertIn("recomp_phase_return(true);", rtl)
+
+    def test_plp_samples_after_pull_before_new_flags(self):
+        source = generate([0x28, 0x6B])
+        pull = source.index("recomp_stack_pull8()")
+        check = source.index("recomp_phase_check_int();", pull)
+        flags = source.index("cpu_set_p(_p);", check)
+        self.assertLess(pull, check)
+        self.assertLess(check, flags)
 
 
 if __name__ == "__main__":

@@ -188,3 +188,10 @@ is the boundary that motivates the timed/cycle-accurate model.
   executes 11,794 native interceptions (the earlier 6,801 count was before PB correction) while
   retaining byte-identical state outside `$1F00-$1FFF`; the exact `$81:F638` closure remains
   byte-identical including stack WRAM for all 2,715 calls.
+- Split interrupt sampling from instruction-boundary yielding and encoded LakeSnes `checkInt`
+  positions in generated code. Checked 8/16-bit bus helpers sample before a byte or between word
+  bytes; RMW writes use the native high/check/low order; branch sampling depends on the taken
+  path; and ordered stack/call/return helpers cover PHA/PLA-family operations, JSR/JSL, RTS, and
+  RTL. The suite now has 26 focused generator tests. Rebuilding all 32 generated functions keeps
+  the `$81:F638` closure raw-byte-identical for 140/140 snapshots and the default 18-function
+  set byte-identical outside its documented dead stack scratch.

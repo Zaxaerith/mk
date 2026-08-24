@@ -256,18 +256,55 @@ def _phase_tail(insn):
     if name in _IDLE1:
         return 6, 0
     if name == "XBA":
-        return 12, 0
+        return 6, 0
     if name in _RMW:
-        return 6, 0
+        return (6, 0) if mode == "imp" else (0, 0)
     if name in ("PHA", "PHX", "PHY", "PHB", "PHP", "PHK", "PHD"):
-        return 6, 0
+        return 0, 0
     if name in ("PLA", "PLX", "PLY", "PLB", "PLP", "PLD"):
-        return 12, 0
-    if op == 0x60:                    # RTS: hook pops two bytes without timing
-        return 18, 2
-    if op == 0x6B:                    # RTL: hook pops PC + PB without timing
-        return 12, 3
+        return 0, 0
     return 0, 0
+
+
+def _fetch_check_after(insn):
+    """Opcode/operand fetch count after which LakeSnes calls checkInt.
+
+    None means the check belongs to a later data/idle/stack microphase.  The
+    immediate-width rule places 8-bit checks before the operand and 16-bit
+    checks between its low and high bytes.
+    """
+    name, mode = insn["name"], insn["mode"]
+    if name in ("REP", "SEP"):
+        return insn["total"]
+    if mode in ("imm8", "immA", "immX") and name != "PEA":
+        return 1 if insn["total"] == 2 else 2
+    if name in _IDLE1 or (name in _RMW and mode == "imp"):
+        return insn["total"]
+    return None
+
+
+def _phase_prelude(insn):
+    """Timed microphases that precede the C-level architectural semantics."""
+    name = insn["name"]
+    pushes = {"PHA", "PHX", "PHY", "PHD"}
+    pulls = {"PLA", "PLX", "PLY", "PLD"}
+    byte_pushes = {"PHP", "PHB", "PHK"}
+    byte_pulls = {"PLB"}
+    if name in pushes:
+        kind = "m" if name == "PHA" else "x"
+        wide = name == "PHD" or _wide(insn, kind)
+        return ["recomp_phase_idle(6);"] + ([] if wide else ["recomp_phase_check_int();"])
+    if name in pulls:
+        kind = "m" if name == "PLA" else "x"
+        wide = name == "PLD" or _wide(insn, kind)
+        return ["recomp_phase_idle(12);"] + ([] if wide else ["recomp_phase_check_int();"])
+    if name in byte_pushes:
+        return ["recomp_phase_idle(6);", "recomp_phase_check_int();"]
+    if name in byte_pulls:
+        return ["recomp_phase_idle(12);", "recomp_phase_check_int();"]
+    if name == "XBA":
+        return ["recomp_phase_idle(6);", "recomp_phase_check_int();"]
+    return []
 
 
 def _reg_write(reg, w, v):
@@ -297,9 +334,9 @@ def _src(insn, w):
         return f"0x{val:0{w // 4}X}"
     if mode in STATIC_MEM_MODES:
         bank, addr = _ea(mode, val)
-        return f"bus_read{w}({bank}, {addr})"
+        return f"bus_read{w}_checked({bank}, {addr})"
     if mode in INDIRECT_MODES:
-        return f"smk_bus_read{w}_24(smk_ea_{mode}(0x{val:02X}))"
+        return f"smk_bus_read{w}_24_checked(smk_ea_{mode}(0x{val:02X}))"
     raise Unsupported(f"{insn['name']} {mode}")
 
 
@@ -363,7 +400,8 @@ def _incdec_val(insn, delta):  # INC/DEC accumulator (imp) or memory (M width)
         bank, addr = _ea(insn["mode"], insn["val"])
         return (f"{{ uint8_t _bk = (uint8_t)({bank}); uint16_t _ad = (uint16_t)({addr}); "
                 f"uint{w}_t _t = (uint{w}_t)(bus_read{w}(_bk, _ad) {sign} 1); "
-                f"bus_write{w}(_bk, _ad, _t); {_nz(w, '_t')} }}")
+                f"recomp_phase_idle(6); "
+                f"bus_write{w}{'_reversed' if w == 16 else ''}_checked(_bk, _ad, _t); {_nz(w, '_t')} }}")
     raise Unsupported(f"{insn['name']} {insn['mode']}")
 
 
@@ -387,7 +425,9 @@ def _shift(insn, name):  # ASL/LSR/ROL/ROR, accumulator (imp) or memory (M width
         bank, addr = _ea(insn["mode"], insn["val"])
         return (f"{{ uint8_t _bk = (uint8_t)({bank}); uint16_t _ad = (uint16_t)({addr}); "
                 f"uint{w}_t _x = bus_read{w}(_bk, _ad); uint8_t _c = {ce}; uint{w}_t _r = {re}; "
-                f"bus_write{w}(_bk, _ad, _r); g_cpu.flag_C = _c; {_nz(w, '_r')} }}")
+                f"recomp_phase_idle(6); "
+                f"bus_write{w}{'_reversed' if w == 16 else ''}_checked(_bk, _ad, _r); "
+                f"g_cpu.flag_C = _c; {_nz(w, '_r')} }}")
     raise Unsupported(f"{name} {insn['mode']}")
 
 
@@ -418,9 +458,9 @@ def _store(insn, reg, kind):
         raise Unsupported(f"{insn['name']} {mode}")
     v = "0" if reg is None else _reg_read(reg, w)
     if mode in INDIRECT_MODES:
-        return f"smk_bus_write{w}_24(smk_ea_{mode}(0x{val:02X}), (uint{w}_t)({v}));"
+        return f"smk_bus_write{w}_24_checked(smk_ea_{mode}(0x{val:02X}), (uint{w}_t)({v}));"
     bank, addr = _ea(mode, val)
-    return f"bus_write{w}({bank}, {addr}, (uint{w}_t)({v}));"
+    return f"bus_write{w}_checked({bank}, {addr}, (uint{w}_t)({v}));"
 
 
 def _stack(insn):
@@ -431,24 +471,34 @@ def _stack(insn):
         kind = "m" if name == "PHA" else "x"
         w = 16 if _wide(insn, kind) else 8
         if w == 16:
-            return f"op_{name.lower()}16();"
-        return (f"bus_wram_write8(g_cpu.S, (uint8_t)({_reg_read(reg, 8)})); "
-                "g_cpu.S--;")
+            return f"recomp_stack_push16({_reg_read(reg, 16)}, true);"
+        return f"recomp_stack_push8((uint8_t)({_reg_read(reg, 8)}));"
     if name in ("PLA", "PLX", "PLY"):
         reg = {"PLA": "A", "PLX": "X", "PLY": "Y"}[name]
         kind = "m" if name == "PLA" else "x"
         w = 16 if _wide(insn, kind) else 8
         if w == 16:
-            return f"op_{name.lower()}16();"
-        return ("{ uint8_t _v; g_cpu.S++; _v = bus_wram_read8(g_cpu.S); "
+            return (f"{{ uint16_t _v = recomp_stack_pull16(true); "
+                    f"{_reg_write(reg, 16, '_v')} {_nz(16, '_v')} }}")
+        return ("{ uint8_t _v = recomp_stack_pull8(); "
                 f"{_reg_write(reg, 8, '_v')} {_nz(8, '_v')} }}")
     if name == "PHK":
-        return "bus_wram_write8(g_cpu.S, g_cpu.PB); g_cpu.S--;"
+        return "recomp_stack_push8(g_cpu.PB);"
     if name == "PHD":
-        return "g_cpu.S--; bus_wram_write16(g_cpu.S, g_cpu.DP); g_cpu.S--;"
+        return "recomp_stack_push16(g_cpu.DP, true);"
     if name == "PLD":
-        return ("{ g_cpu.S++; g_cpu.DP = bus_wram_read16(g_cpu.S); g_cpu.S++; "
+        return ("{ g_cpu.DP = recomp_stack_pull16(true); "
                 f"{_nz(16, 'g_cpu.DP')} }}")
+    if name == "PHP":
+        return "recomp_stack_push8(cpu_get_p());"
+    if name == "PHB":
+        return "recomp_stack_push8(g_cpu.DB);"
+    if name == "PLP":
+        return ("{ uint8_t _p = recomp_stack_pull8(); recomp_phase_check_int(); "
+                "cpu_set_p(_p); }")
+    if name == "PLB":
+        return ("{ g_cpu.DB = recomp_stack_pull8(); "
+                f"{_nz(8, 'g_cpu.DB')} }}")
     raise Unsupported(f"stack op {name}")
 
 
@@ -488,16 +538,17 @@ def _tsb_trb(insn, set_bits):
     expr = expr.format(w=w)
     return (f"{{ uint8_t _bk = (uint8_t)({bank}); uint16_t _ad = (uint16_t)({addr}); "
             f"uint{w}_t _m = bus_read{w}(_bk, _ad); uint{w}_t _a = (uint{w}_t)({_reg_read('A', w)}); "
-            f"g_cpu.flag_Z = (uint8_t)((_a & _m) == 0); bus_write{w}(_bk, _ad, {expr}); }}")
+            f"g_cpu.flag_Z = (uint8_t)((_a & _m) == 0); recomp_phase_idle(6); "
+            f"bus_write{w}{'_reversed' if w == 16 else ''}_checked(_bk, _ad, {expr}); }}")
 
 
 # register/flag ops that already have an op_* helper
 _SIMPLE = {
     "XBA": "op_xba();", "XCE": "op_xce();",
     "TAX": "op_tax();", "TAY": "op_tay();", "TXA": "op_txa();", "TYA": "op_tya();",
-    "PHP": "op_php();", "PLP": "op_plp();", "PHB": "op_phb();", "PLB": "op_plb();",
 }
-_STACK = {"PHA", "PLA", "PHX", "PLX", "PHY", "PLY", "PHK", "PHD", "PLD"}
+_STACK = {"PHA", "PLA", "PHX", "PLX", "PHY", "PLY", "PHK", "PHD", "PLD",
+          "PHP", "PLP", "PHB", "PLB"}
 _TRANSFER = {"TSX", "TXS", "TXY", "TYX", "TCD", "TDC", "TCS", "TSC"}
 _LOADS = {"LDA": ("A", "m"), "LDX": ("X", "x"), "LDY": ("Y", "x")}
 _STORES = {"STA": ("A", "m"), "STX": ("X", "x"), "STY": ("Y", "x"), "STZ": (None, "m")}
@@ -542,11 +593,9 @@ def emit_body(insn, bank=0):
     if name in ("TSB", "TRB"):
         return _tsb_trb(insn, name == "TSB")
     if name in ("INC", "DEC"):
-        if name == "INC" and insn["mode"] == "dp":
-            return f"op_inc_dp{16 if _wide(insn, 'm') else 8}(0x{insn['val']:02X});"
         return _incdec_val(insn, +1 if name == "INC" else -1)
     if name == "PEA":  # push 16-bit immediate operand
-        return (f"{{ g_cpu.S--; bus_wram_write16(g_cpu.S, 0x{insn['val']:04X}); g_cpu.S--; }}")
+        return f"recomp_stack_push16(0x{insn['val']:04X}, true);"
     if name == "NOP":
         return "(void)0;"
     raise Unsupported(f"no emit rule for {name} {insn['mode']} (${op:02X}) at ${insn['pc']:04X}")
@@ -594,20 +643,34 @@ def generate(data, bank, addr, P, name):
         # per-byte ticks inside emit_body().
         phase = (ins["name"] not in ("MVN", "MVP") and op not in TAILJMP)
         if phase:
-            out.append(f"    recomp_phase_begin({_instr_cycles(ins, bank)}, 0x{bank:02X}, 0x{pc:04X}, {ins['total']});")
+            if op in BRANCH:
+                flag, want = BRANCH[op]
+                branch_cond = f"g_cpu.flag_{flag}" if want else f"!g_cpu.flag_{flag}"
+                check_after = f"({branch_cond}) ? {ins['total']} : 1"
+            elif op in UNCOND:
+                check_after = str(ins["total"])
+            else:
+                check_after = _fetch_check_after(ins)
+            if check_after is None:
+                out.append(f"    recomp_phase_begin({_instr_cycles(ins, bank)}, 0x{bank:02X}, 0x{pc:04X}, {ins['total']});")
+            else:
+                out.append(f"    recomp_phase_begin_checked({_instr_cycles(ins, bank)}, 0x{bank:02X}, 0x{pc:04X}, {ins['total']}, {check_after});")
         elif ins["name"] not in ("MVN", "MVP"):
             out.append(f"    recomp_tick({_instr_cycles(ins, bank)});")
         idle, stack = _phase_tail(ins)
         if op in TERMINALS:
-            out.append(f"    recomp_phase_end({idle}, {stack});")
+            if op in (0x60, 0x6B):
+                out.append(f"    recomp_phase_return({'true' if op == 0x6B else 'false'});")
+            else:
+                out.append(f"    recomp_phase_end({idle}, {stack});")
             out.append("    (void)recomp_phase_interrupt_pending();")
             out.append(f"    return;            /* ${pc:04X} {ins['name']} */")
         elif op in CALL:
             if op == 0xFC:
                 # JSR (abs,X): table reads are part of the calling instruction,
                 # not the callee. Time them before its idle/stack-write phases.
-                out.append(f"    {{ uint16_t _t = bus_read16(0x{bank:02X}, (uint16_t)(0x{ins['val']:04X} + g_cpu.X));")
-                out.append(f"      recomp_call_frame_t _frame = recomp_phase_call_enter(0x{(nxt - 1) & 0xFFFF:04X}, 0x{bank:02X}, 0x{bank:02X}, false);")
+                out.append(f"    {{ uint16_t _t = bus_read16_checked(0x{bank:02X}, (uint16_t)(0x{ins['val']:04X} + g_cpu.X));")
+                out.append(f"      recomp_call_frame_t _frame = recomp_phase_call_enter(0x{(nxt - 1) & 0xFFFF:04X}, 0x{bank:02X}, 0x{bank:02X}, false, false);")
                 out.append(f"      if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(((uint32_t)0x{bank:02X} << 16) | _t); return; }}")
                 out.append(f"      bool _frame_consumed = func_table_call_with_frame(((uint32_t)0x{bank:02X} << 16) | _t, false, &_frame);")
                 out.append("      if (recomp_redirect_pending()) return;")
@@ -619,7 +682,7 @@ def generate(data, bank, addr, P, name):
                 direct_target = _call_target(ins, bank)
                 target_bank = (direct_target >> 16) & 0xFF
                 consumed_var = f"_frame_consumed_{pc:04X}_M{int(state_m)}X{int(state_x)}"
-                out.append(f"    recomp_call_frame_t {frame_var} = recomp_phase_call_enter(0x{(nxt - 1) & 0xFFFF:04X}, 0x{bank:02X}, 0x{target_bank:02X}, {'true' if is_long else 'false'});")
+                out.append(f"    recomp_call_frame_t {frame_var} = recomp_phase_call_enter(0x{(nxt - 1) & 0xFFFF:04X}, 0x{bank:02X}, 0x{target_bank:02X}, {'true' if is_long else 'false'}, true);")
                 out.append(f"    if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(0x{direct_target:06X}); return; }}")
                 out.append(f"    bool {consumed_var} = func_table_call_with_frame(0x{direct_target:06X}, {'true' if is_long else 'false'}, &{frame_var});  /* ${pc:04X} {ins['name']} */")
                 out.append("    if (recomp_redirect_pending()) return;")
@@ -645,6 +708,8 @@ def generate(data, bank, addr, P, name):
             out.append(f"    if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(0x{(bank << 16) | nxt:06X}); return; }}")
             out.append(f"    goto {_cfg_label(nxt, nm, nx)};")
         else:
+            for prelude in _phase_prelude(ins):
+                out.append(f"    {prelude}")
             out.append(f"    {emit_body(ins, bank):<46s} /* ${pc:04X} {ins['name']} */")
             out.append(f"    recomp_phase_end({idle}, {stack});")
             out.append(f"    if (recomp_phase_interrupt_pending()) {{ recomp_set_redirect(0x{(bank << 16) | nxt:06X}); return; }}")

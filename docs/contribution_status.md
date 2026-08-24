@@ -30,8 +30,10 @@ state when the documented dead stack-scratch range `$1F00-$1FFF` is excluded.
 
 - It is not a complete C recompile of the game.
 - It does not yet replace the LakeSnes-owned reset/NMI/main-frame scheduler.
-- Bus-phase timing remains opt-in while per-opcode interrupt sampling and all JSL, RMW, indirect
-  jump, block-move, DMA-stall, and open-bus ordering are made exact.
+- Bus-phase timing remains opt-in. Generated immediate, implied, branch, data-access, RMW,
+  stack, JSR/JSL, RTS, and RTL paths now place `checkInt` at their LakeSnes micro-phase, but
+  long-call operand ordering, indirect jumps, block moves, RTI, DMA stalls, page/direct-page
+  penalties, and open-bus behavior still need exact modeling.
 - Passing the standard route does not prove every game mode, character, cup, track, multiplayer
   path, or long-running race.
 - Interpreter fallback is stack-safe but intentionally untimed; it is excluded from exact-closure
@@ -123,5 +125,5 @@ Before pushing this branch, the following were checked:
 - no absolute local filesystem paths, credentials, access tokens, or private keys are present in
   the branch diff;
 - the generated source is reproducible from the checked-in generator/profile;
-- the 20 Python generator tests and the Visual Studio Release build pass;
+- the 26 Python generator tests and the Visual Studio Release build pass;
 - the parent gitlink resolves to the published `snesrecomp` contribution branch.

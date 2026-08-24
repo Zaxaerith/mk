@@ -235,7 +235,9 @@ SMK_RECOMP_INTERCEPTS=81F638:L build/Debug/smk_launcher.exe
 2,715 interceptions match the 1,400-frame WRAM/VRAM/CGRAM oracle at all 140 sampled frames. The
 generated call-frame token preserves caller SP/PB, prevents interpreter fallback from pushing a
 second return frame, and suspends the timed hook while fallback executes. The bus-phase/yield path
-is still opt-in while exact interrupt sampling and remaining bus-order cases are implemented.
+is still opt-in. Its generated immediate, data, implied, branch, RMW, stack, call, and return
+paths now use LakeSnes-style `checkInt` micro-phases; long-call operand ordering, indirect jumps,
+block moves, page/direct-page penalties, DMA stalls, and open-bus cases remain M3 work.
 
 ## Decompressor
 

@@ -16,7 +16,7 @@ The project is playable, but playability and recompilation completeness are diff
 - A standard deterministic 1,400-frame title-to-race route observes 361 direct call targets.
   Fifty-six already have registered C entries and all remaining 305 generate successfully for
   their observed M/X entry variants (`unsupported: 0`).
-- The repository currently registers 81 C entries, including 33 generated functions. Only
+- The repository currently registers 85 C entries, including 37 generated functions. Only
   oracle-gated subsets are enabled by default; generation success alone is not treated as proof
   of runtime correctness.
 
@@ -26,20 +26,27 @@ sampled snapshots through frame 1,400 match the ROM reference byte-for-byte, inc
 WRAM. The default 18-function set executes 11,794 native interceptions and matches all observable
 state when the documented dead stack-scratch range `$1F00-$1FFF` is excluded.
 
+September coverage expansion adds four generated roots: `$81F722`, `$81FD22`, `$8087D9`,
+and `$80879A`. Together they execute 9,220 interceptions and pass all 140 raw snapshots.
+The opt-in `SMK_RECOMP_INTERCEPTS=coverage` preset combines them with the legacy 18 roots:
+21,014 interceptions and 140/140 snapshots matching outside the legacy dead stack range.
+Use `SMK_INTERP=0 SMK_RECOMP_BUSPHASE=1 SMK_RECOMP_PHASE_YIELD=1` with `SMK_RECOMP=1`.
+See [research, reproduction and next milestones](related_projects_and_coverage_plan.md).
+
 ## What this branch does not claim
 
 - It is not a complete C recompile of the game.
 - It does not yet replace the LakeSnes-owned reset/NMI/main-frame scheduler.
 - Bus-phase timing remains opt-in. Generated immediate, implied, branch, data-access, RMW,
   stack, JSR/JSL, RTS, and RTL paths now place `checkInt` at their LakeSnes micro-phase. MVN/MVP
-  and RTI now also have ordered micro-phase implementations. They do not occur in the current 33
+  and RTI now also have ordered micro-phase implementations. They do not occur in the current 37
   generated functions, however, so ROM-level closure coverage is still missing. Generated direct
   page, absolute-indexed, direct-page-indirect, and stack-relative modes now apply their dynamic
   LakeSnes addressing idles in bus order. The generated `$80:946E` OAM-DMA leaf preserves the
   exercised deferred DMA stall and passes a 1,071-hit, 140/140 raw-snapshot gate; bus-phase
   accesses inherit LakeSnes open-bus updates. The legacy aggregate path remains approximate and
-  internal bus-latch state is not directly snapshot-gated. JSL and indirect JMP/JML ordering are
-  implemented, but still need standard-route all-C child closures for ROM-level validation.
+  internal bus-latch state is not directly snapshot-gated. The `$81FD22 -> $81F638` JSL child
+  closure is now ROM-gated; general indirect JMP/JML closures still need equivalent validation.
 - Passing the standard route does not prove every game mode, character, cup, track, multiplayer
   path, or long-running race.
 - Interpreter fallback is stack-safe but intentionally untimed; it is excluded from exact-closure
@@ -124,7 +131,8 @@ state.
 
 ## Publication checks
 
-The current M3g commits remain local. The working tree was audited for the first five items below;
+M3g was published at parent `5665b45` / submodule `78245a6`. The September coverage expansion
+is local work. The previous publication audit covered the first five items below;
 before any future push, repeat the audit and publish the submodule commit before its parent gitlink:
 
 - the ROM is ignored and absent from the Git index;

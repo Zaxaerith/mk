@@ -250,13 +250,21 @@ int main(int argc, char *argv[]) {
         printf("smk: TIMED-RECOMP PROFILE mode (ranking JSR/JSL call targets)\n");
     }
 
-    /* Install the interception hook + register the intercept set. Default is the
-     * single OAM-DMA leaf $80:946E (RTS/near). Override with
+    /* Install the interception hook + register the 18-root legacy default set.
+     * Override with
      * SMK_RECOMP_INTERCEPTS="80946E,81xxxx:L,..." (comma-separated 24-bit hex;
      * suffix ':L' marks a JSL/RTL-return routine, default JSR/RTS). */
     if (recomp) {
         recomp_timed_recomp_enable();
         const char *iv = getenv("SMK_RECOMP_INTERCEPTS");
+        /* September coverage gate: the original 18 roots plus four generated
+         * roots and their C callees. Validated with SMK_INTERP=0 and both
+         * SMK_RECOMP_BUSPHASE / SMK_RECOMP_PHASE_YIELD set to 1. */
+        if (iv && strcmp(iv, "coverage") == 0) {
+            iv = "80F90A,80A01F,80A027,818902,81B9A8,808BBF,8086A0,80BBCC,"
+                 "80BA50,808D83,80B7EB,8584D1,858EE9,85B945,858FB8,858B7A,"
+                 "808EED,81BB70:L,81F722,81FD22,8087D9,80879A";
+        }
         if (iv && *iv) {
             char buf[256];
             strncpy(buf, iv, sizeof(buf) - 1); buf[sizeof(buf) - 1] = 0;
@@ -270,8 +278,8 @@ int main(int argc, char *argv[]) {
             /* Default set: steady-state leaves each validated functionally exact
              * vs the emulation oracle (live WRAM + VRAM + CGRAM identical; only
              * dead stack scratch differs — gate with --ignore-wram 1F00-1FFF).
-             * The boot OAM-DMA $80946E (Phase-1 demo) is rendered-faithful but
-             * perturbs audio WRAM phase; reach it via SMK_RECOMP_INTERCEPTS. */
+             * The OAM-DMA $80946E has a separate exact bus-phase gate;
+             * reach it via SMK_RECOMP_INTERCEPTS. */
             /* autogen (autogen.py + batch.py), all PURE-LOGIC, gated byte-identical
              * THROUGH A RACE (title + Mode-7 gameplay) as ONE combined set. Pure-logic
              * functions compose cleanly with no count ceiling; only hardware/timing-

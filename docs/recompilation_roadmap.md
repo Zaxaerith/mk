@@ -103,7 +103,8 @@ opcode and 16-bit address before pushing PB, idles, fetches the bank operand, th
 checked return word. `JSR (abs,X)` fetches opcode+operand-low, pushes its unchecked return word,
 fetches operand-high, idles, and performs the checked table-word read. The F638 closure exercises
 the latter twice per root call and remains byte-identical; the JSL sequence is structurally tested
-and compiled, but still needs an all-C JSL child closure for an equivalent ROM gate.
+and compiled. The September `$81FD22 -> $81F638` expansion now provides an all-C JSL child
+closure gate: 2,684 root interceptions and all 140 raw snapshots match.
 
 All five JMP/JML forms now participate in bus-phase timing. Direct JMP/JML sample between their
 documented operand bytes; indirect forms preserve same-bank pointer wrapping, indexed idle
@@ -128,7 +129,7 @@ sets DB before source access, performs the ordered read/write and register updat
 idle/check/idle. A boundary yield resumes at the opcode while A has not wrapped. RTI now restores
 P/PC/PB using the LakeSnes idle/pull/check sequence and redirects without a synthetic RTS/RTL;
 status restoration also enforces emulation-mode M/X and index narrowing. These opcodes have
-focused synthetic tests but are absent from the current 33 generated functions, so a real ROM
+focused synthetic tests but are absent from the current 37 generated functions, so a real ROM
 closure containing them remains an explicit gate rather than an inferred success.
 
 Generated addressing modes now reproduce LakeSnes's runtime-dependent idle phases. A nonzero DP

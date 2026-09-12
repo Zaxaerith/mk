@@ -36,3 +36,9 @@ PROF 81F705 0        00
 PROF 81F710 0        00
 PROF 8596DC 675      00
 PROF 81F56C 58295    20
+# Coverage expansion: two leaf roots and two roots with generated C callees.
+# Gated individually and together; opt in via the bus-phase coverage preset.
+PROF 81F722 4096     00
+PROF 81FD22 2684     00
+PROF 8087D9 2440     00
+PROF 80879A 2440     00

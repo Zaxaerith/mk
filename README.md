@@ -67,7 +67,19 @@ A Dear ImGui menu bar (File / Graphics / Sound / Controller / Multiplayer / Help
 - Netplay polish: rollback / over-the-wire desync detection; "drop straight into 2-player on connect"
 - More recompiled functions (the long-term goal: replace real-frame with recompiled C)
 
-### Recent (August 2026)
+### Recent (September 2026)
+
+- **Coverage-first expansion**: 85 registered C entries, including 37 generated functions.
+  Four new roots (`81F722`, `81FD22`, `8087D9`, `80879A`) execute 9,220 interceptions
+  together and match all 140 raw snapshots of the 1,400-frame route. The 22-root `coverage`
+  preset executes 21,014 interceptions (legacy default: 11,794), matching outside the
+  legacy dead-stack exclusion. These counts are not whole-game completion percentages.
+- Run `python tools/recomp/validate_route.py` for the strict new-root gate, or
+  `python tools/recomp/validate_route.py --intercepts coverage --ignore-dead-stack`
+  for the expanded combined gate. Both run a fresh ROM oracle and save local evidence.
+  See [the related-project review and plan](docs/related_projects_and_coverage_plan.md).
+
+### Earlier (August 2026)
 - **Measured full-C baseline and roadmap** — the standard 1,400-frame route reaches 361 direct
   call targets. 81 C entries are registered (32 auto-generated), but only the strict 18-function
   combined set is default oracle-gated; see [`docs/recompilation_roadmap.md`](docs/recompilation_roadmap.md).
@@ -239,7 +251,7 @@ is still opt-in. Its generated immediate, data, implied, branch, RMW, stack, cal
 paths now use LakeSnes-style `checkInt` micro-phases. MVN/MVP now execute one hardware-style
 iteration at a time (including opcode refetch, read/write, idle/check/idle, and resumable PC),
 and RTI restores P/PC/PB in LakeSnes pull/check order. These three opcodes have focused generator
-coverage but do not occur in the current 33-function generated set, so they still need a ROM-level
+coverage but do not occur in the current 37-function generated set, so they still need a ROM-level
 closure gate. Generated memory modes now also place LakeSnes's dynamic DP-low, DP-index,
 absolute-index page/write/width, and stack-relative idle penalties before the correct pointer or
 data access. The generated `$80:946E` OAM-DMA leaf now drives LakeSnes one bus phase at a time:
@@ -247,8 +259,9 @@ data access. The generated `$80:946E` OAM-DMA leaf now drives LakeSnes one bus p
 accesses call LakeSnes directly, its DMA stall state machine and open-bus updates are preserved;
 the legacy aggregate path remains approximate, and internal bus latches are not part of the
 snapshot format. JSL and
-`JSR (abs,X)` now also preserve their non-linear operand/stack fetch order; an all-C JSL child
-closure is still needed for the same ROM-level proof already held by the indirect-JSR closure.
+`JSR (abs,X)` now also preserve their non-linear operand/stack fetch order. The newly generated
+`$81:FD22` calls the `$81:F638` C closure through JSL and passes 2,684 root interceptions with
+all 140 raw snapshots matching, providing a ROM gate for this cross-bank call path.
 All five JMP/JML tail forms now have ordered bus-phase emission, with local decoded targets kept
 inside the C CFG; indirect-tail closures still need isolated ROM-level timing gates.
 

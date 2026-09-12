@@ -69,6 +69,11 @@ A Dear ImGui menu bar (File / Graphics / Sound / Controller / Multiplayer / Help
 
 ### Recent (September 2026)
 
+- **Readable algorithm recovered from ROM**: `smk_mix_word` reconstructs `$81:BB70`
+  as compact C, including its unusual separate return value/state and final flags.
+  All 65,536 inputs pass against actual ROM CPU execution under two initial flag
+  patterns (131,072 cases). The timed generated body remains in use for game execution.
+  See [derivation and exhaustive test](docs/binary_word_mix.md).
 - **Coverage-first expansion**: 85 registered C entries, including 37 generated functions.
   Four new roots (`81F722`, `81FD22`, `8087D9`, `80879A`) execute 9,220 interceptions
   together and match all 140 raw snapshots of the 1,400-frame route. The 22-root `coverage`

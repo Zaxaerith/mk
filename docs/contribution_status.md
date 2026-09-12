@@ -33,6 +33,12 @@ The opt-in `SMK_RECOMP_INTERCEPTS=coverage` preset combines them with the legacy
 Use `SMK_INTERP=0 SMK_RECOMP_BUSPHASE=1 SMK_RECOMP_PHASE_YIELD=1` with `SMK_RECOMP=1`.
 See [research, reproduction and next milestones](related_projects_and_coverage_plan.md).
 
+An additional semantic reconstruction of `$81BB70` is available as `smk_mix_word`.
+Its 65,536-input, two-flag-pattern test executes the supplied ROM with LakeSnes's CPU
+and verifies returned/stored values and CPU flags. The generated timed body remains
+the game implementation; this adds a readable algorithm without changing entry counts.
+See [binary derivation and scope](binary_word_mix.md).
+
 ## What this branch does not claim
 
 - It is not a complete C recompile of the game.
@@ -132,7 +138,7 @@ state.
 ## Publication checks
 
 M3g was published at parent `5665b45` / submodule `78245a6`. The September coverage expansion
-is local work. The previous publication audit covered the first five items below;
+and semantic reconstruction are prepared for publication. The previous audit covered the first five items below;
 before any future push, repeat the audit and publish the submodule commit before its parent gitlink:
 
 - the ROM is ignored and absent from the Git index;

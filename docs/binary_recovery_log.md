@@ -24,10 +24,14 @@ convention are preserved. See `binary_direction.md` for the timing/API limits.
 
 ## Next investigation
 
-Study $80:86A0: a conditional pair of fixed-point projections. The four ROL
-operations per coordinate look like selecting bits 14..29 of a 32-bit value,
-with the guard `mode == 2 || sign-bit(flag)`. Verify carry interactions and
-unchanged destinations on skipped paths before simplifying.
+Checkpoint 3 recovered $80:86A0 as `smk_project_coordinates`; all 4,194,304
+ROM tests pass, including skipped paths with no destination writes. See
+`binary_projection.md`. Its ROL sequence simplifies to extracting bits 14..29.
+
+Study $80:A027 next: it compares adjacent object keys, conditionally exchanges
+two order entries, updates each object's reverse slot reference, then walks
+backward. Check zero sentinels, equal keys and predecessor flag bit $20 before
+describing it as an insertion-order repair operation.
 
 Continue after that with callers or other bounded game algorithms. Keep data
 tables caller-supplied, distinguish inferred gameplay purpose from established

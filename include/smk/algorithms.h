@@ -49,4 +49,12 @@ SmkCellDirectionResult smk_direction_from_cell(uint16_t cell, uint16_t point_x,
  * returns only the angle and does not reproduce CPU or MMIO side effects. */
 uint8_t smk_vector_direction8(int16_t x, int16_t y, const uint8_t table[256]);
 
+/* Destination semantics of $80:86A0. If its guard is false, neither output
+ * is written. Otherwise extract bits 14..29 of each source word pair.
+ * CPU scratch/flags are outside this semantic API. Output pointers must be
+ * valid and distinct when the guard is true. */
+bool smk_project_coordinates(uint16_t mode, uint16_t flags,
+                             uint32_t source_x, uint32_t source_y,
+                             uint16_t *dest_x, uint16_t *dest_y);
+
 #endif

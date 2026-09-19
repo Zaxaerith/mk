@@ -106,3 +106,12 @@ uint8_t smk_vector_direction8(int16_t x, int16_t y, const uint8_t table[256]) {
     const uint8_t sample = table[index];
     return (uint8_t)((reflect ? (uint8_t)(0 - sample) : sample) + bias);
 }
+
+bool smk_project_coordinates(uint16_t mode, uint16_t flags,
+                             uint32_t source_x, uint32_t source_y,
+                             uint16_t *dest_x, uint16_t *dest_y) {
+    if (mode != 2 && !(flags & 0x8000)) return false;
+    *dest_x = (uint16_t)(source_x >> 14);
+    *dest_y = (uint16_t)(source_y >> 14);
+    return true;
+}

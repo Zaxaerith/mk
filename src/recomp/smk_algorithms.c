@@ -79,3 +79,30 @@ SmkCellDirectionResult smk_direction_from_cell(uint16_t cell, uint16_t point_x,
     result.direction = smk_vector_direction(result.delta_x, result.delta_y, table);
     return result;
 }
+
+uint8_t smk_vector_direction8(int16_t x, int16_t y, const uint8_t table[256]) {
+    if (!y) return x == 0 ? 0 : x < 0 ? 0xc0 : 0x40;
+    if (!x) return y < 0 ? 0x80 : 0;
+    const uint32_t ax = x < 0 ? (uint32_t)-(int32_t)x : (uint32_t)x;
+    const uint32_t ay = y < 0 ? (uint32_t)-(int32_t)y : (uint32_t)y;
+    const bool y_major = ax < ay;
+    uint32_t major = y_major ? ay : ax;
+    uint32_t minor = y_major ? ax : ay;
+    uint16_t fraction = 0;
+    while (major > 256) {
+        major >>= 1;
+        fraction = (uint16_t)((fraction >> 1) | ((minor & 1) << 15));
+        minor >>= 1;
+    }
+    /* LDA $09 spans fraction's high byte and minor's low byte. The divider
+     * takes only the low byte of major; 256 therefore means division by zero
+     * ($FFFF), subsequently clamped to index 255 by the original routine. */
+    const uint16_t dividend = (uint16_t)((minor << 8) | (fraction >> 8));
+    const uint8_t divisor = (uint8_t)major;
+    uint32_t index = divisor ? dividend / divisor : 0xffff;
+    if (index > 255) index = 255;
+    const bool reflect = y_major ? ((x < 0) != (y < 0)) : ((x < 0) == (y < 0));
+    const uint8_t bias = y_major ? (y < 0 ? 0x80 : 0) : (x < 0 ? 0xc0 : 0x40);
+    const uint8_t sample = table[index];
+    return (uint8_t)((reflect ? (uint8_t)(0 - sample) : sample) + bias);
+}

@@ -14,14 +14,20 @@ ROM differential gate passes 6,489,603 and 1,572,864 cases respectively.
 Existing word-mixer and generator regressions pass. See `binary_direction.md`
 for evidence, preconditions and limitations. No timed game routine was replaced.
 
+## Checkpoint 2 — hardware-divider byte direction
+
+Recovered $81:F722 as `smk_vector_direction8`. The ROM CPU gate routes divider
+accesses into LakeSnes's actual register implementation and passes 6,489,603
+cases; vector and cell gates remain green. The zero-divisor boundary at a
+reduced magnitude of 256, overlapping scratch-word read and differing axis
+convention are preserved. See `binary_direction.md` for the timing/API limits.
+
 ## Next investigation
 
-Study $81:F722, another direction calculation. It uses the hardware divider
-($4204/$4206, $4214), an 8-bit runtime table at $7F:0000, and ROM octant tables
-at $81:F7C3/$81:F7CB. Its axis convention differs from F638. Preserve the
-divisor-low-byte behavior when the reduced magnitude equals 256; do not assume
-ordinary mathematical division by 256. Inspect the LakeSnes divider behavior
-and test with hardware-backed reference accesses before claiming equivalence.
+Study $80:86A0: a conditional pair of fixed-point projections. The four ROL
+operations per coordinate look like selecting bits 14..29 of a 32-bit value,
+with the guard `mode == 2 || sign-bit(flag)`. Verify carry interactions and
+unchanged destinations on skipped paths before simplifying.
 
 Continue after that with callers or other bounded game algorithms. Keep data
 tables caller-supplied, distinguish inferred gameplay purpose from established

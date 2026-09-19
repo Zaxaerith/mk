@@ -43,4 +43,10 @@ SmkCellDirectionResult smk_direction_from_cell(uint16_t cell, uint16_t point_x,
                                               uint16_t point_y,
                                               const uint8_t table[4097]);
 
+/* Low accumulator byte of $81:F722, native 16-bit entry with D clear.
+ * This uses a different axis convention and hardware-divider quantization
+ * from F638. The original switches to 8-bit A/X on return; this pure API
+ * returns only the angle and does not reproduce CPU or MMIO side effects. */
+uint8_t smk_vector_direction8(int16_t x, int16_t y, const uint8_t table[256]);
+
 #endif

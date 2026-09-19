@@ -79,3 +79,28 @@ interrupts, bus timing and concurrent table mutation are outside these APIs.
 The game still uses the timed generated routines. These pure algorithms are
 compiled into the library and the test executable, but do not replace timed
 interceptions. Registered/generated entry counts therefore remain 85/37.
+
+## $81:F722: byte direction with hardware-divider quantization
+
+`smk_vector_direction8` returns the low accumulator byte for another direction
+routine. Its positive-Y axis is zero (negative Y is `$80`), unlike F638; the
+X axes remain `$40` and `$C0`. It also returns zero for a zero vector.
+
+The general path sorts absolute magnitudes, records sign and major-axis bits,
+then shifts until the larger magnitude is at most 256. Each discarded minor
+bit is rotated into a fraction word. The overlapping word read at DP `$09`
+forms `(minor << 8) | (fraction >> 8)`, truncated to 16 bits. The hardware
+divides this by the low byte of the major magnitude. Consequently exactly 256
+means a zero divisor, producing `$FFFF`, then clamped to index 255. Equal
+magnitudes at 256 also truncate the numerator; do not simplify this to a
+floating-point ratio. A 256-byte caller-supplied table and octant reflection/
+bias produce the result modulo 256.
+
+The test now additionally executes **6,489,603 byte-direction ROM cases** on
+the same grids/sweeps and three 256-byte table patterns. ROM CPU accesses to
+divider registers are routed to LakeSnes `snes_read`/`snes_write`, rather than
+duplicating division in the reference adapter. This validates register-result
+semantics, not hardware divider latency: no emulated master-clock progression
+is asserted by this isolated gate. The original returns with M/X set to 8-bit;
+the API returns only the angle and does not reproduce that status change, the
+accumulator's high byte, scratch values, or hardware register side effects.

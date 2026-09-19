@@ -52,3 +52,7 @@ target_link_libraries(lakesnes_ref PRIVATE lakesnes_hw)
 add_executable(test_word_mix tools/test_word_mix.c src/recomp/smk_algorithms.c)
 target_include_directories(test_word_mix PRIVATE ext/snesrecomp/ext/LakeSnes)
 target_link_libraries(test_word_mix PRIVATE lakesnes_hw)
+
+add_executable(test_vector_direction tools/test_vector_direction.c src/recomp/smk_algorithms.c)
+target_include_directories(test_vector_direction PRIVATE ext/snesrecomp/ext/LakeSnes)
+target_link_libraries(test_vector_direction PRIVATE lakesnes_hw)

@@ -69,6 +69,12 @@ A Dear ImGui menu bar (File / Graphics / Sound / Controller / Multiplayer / Help
 
 ### Recent (September 2026)
 
+- **Two more readable binary reconstructions**: vector direction (`81F638` and
+  eight branches) and direction from a packed grid-cell center (`81FD22`).
+  Direct ROM tests pass 6,489,603 vector and 1,572,864 cell cases. These are
+  semantic APIs, not replacements for bus-timed game execution. See
+  [derivation and evidence](docs/binary_direction.md) and the
+  [ongoing recovery log](docs/binary_recovery_log.md).
 - **Readable algorithm recovered from ROM**: `smk_mix_word` reconstructs `$81:BB70`
   as compact C, including its unusual separate return value/state and final flags.
   All 65,536 inputs pass against actual ROM CPU execution under two initial flag

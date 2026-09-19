@@ -9,6 +9,7 @@
 #include <snesrecomp/menu_overlay.h>
 #include <snesrecomp/mp_session.h>
 #include "smk/functions.h"
+#include "smk/semantic_verify.h"
 
 #define SMK_STATE_PATH "smk_state.sav"
 
@@ -498,7 +499,8 @@ int main(int argc, char *argv[]) {
     }
 
     printf("Shutting down...\n");
+    bool semantic_ok = smk_semantic_report();
     snesrecomp_shutdown();
 
-    return 0;
+    return semantic_ok ? 0 : 1;
 }

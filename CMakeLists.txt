@@ -23,6 +23,7 @@ add_library(smk_game STATIC
     src/recomp/smk_title.c
     src/recomp/smk_autogen.c
     src/recomp/smk_algorithms.c
+    src/recomp/smk_semantic_verify.c
 )
 target_link_libraries(smk_game PUBLIC snesrecomp)
 

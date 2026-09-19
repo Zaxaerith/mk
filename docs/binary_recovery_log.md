@@ -28,10 +28,13 @@ Checkpoint 3 recovered $80:86A0 as `smk_project_coordinates`; all 4,194,304
 ROM tests pass, including skipped paths with no destination writes. See
 `binary_projection.md`. Its ROL sequence simplifies to extracting bits 14..29.
 
-Study $80:A027 next: it compares adjacent object keys, conditionally exchanges
-two order entries, updates each object's reverse slot reference, then walks
-backward. Check zero sentinels, equal keys and predecessor flag bit $20 before
-describing it as an insertion-order repair operation.
+Checkpoint 4 recovered $80:A027 as `smk_repair_object_order`: 811,440 ROM
+cases pass across all seven-object permutations, guard/key patterns and holes.
+See `binary_object_order.md`.
+
+Next: connect the pure direction algorithms to optional read-only live checks
+at generated routine entry/normal return, so the actual game tables and real
+race-path inputs are covered without replacing the timed implementations.
 
 Continue after that with callers or other bounded game algorithms. Keep data
 tables caller-supplied, distinguish inferred gameplay purpose from established

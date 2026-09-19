@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 
 /* Semantic result of ROM $81:BB70 with a stable ordinary-RAM input at
  * DB:$1F26, native mode and a 16-bit accumulator. These are distinct: one
@@ -56,5 +57,18 @@ uint8_t smk_vector_direction8(int16_t x, int16_t y, const uint8_t table[256]);
 bool smk_project_coordinates(uint16_t mode, uint16_t flags,
                              uint32_t source_x, uint32_t source_y,
                              uint16_t *dest_x, uint16_t *dest_y);
+
+typedef struct SmkOrderObject {
+    uint16_t key;
+    uint16_t flags;
+    uint16_t slot_offset;
+} SmkOrderObject;
+
+/* Data semantics of $80:A027 with non-overlapping ordinary RAM fields.
+ * Handles are caller-normalized object indices; zero is an empty sentinel.
+ * start must be a valid order index <=32767, and all nonzero handles must be
+ * valid objects. Returns the final index; reverse offsets are byte offsets
+ * (2 * index), matching the ROM's word order table. No CPU effects modeled. */
+size_t smk_repair_object_order(uint16_t *order, SmkOrderObject *objects, size_t start);
 
 #endif

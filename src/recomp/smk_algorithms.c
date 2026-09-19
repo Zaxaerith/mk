@@ -115,3 +115,18 @@ bool smk_project_coordinates(uint16_t mode, uint16_t flags,
     *dest_y = (uint16_t)(source_y >> 14);
     return true;
 }
+
+size_t smk_repair_object_order(uint16_t *order, SmkOrderObject *objects, size_t start) {
+    while (start > 0) {
+        const uint16_t current = order[start];
+        const uint16_t previous = order[start - 1];
+        if (!current || !previous || objects[current].key <= objects[previous].key ||
+            (objects[previous].flags & 0x20)) break;
+        order[start] = previous;
+        objects[previous].slot_offset = (uint16_t)(start * 2);
+        order[start - 1] = current;
+        objects[current].slot_offset = (uint16_t)((start - 1) * 2);
+        --start;
+    }
+    return start;
+}

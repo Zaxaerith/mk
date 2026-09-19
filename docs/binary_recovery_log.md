@@ -42,10 +42,19 @@ zero mismatches across 2,670 calls to $81:F638 and 4,096 calls to $81:F722; all 
 raw snapshots match LakeSnes oracle state outside dead stack scratch. See
 `tools/recomp/validate_route.py --semantic-check`.
 
+## Checkpoint 6 — sprite tile DMA staging queue append
+
+Recovered $80:8D83 as `smk_queue_tile_dma`: the staging queue builder called 1,191
+times during the standard route. 96,768 ROM CPU test cases pass across 8 guard
+patterns, all 9 queue limits, 14 queue positions, 12 buffer positions, and all 8 tile
+IDs. Validates double guards ($2C and queue limit $0144), ROM table lookups,
+12-byte queue descriptors and pointer advances. See `binary_tile_dma.md`.
+
+
 ## Next investigation
 
-Recover $80:8D83 (`smk_queue_tile_dma`): the sprite tile DMA staging buffer builder
-at RAM $0EA0. Called 1,191 times during the standard route. Test against ROM CPU
-execution and verify double-guard behavior, ROM table lookups, 12-byte queue
-descriptors and pointer advances.
+Connect `smk_repair_object_order` and `smk_queue_tile_dma` to live assertion checks,
+or continue recovering callers ($80:A01F) and adjacent object physics routines.
+Keep data tables caller-supplied and verify against ROM CPU execution.
+
 

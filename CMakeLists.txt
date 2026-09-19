@@ -65,3 +65,8 @@ target_link_libraries(test_projection PRIVATE lakesnes_hw)
 add_executable(test_object_order tools/test_object_order.c src/recomp/smk_algorithms.c)
 target_include_directories(test_object_order PRIVATE ext/snesrecomp/ext/LakeSnes)
 target_link_libraries(test_object_order PRIVATE lakesnes_hw)
+
+add_executable(test_tile_dma tools/test_tile_dma.c src/recomp/smk_algorithms.c)
+target_include_directories(test_tile_dma PRIVATE ext/snesrecomp/ext/LakeSnes)
+target_link_libraries(test_tile_dma PRIVATE lakesnes_hw)
+

@@ -71,4 +71,27 @@ typedef struct SmkOrderObject {
  * (2 * index), matching the ROM's word order table. No CPU effects modeled. */
 size_t smk_repair_object_order(uint16_t *order, SmkOrderObject *objects, size_t start);
 
+typedef struct SmkTileDmaEntry {
+    uint16_t vram_dest;
+    uint16_t rom_src;
+    uint16_t dma_param;
+} SmkTileDmaEntry;
+
+/* Queue and data semantics of ROM $80:8D83 (sprite tile DMA staging builder).
+ * If guard_2c != 0 or *p_queue_idx >= queue_limit, returns false without writes.
+ * Otherwise appends two 6-byte DMA staging descriptors into out_entries,
+ * increments *p_queue_idx by 2, advances *p_buffer_pos by 12, and returns true.
+ * table_8dd1, table_8de1, table_8df1 are 8-word caller-supplied ROM tables.
+ * CPU scratch/flags and bus timing are outside this pure algorithm API. */
+bool smk_queue_tile_dma(uint16_t guard_2c,
+                        uint16_t *p_queue_idx,
+                        uint16_t queue_limit,
+                        uint16_t *p_buffer_pos,
+                        uint16_t tile_id,
+                        const uint16_t table_8dd1[8],
+                        const uint16_t table_8de1[8],
+                        const uint16_t table_8df1[8],
+                        SmkTileDmaEntry out_entries[2]);
+
 #endif
+

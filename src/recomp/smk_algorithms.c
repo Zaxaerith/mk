@@ -130,3 +130,39 @@ size_t smk_repair_object_order(uint16_t *order, SmkOrderObject *objects, size_t 
     }
     return start;
 }
+
+bool smk_queue_tile_dma(uint16_t guard_2c,
+                        uint16_t *p_queue_idx,
+                        uint16_t queue_limit,
+                        uint16_t *p_buffer_pos,
+                        uint16_t tile_id,
+                        const uint16_t table_8dd1[8],
+                        const uint16_t table_8de1[8],
+                        const uint16_t table_8df1[8],
+                        SmkTileDmaEntry out_entries[2]) {
+    if (guard_2c != 0) return false;
+    if (!p_queue_idx) return false;
+    const uint16_t q_idx = *p_queue_idx;
+    if (q_idx >= queue_limit || q_idx >= 16) return false;
+
+    const uint16_t vram_base = table_8dd1[q_idx >> 1];
+    const uint16_t tile_idx = (tile_id >> 1) & 7;
+    const uint16_t tile_src = (q_idx < 8) ? table_8de1[tile_idx] : table_8df1[tile_idx];
+
+    if (out_entries) {
+        out_entries[0].vram_dest = vram_base;
+        out_entries[0].rom_src = tile_src;
+        out_entries[0].dma_param = 0x407F;
+
+        out_entries[1].vram_dest = (uint16_t)(vram_base + 0x0100);
+        out_entries[1].rom_src = (uint16_t)(tile_src + 0x0200);
+        out_entries[1].dma_param = 0x407F;
+    }
+
+    if (p_buffer_pos) {
+        *p_buffer_pos = (uint16_t)(*p_buffer_pos + 12);
+    }
+    *p_queue_idx = (uint16_t)(q_idx + 2);
+    return true;
+}
+

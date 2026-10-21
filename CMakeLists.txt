@@ -21,9 +21,15 @@ add_library(smk_game STATIC
     src/recomp/smk_boot.c
     src/recomp/smk_init.c
     src/recomp/smk_title.c
-    src/recomp/smk_autogen.c
 )
 target_link_libraries(smk_game PUBLIC snesrecomp)
+
+# smk_autogen.c is autogen.py output generated from your ROM, so it is never
+# committed (see docs/autogen.md). Built in when you have generated it locally.
+if(EXISTS ${CMAKE_SOURCE_DIR}/src/recomp/smk_autogen.c)
+    target_sources(smk_game PRIVATE src/recomp/smk_autogen.c)
+    target_compile_definitions(smk_game PUBLIC SMK_HAVE_AUTOGEN=1)
+endif()
 
 # --- smk_launcher (executable) ---
 add_executable(smk_launcher src/main/main.c)

@@ -6,6 +6,7 @@
  */
 
 #include <snesrecomp/snesrecomp.h>
+#include <SDL.h>   /* SDL2main needs main renamed to SDL_main */
 #include <snesrecomp/menu_overlay.h>
 #include <snesrecomp/mp_session.h>
 #include "smk/functions.h"
@@ -119,6 +120,7 @@ static void apply_script(int frame) {
 }
 
 int main(int argc, char *argv[]) {
+    argc = snesrecomp_parse_args(argc, argv);   /* --headless, --record out.mp4 */
     printf("Super Mario Kart - Static Recompilation\n");
     printf("========================================\n");
     printf("Powered by snesrecomp (LakeSnes backend)\n\n");
@@ -142,8 +144,11 @@ int main(int argc, char *argv[]) {
     /* Recompiled functions are auto-registered via RECOMP_PATCH static
      * constructors — see ext/snesrecomp/include/snesrecomp/recomp_patch.h.
      * smk_autogen.c has no externally-referenced symbol, so force its TU to link
-     * (else the linker drops it and its registrations never run). */
+     * (else the linker drops it and its registrations never run). It is
+     * generated locally and may be absent (docs/autogen.md). */
+#ifdef SMK_HAVE_AUTOGEN
     smk_autogen_link_anchor();
+#endif
 
     /* Force-interpret mode: run the genuine ROM for init/transitions/state
      * handlers via the LakeSnes CPU, using the recompiled frame shells only
@@ -272,7 +277,8 @@ int main(int argc, char *argv[]) {
     }
 
     parse_script();
-    s_lock_input = (getenv("SMK_SCRIPT") != NULL) || (getenv("SMK_HEADLESS") != NULL);
+    s_lock_input = (getenv("SMK_SCRIPT") != NULL) || (getenv("SMK_HEADLESS") != NULL) ||
+                   platform_is_headless();
     int max_frames = 0;
     {
         const char *mf = getenv("SMK_MAX_FRAMES");

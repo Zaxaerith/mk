@@ -59,17 +59,11 @@ tools/mesen/*.txt
 /*.bmp
 /*.log
 /*.png
-!/title.png
-!/titlewithchar.png
-!/mode7_race.png
-!/driver_select.png
-!/newtitle.png
-!/charselect.png
-!/class.png
-!/mp.png
-!/race.png
-!/race2.png
 
 # Runtime user config (written by the ImGui menu)
 smk_config.ini
 smk_state.sav
+
+# autogen.py output, generated from the ROM: never committed (docs/autogen.md)
+src/recomp/smk_autogen.c
+build-farm/

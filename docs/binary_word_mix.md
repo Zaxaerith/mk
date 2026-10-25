@@ -95,10 +95,17 @@ with snesrecomp `78245a6a3dfac087e4237a89c7e3006c5d9bedfc` and LakeSnes
 upstream combination. The first draft folded the mixed byte instead of the
 original low byte; the historical CPU gate caught that at input `0x0100`.
 
-The 2026-10-25 local migration check passed the 12 ROM-free examples with GCC.
-The CPU oracle and title-to-race regression were not run: no ROM or initialized
-LakeSnes/runtime was present in the migration workspace. Record the actual
-runtime/LakeSnes pins and ROM version when running those checks later.
+Local validation on 2026-10-25 used Windows, GCC/G++ 16.1.0, CMake 4.4.4 and
+SDL2 2.32.8. The strict C17 standalone build passed all 12 ROM-free examples.
+The Release CMake build of both tests and the launcher succeeded, and the
+ROM-free CTest passed (1/1). The CPU oracle's `--sample` mode passed 24 actual
+ROM executions, including one input whose stored state differs from A.
+One bounded 1,400-frame headless title-to-race run reached race state at frame
+1,095 and exited normally; title and ROUND 1 captures were checked locally.
+These checks used the US v1.0 ROM identity above, snesrecomp
+`b73fdcd1322103f15fa33401889cd7b94eb9e79b` and LakeSnes
+`9f1de1e9b7064f496bdc659c40435caa27c37a52`. The historical 131,072-execution
+exhaustive gate was not rerun during this migration.
 
 This test compares against CPU execution of the ROM, not a second manually
 transcribed algorithm or output from the C generator. It checks functional
